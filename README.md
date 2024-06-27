@@ -1,4 +1,4 @@
 ## solar-webapp
 
-#cd solar-cleaning
-#npm run dev
+- cd solar-cleaning
+- npm run dev
