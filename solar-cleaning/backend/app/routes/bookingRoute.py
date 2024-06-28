@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from ..models.booking import Booking
+from ..models.bookingModel import Booking
 from .. import db
 from datetime import datetime
 
