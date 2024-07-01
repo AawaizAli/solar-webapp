@@ -1,6 +1,7 @@
-from flask import Blueprint, request, jsonify, redirect, url_for
-from flask_login import login_user, login_required, logout_user, current_user
+from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, login_required, logout_user
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from app.models.userModel import User
 from app import db
 
@@ -14,8 +15,8 @@ def login():
     user = User.query.filter_by(username=username).first()
 
     if user and check_password_hash(user.password, password):
-        login_user(user)
-        return jsonify({'message': 'Login successful', 'user': user.serialize()}), 200
+        access_token = create_access_token(identity=user.id)
+        return jsonify({'message': 'Login successful', 'access_token': access_token}), 200
 
     return jsonify({'message': 'Invalid credentials'}), 401
 
