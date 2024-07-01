@@ -6,7 +6,7 @@ from app import db
 
 auth_bp = Blueprint('auth_bp', __name__)
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
     username = data['username']
@@ -19,7 +19,7 @@ def login():
 
     return jsonify({'message': 'Invalid credentials'}), 401
 
-@auth_bp.route('/logout')
+@auth_bp.route('/api/logout')
 @login_required
 def logout():
     logout_user()
