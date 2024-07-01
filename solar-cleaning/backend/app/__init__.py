@@ -1,3 +1,4 @@
+# app/__init__.py
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -19,19 +20,17 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
-    from app.models import bookingModel, workerModel, userModel
+    # Import models to ensure they are registered
+    from app.models import bookingModel, workerModel, userModel, clientModel, availibilityModel
 
     @login_manager.user_loader
     def load_user(user_id):
         return userModel.User.query.get(int(user_id))
 
-    with app.app_context():
-        db.create_all()
-
     from app.routes.bookingRoute import booking_bp
     from app.routes.workerRoute import worker_bp
     from app.routes.authRoute import auth_bp
-    from app.routes.availabilityRoute import availability_bp
+    from app.routes.availibilityRoute import availability_bp
     
     app.register_blueprint(booking_bp)
     app.register_blueprint(worker_bp)
