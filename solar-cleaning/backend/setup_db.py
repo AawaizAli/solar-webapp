@@ -1,9 +1,17 @@
-from app import create_app, db
-from app.models.bookingModel import Booking
-from app.models.workerModel import Worker
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from config.config import Config
 
-app = create_app()
+db = SQLAlchemy()
 
-with app.app_context():
-    db.create_all()
-    print("Database tables created successfully.")
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+
+    db.init_app(app)
+
+    with app.app_context():
+        from app.models import bookingModel, workerModel
+        db.create_all()
+
+    return app

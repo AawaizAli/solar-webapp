@@ -1,36 +1,27 @@
+# app/models/booking.py
 from .. import db
-from datetime import datetime, timedelta
 
 class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    contact = db.Column(db.String(120), nullable=False)
-    address = db.Column(db.String(200), nullable=False)
-    panels = db.Column(db.Integer, nullable=False)
-    charges = db.Column(db.Float, nullable=False)
-    booking_date = db.Column(db.Date, nullable=False)
-    interval = db.Column(db.String(20), nullable=False)
-    next_booking_date = db.Column(db.Date, nullable=False)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
+    worker_id = db.Column(db.Integer, db.ForeignKey('worker.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    time_slot = db.Column(db.String(20), nullable=False)
+    location = db.Column(db.String(200), nullable=False)
+    status = db.Column(db.String(20), nullable=False)
 
-    def __init__(self, name, contact, address, panels, charges, booking_date, interval):
-        self.name = name
-        self.contact = contact
-        self.address = address
-        self.panels = panels
-        self.charges = charges
-        self.booking_date = booking_date
-        self.interval = interval
-        self.next_booking_date = booking_date + timedelta(days=int(interval))
+    client = db.relationship('Client', backref=db.backref('bookings', lazy=True))
+    worker = db.relationship('Worker', backref=db.backref('bookings', lazy=True))
 
     def to_dict(self):
         return {
             'id': self.id,
-            'name': self.name,
-            'contact': self.contact,
-            'address': self.address,
-            'panels': self.panels,
-            'charges': self.charges,
-            'booking_date': self.booking_date.strftime('%Y-%m-%d'),
-            'interval': self.interval,
-            'next_booking_date': self.next_booking_date.strftime('%Y-%m-%d')
+            'client_id': self.client_id,
+            'worker_id': self.worker_id,
+            'date': self.date,
+            'time_slot': self.time_slot,
+            'location': self.location,
+            'status': self.status,
+            'client': self.client.to_dict(),
+            'worker': self.worker.to_dict()
         }
