@@ -19,7 +19,7 @@ def login():
 
     return jsonify({'message': 'Invalid credentials'}), 401
 
-@auth_bp.route('/logout')
+@auth_bp.route('/logout',methods=['POST'])
 @login_required
 def logout():
     logout_user()
