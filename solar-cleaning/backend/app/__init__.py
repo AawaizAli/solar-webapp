@@ -4,11 +4,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager
 from app.config.config import Config
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
+jwt = JWTManager()
 
 def create_app():
     app = Flask(__name__)
@@ -19,6 +21,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+    jwt.init_app(app) 
 
     # Import models to ensure they are registered
     from app.models import bookingModel, workerModel, userModel, clientModel, availibilityModel
