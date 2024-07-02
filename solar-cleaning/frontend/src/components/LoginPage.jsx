@@ -1,65 +1,59 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../features/auth/authSlice'; // Import the login action
-import { Navigate } from 'react-router-dom';
-import './LoginPage.css';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Menu } from 'antd';
+import { Link } from 'react-router-dom';
+import './HomePage.css'; // Create a CSS file for custom styles
 
-const LoginPage = () => {
-  const dispatch = useDispatch();
-  const loading = useSelector((state) => state.auth.loading);
-  const error = useSelector((state) => state.auth.error);
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
-  const onFinish = (values) => {
-    dispatch(login({ username: values.email, password: values.password }));
-  };
-
-  if (isAuthenticated) {
-    return <Navigate to="/" />;
-  }
+const HomePage = () => {
+  const { user, isAuthenticated } = useSelector(state => state.auth);
 
   return (
-    <div className="login-container">
-      <Form
-        name="login"
-        className="login-form"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-      >
-        <Form.Item
-          name="email"
-          rules={[{ required: true, message: 'Please input your Email!' }]}
-        >
-          <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          rules={[{ required: true, message: 'Please input your Password!' }]}
-        >
-          <Input.Password
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            placeholder="Password"
-          />
-        </Form.Item>
-        <Form.Item>
-          <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-          <a className="login-form-forgot" href="">
-            Forgot password
-          </a>
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit" className="login-form-button" loading={loading}>
-            Log in
-          </Button>
-        </Form.Item>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-      </Form>
+    <div>
+      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['home']}>
+        <Menu.Item key="company">
+          <div className="company-name">Dada Panel Cleaning Service</div>
+        </Menu.Item>
+        <Menu.Item key="home">
+          <Link to="/">Home</Link>
+        </Menu.Item>
+        {isAuthenticated && (
+          <>
+            <Menu.Item key="bookings">
+              <Link to="/bookings">Bookings</Link>
+            </Menu.Item>
+            <Menu.Item key="workers">
+              <Link to="/workers">Workers</Link>
+            </Menu.Item>
+            <Menu.Item key="reports">
+              <Link to="/reports">Reports</Link>
+            </Menu.Item>
+            <Menu.Item key="user" style={{ marginLeft: 'auto' }}>
+              <div>{user?.username}</div>
+            </Menu.Item>
+            <Menu.Item key="logout">
+              <Link to="/logout">Logout</Link>
+            </Menu.Item>
+          </>
+        )}
+        {!isAuthenticated && (
+          <Menu.Item key="login" style={{ marginLeft: 'auto' }}>
+            <Link to="/login">Login</Link>
+          </Menu.Item>
+        )}
+      </Menu>
+
+      <section className="hero-section">
+        <div className="hero-content">
+          <h1>Welcome to Our Solar Panel Cleaning Service</h1>
+          <p>Clean energy starts with clean panels.</p>
+        </div>
+      </section>
+
+      <footer className="footer">
+        <p>&copy; 2024 Solar Panel Cleaning Service. All rights reserved.</p>
+      </footer>
     </div>
   );
 };
 
-export default LoginPage;
+export default HomePage;

@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import './HomePage.css'; // Create a CSS file for custom styles
 
 const HomePage = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const [username, setUsername] = useState('Hashir Khan'); 
 
   return (
     <div>
@@ -15,21 +16,27 @@ const HomePage = () => {
         <Menu.Item key="home">
           <Link to="/">Home</Link>
         </Menu.Item>
-        <Menu.Item key="bookings">
-          <Link to="/bookings">Bookings</Link>
-        </Menu.Item>
-        <Menu.Item key="workers">
-          <Link to="/workers">Workers</Link>
-        </Menu.Item>
-        <Menu.Item key="reports">
-          <Link to="/reports">Reports</Link>
-        </Menu.Item>
-        {isLoggedIn ? (
-          <Menu.Item key="logout">
-            <Link to="/logout">Logout</Link>
-          </Menu.Item>
-        ) : (
-          <Menu.Item key="login">
+        {isLoggedIn && (
+          <>
+            <Menu.Item key="bookings">
+              <Link to="/bookings">Bookings</Link>
+            </Menu.Item>
+            <Menu.Item key="workers">
+              <Link to="/workers">Workers</Link>
+            </Menu.Item>
+            <Menu.Item key="reports">
+              <Link to="/reports">Reports</Link>
+            </Menu.Item>
+            <Menu.Item key="user" style={{ marginLeft: 'auto' }}>
+              <div>{username}</div>
+            </Menu.Item>
+            <Menu.Item key="logout">
+              <Link to="/logout">Logout</Link>
+            </Menu.Item>
+          </>
+        )}
+        {!isLoggedIn && (
+          <Menu.Item key="login" style={{ marginLeft: 'auto' }}>
             <Link to="/login">Login</Link>
           </Menu.Item>
         )}
