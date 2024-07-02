@@ -13,7 +13,7 @@ class Availability(db.Model):
         return {
             'id': self.id,
             'worker_id': self.worker_id,
-            'date': self.date,
+            'date': self.date.strftime('%Y-%m-%d'),
             'time_slot': self.time_slot,
             'is_available': self.is_available
         }

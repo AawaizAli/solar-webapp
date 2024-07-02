@@ -1,4 +1,4 @@
-# app/models/client.py
+# app/models/clientModel.py
 from .. import db
 
 class Client(db.Model):
@@ -9,4 +9,12 @@ class Client(db.Model):
     number_of_panels = db.Column(db.Integer, nullable=False)
     charges = db.Column(db.Float, nullable=False)
 
-# Similar structure for worker.py, booking.py, expense.py
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'contact': self.contact,
+            'address': self.address,
+            'number_of_panels': self.number_of_panels,
+            'charges': self.charges
+        }

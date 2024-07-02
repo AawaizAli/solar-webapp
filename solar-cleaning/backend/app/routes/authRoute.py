@@ -20,8 +20,8 @@ def login():
 
     return jsonify({'message': 'Invalid credentials'}), 401
 
-@auth_bp.route('/api/logout')
-@login_required
+@auth_bp.route('/api/logout', methods=['GET'])
+@jwt_required()  # Ensure that JWT is required
 def logout():
     logout_user()
     return jsonify({'message': 'Logged out successfully'}), 200

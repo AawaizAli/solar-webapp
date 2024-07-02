@@ -34,10 +34,16 @@ def create_app():
     from app.routes.workerRoute import worker_bp
     from app.routes.authRoute import auth_bp
     from app.routes.availibilityRoute import availability_bp
+    from app.routes.clientRoute import client_bp
+    from app.routes.reportRoute import report_bp
+
     
     app.register_blueprint(booking_bp)
     app.register_blueprint(worker_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(availability_bp)
+    app.register_blueprint(client_bp)
+    app.register_blueprint(report_bp)
+    
 
     return app

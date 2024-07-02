@@ -1,8 +1,9 @@
-# app/routes/bookings.py
+# app/routes/booking.py
 from flask import Blueprint, request, jsonify
 from ..models.bookingModel import Booking
 from ..models.availibilityModel import Availability
 from .. import db
+from datetime import datetime
 
 booking_bp = Blueprint('booking_bp', __name__, url_prefix='/api/bookings')
 
@@ -19,7 +20,7 @@ def manage_bookings():
         # Check worker availability
         availability = Availability.query.filter_by(
             worker_id=data['worker_id'],
-            date=data['date'],
+            date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
             time_slot=data['time_slot'],
             is_available=True
         ).first()
@@ -30,7 +31,7 @@ def manage_bookings():
         new_booking = Booking(
             client_id=data['client_id'],
             worker_id=data['worker_id'],
-            date=data['date'],
+            date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
             time_slot=data['time_slot'],
             location=data['location'],
             status=data['status']
@@ -53,10 +54,34 @@ def handle_booking(booking_id):
         data = request.get_json()
         if not all(key in data for key in ['client_id', 'worker_id', 'date', 'time_slot', 'location', 'status']):
             return jsonify({'error': 'Bad Request', 'message': 'Missing required fields'}), 400
-        
+
+        # Check worker availability if the worker or time slot is changing
+        if data['worker_id'] != booking.worker_id or data['time_slot'] != booking.time_slot or data['date'] != booking.date.strftime('%Y-%m-%d'):
+            availability = Availability.query.filter_by(
+                worker_id=data['worker_id'],
+                date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
+                time_slot=data['time_slot'],
+                is_available=True
+            ).first()
+
+            if not availability:
+                return jsonify({'error': 'Conflict', 'message': 'Worker not available for the selected time slot'}), 409
+
+            # Mark the old availability as true
+            old_availability = Availability.query.filter_by(
+                worker_id=booking.worker_id,
+                date=booking.date,
+                time_slot=booking.time_slot
+            ).first()
+            if old_availability:
+                old_availability.is_available = True
+
+            # Mark the new availability as false
+            availability.is_available = False
+
         booking.client_id = data['client_id']
         booking.worker_id = data['worker_id']
-        booking.date = data['date']
+        booking.date = datetime.strptime(data['date'], '%Y-%m-%d').date()
         booking.time_slot = data['time_slot']
         booking.location = data['location']
         booking.status = data['status']
@@ -71,7 +96,7 @@ def handle_booking(booking_id):
         ).first()
         if availability:
             availability.is_available = True
-        
+
         db.session.delete(booking)
         db.session.commit()
         return jsonify({'message': 'Booking deleted successfully'}), 200

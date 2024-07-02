@@ -1,6 +1,8 @@
+# app/routes/availability.py
 from flask import Blueprint, request, jsonify
 from ..models.availibilityModel import Availability
 from .. import db
+from datetime import datetime
 
 availability_bp = Blueprint('availability', __name__, url_prefix='/api/availabilities')
 
@@ -10,9 +12,14 @@ def add_availability():
     if not data or not all(key in data for key in ['worker_id', 'date', 'time_slot']):
         return jsonify({'error': 'Bad Request', 'message': 'worker_id, date, and time_slot are required'}), 400
 
+    try:
+        date_obj = datetime.strptime(data['date'], '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({'error': 'Bad Request', 'message': 'Invalid date format. Use YYYY-MM-DD.'}), 400
+
     new_availability = Availability(
         worker_id=data['worker_id'],
-        date=data['date'],
+        date=date_obj,
         time_slot=data['time_slot'],
         is_available=data.get('is_available', True)
     )
@@ -35,8 +42,14 @@ def handle_availability(availability_id):
         data = request.get_json()
         if not data or not all(key in data for key in ['worker_id', 'date', 'time_slot']):
             return jsonify({'error': 'Bad Request', 'message': 'worker_id, date, and time_slot are required'}), 400
+
+        try:
+            date_obj = datetime.strptime(data['date'], '%Y-%m-%d').date()
+        except ValueError:
+            return jsonify({'error': 'Bad Request', 'message': 'Invalid date format. Use YYYY-MM-DD.'}), 400
+
         availability.worker_id = data['worker_id']
-        availability.date = data['date']
+        availability.date = date_obj
         availability.time_slot = data['time_slot']
         availability.is_available = data.get('is_available', availability.is_available)
         db.session.commit()
