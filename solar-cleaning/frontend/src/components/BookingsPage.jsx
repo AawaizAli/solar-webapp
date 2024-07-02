@@ -1,21 +1,67 @@
-import React, { useState } from 'react';
-import { Menu, Button, Form, Input, Select, DatePicker } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Menu, Button, Form, Input, Select, DatePicker, message } from 'antd';
 import { Link } from 'react-router-dom';
-import './BookingsPage.css'; // Create a CSS file for custom styles
+import { fetchBookings, createBooking, updateBooking, deleteBooking } from '../features/bookings/bookingsSlice';
+import './BookingsPage.css';
 
 const { Option } = Select;
 
 const BookingsPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [formMode, setFormMode] = useState('create');
+  
+  const dispatch = useDispatch();
+  const { bookings, loading, error } = useSelector(state => state.bookings);
+
+  useEffect(() => {
+    dispatch(fetchBookings());
+  }, [dispatch]);
 
   const handleCreateBooking = () => {
     setShowForm(true);
+    setFormMode('create');
+    setSelectedBooking(null);
+  };
+
+  const handleUpdateBooking = (id) => {
+    const booking = bookings.find(b => b.id === id);
+    if (booking) {
+      setSelectedBooking(booking);
+      setFormMode('update');
+      setShowForm(true);
+    } else {
+      message.error('Booking not found');
+    }
+  };
+
+  const handleDeleteBooking = (id) => {
+    const booking = bookings.find(b => b.id === id);
+    if (booking) {
+      setSelectedBooking(booking);
+      setFormMode('delete');
+      setShowForm(true);
+    } else {
+      message.error('Booking not found');
+    }
   };
 
   const handleFormSubmit = (values) => {
-    console.log('Form values:', values);
-    // Add logic to handle form submission
+    if (formMode === 'create') {
+      dispatch(createBooking(values));
+    } else if (formMode === 'update' && selectedBooking) {
+      dispatch(updateBooking({ id: selectedBooking.id, updatedData: values }));
+    }
+    setShowForm(false);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (selectedBooking) {
+      dispatch(deleteBooking(selectedBooking.id));
+      setShowForm(false);
+    }
   };
 
   return (
@@ -49,11 +95,30 @@ const BookingsPage = () => {
 
       <div className="content">
         {!showForm ? (
-          <Button type="primary" onClick={handleCreateBooking}>
-            Create Booking
-          </Button>
+          <div>
+            <Button type="primary" onClick={handleCreateBooking} style={{ margin: '0 8px' }}>
+              Create Booking
+            </Button>
+            <Button type="primary" onClick={() => handleUpdateBooking(prompt('Enter Booking ID to Update'))} style={{ margin: '0 8px' }}>
+              Update Booking
+            </Button>
+            <Button type="primary" danger onClick={() => handleDeleteBooking(prompt('Enter Booking ID to Delete'))} style={{ margin: '0 8px' }}>
+              Delete Booking
+            </Button>
+          </div>
+        ) : formMode === 'delete' ? (
+          <div>
+            <h2>Confirm Delete Booking</h2>
+            <p>Are you sure you want to delete booking with ID: {selectedBooking.id}?</p>
+            <Button type="danger" onClick={handleDeleteConfirm}>
+              Confirm Delete
+            </Button>
+            <Button type="default" onClick={() => setShowForm(false)}>
+              Cancel
+            </Button>
+          </div>
         ) : (
-          <Form onFinish={handleFormSubmit} layout="vertical">
+          <Form onFinish={handleFormSubmit} layout="vertical" initialValues={selectedBooking}>
             <Form.Item label="ClientID" name="clientID" rules={[{ required: true, message: 'Please select a ClientID!' }]}>
               <Select placeholder="Select ClientID">
                 {/* Replace with dynamic values from the database */}
@@ -91,7 +156,10 @@ const BookingsPage = () => {
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
-                Submit
+                {formMode === 'create' ? 'Create' : 'Update'} Booking
+              </Button>
+              <Button type="default" onClick={() => setShowForm(false)} style={{ marginLeft: '8px' }}>
+                Cancel
               </Button>
             </Form.Item>
           </Form>
