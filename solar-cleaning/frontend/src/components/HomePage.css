@@ -18,6 +18,7 @@
     color: white;
     /* Adjust text color as needed */
     font-family: Arial, Helvetica, sans-serifs;
+    padding-right:0;
 }
 
 .hero-content h1 {
