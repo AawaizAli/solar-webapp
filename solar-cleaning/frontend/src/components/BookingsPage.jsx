@@ -12,7 +12,7 @@ const BookingsPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [formMode, setFormMode] = useState('create');
-  
+
   const dispatch = useDispatch();
   const { bookings, loading, error } = useSelector(state => state.bookings);
 
@@ -68,7 +68,8 @@ const BookingsPage = () => {
     <div>
       <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['bookings']}>
         <Menu.Item key="company">
-          <div className="company-name">Solar Panel Cleaning Service</div>
+          <div className="company-name">Pod Bhai Cleaning Service</div>
+
         </Menu.Item>
         <Menu.Item key="home">
           <Link to="/">Home</Link>
