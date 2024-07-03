@@ -1,75 +1,96 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Menu, Button, Form, Input, Select, DatePicker, message } from 'antd';
+import { Menu, Button, Form, Input, Checkbox, message } from 'antd';
 import { Link } from 'react-router-dom';
-import { fetchBookings, createBooking, updateBooking, deleteBooking } from '../features/bookings/bookingsSlice';
-import './BookingsPage.css';
+import { fetchWorkers, createWorker, updateWorker, deleteWorker } from '../features/workers/workersSlice';
+import './WorkersPage.css';
 
-const { Option } = Select;
+const timeSlots = ['9am', '11am', '1pm', '3pm', '5pm'];
 
-const BookingsPage = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+const WorkersPage = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // For testing purposes
   const [showForm, setShowForm] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [selectedWorker, setSelectedWorker] = useState(null);
   const [formMode, setFormMode] = useState('create');
 
   const dispatch = useDispatch();
-  const { bookings, loading, error } = useSelector(state => state.bookings);
+  // Mock state for testing
+  const mockState = {
+    workers: [
+      { id: 1, firstName: 'John', lastName: 'Doe', availability: Array(7).fill(Array(5).fill(false)) },
+      { id: 2, firstName: 'Jane', lastName: 'Doe', availability: Array(7).fill(Array(5).fill(false)) }
+    ],
+    loading: false,
+    error: null
+  };
+  // Uncomment the following line for actual state and comment the mock state
+  // const { workers, loading, error } = useSelector(state => state.workers || mockState);
+  const { workers, loading, error } = mockState; // For testing
 
   useEffect(() => {
-    dispatch(fetchBookings());
+    dispatch(fetchWorkers());
   }, [dispatch]);
 
-  const handleCreateBooking = () => {
+  const handleCreateWorker = () => {
     setShowForm(true);
     setFormMode('create');
-    setSelectedBooking(null);
+    setSelectedWorker(null);
   };
 
-  const handleUpdateBooking = (id) => {
-    const booking = bookings.find(b => b.id === id);
-    if (booking) {
-      setSelectedBooking(booking);
+  const handleUpdateWorker = (id) => {
+    const worker = workers.find(w => w.id === id);
+    if (worker) {
+      setSelectedWorker(worker);
       setFormMode('update');
       setShowForm(true);
     } else {
-      message.error('Booking not found');
+      message.error('Worker not found');
     }
   };
 
-  const handleDeleteBooking = (id) => {
-    const booking = bookings.find(b => b.id === id);
-    if (booking) {
-      setSelectedBooking(booking);
+  const handleDeleteWorker = (id) => {
+    const worker = workers.find(w => w.id === id);
+    if (worker) {
+      setSelectedWorker(worker);
       setFormMode('delete');
       setShowForm(true);
     } else {
-      message.error('Booking not found');
+      message.error('Worker not found');
     }
   };
 
   const handleFormSubmit = (values) => {
+    const availability = Array(7)
+      .fill(null)
+      .map((_, dayIndex) =>
+        timeSlots.map((slot, slotIndex) => values[`day${dayIndex}_slot${slotIndex}`] || false)
+      );
+
+    const workerData = {
+      ...values,
+      availability
+    };
+
     if (formMode === 'create') {
-      dispatch(createBooking(values));
-    } else if (formMode === 'update' && selectedBooking) {
-      dispatch(updateBooking({ id: selectedBooking.id, updatedData: values }));
+      dispatch(createWorker(workerData));
+    } else if (formMode === 'update' && selectedWorker) {
+      dispatch(updateWorker({ id: selectedWorker.id, updatedData: workerData }));
     }
     setShowForm(false);
   };
 
   const handleDeleteConfirm = () => {
-    if (selectedBooking) {
-      dispatch(deleteBooking(selectedBooking.id));
+    if (selectedWorker) {
+      dispatch(deleteWorker(selectedWorker.id));
       setShowForm(false);
     }
   };
 
   return (
     <div>
-      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['bookings']}>
+      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['workers']}>
         <Menu.Item key="company">
-          <div className="company-name">Pod Bhai Cleaning Service</div>
-
+          <div className="company-name">Solar Panel Cleaning Service</div>
         </Menu.Item>
         <Menu.Item key="home">
           <Link to="/">Home</Link>
@@ -97,20 +118,20 @@ const BookingsPage = () => {
       <div className="content">
         {!showForm ? (
           <div>
-            <Button type="primary" onClick={handleCreateBooking} style={{ margin: '0 8px' }}>
-              Create Booking
+            <Button type="primary" onClick={handleCreateWorker} style={{ margin: '0 8px' }}>
+              Create Worker
             </Button>
-            <Button type="primary" onClick={() => handleUpdateBooking(prompt('Enter Booking ID to Update'))} style={{ margin: '0 8px' }}>
-              Update Booking
+            <Button type="primary" onClick={() => handleUpdateWorker(prompt('Enter Worker ID to Update'))} style={{ margin: '0 8px' }}>
+              Update Worker
             </Button>
-            <Button type="primary" danger onClick={() => handleDeleteBooking(prompt('Enter Booking ID to Delete'))} style={{ margin: '0 8px' }}>
-              Delete Booking
+            <Button type="primary" danger onClick={() => handleDeleteWorker(prompt('Enter Worker ID to Delete'))} style={{ margin: '0 8px' }}>
+              Delete Worker
             </Button>
           </div>
         ) : formMode === 'delete' ? (
           <div>
-            <h2>Confirm Delete Booking</h2>
-            <p>Are you sure you want to delete booking with ID: {selectedBooking.id}?</p>
+            <h2>Confirm Delete Worker</h2>
+            <p>Are you sure you want to delete worker with ID: {selectedWorker.id}?</p>
             <Button type="danger" onClick={handleDeleteConfirm}>
               Confirm Delete
             </Button>
@@ -119,51 +140,54 @@ const BookingsPage = () => {
             </Button>
           </div>
         ) : (
-          <Form onFinish={handleFormSubmit} layout="vertical" initialValues={selectedBooking}>
-            <Form.Item label="ClientID" name="clientID" rules={[{ required: true, message: 'Please select a ClientID!' }]}>
-              <Select placeholder="Select ClientID">
-                {/* Replace with dynamic values from the database */}
-                <Option value="1">Client 1</Option>
-                <Option value="2">Client 2</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="WorkerID" name="workerID" rules={[{ required: true, message: 'Please select a WorkerID!' }]}>
-              <Select placeholder="Select WorkerID">
-                {/* Replace with dynamic values from the database */}
-                <Option value="1">Worker 1</Option>
-                <Option value="2">Worker 2</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="Date" name="date" rules={[{ required: true, message: 'Please select a date!' }]}>
-              <DatePicker />
-            </Form.Item>
-            <Form.Item label="Time Slot" name="timeSlot" rules={[{ required: true, message: 'Please select a time slot!' }]}>
-              <Select placeholder="Select Time Slot">
-                <Option value="9am">9am</Option>
-                <Option value="11am">11am</Option>
-                <Option value="1pm">1pm</Option>
-                <Option value="3pm">3pm</Option>
-                <Option value="5pm">5pm</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="Location" name="location" rules={[{ required: true, message: 'Please enter a location!' }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item label="Status" name="status" rules={[{ required: true, message: 'Please select a status!' }]}>
-              <Select placeholder="Select Status">
-                <Option value="true">True</Option>
-                <Option value="false">False</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                {formMode === 'create' ? 'Create' : 'Update'} Booking
-              </Button>
-              <Button type="default" onClick={() => setShowForm(false)} style={{ marginLeft: '8px' }}>
-                Cancel
-              </Button>
-            </Form.Item>
-          </Form>
+          <div className="form-container" style={{ maxHeight: '80vh', overflowY: 'scroll' }}>
+            <Form
+              onFinish={handleFormSubmit}
+              layout="vertical"
+              initialValues={
+                selectedWorker
+                  ? {
+                      ...selectedWorker,
+                      ...selectedWorker.availability.reduce((acc, day, dayIndex) => {
+                        day.forEach((slot, slotIndex) => {
+                          acc[`day${dayIndex}_slot${slotIndex}`] = slot;
+                        });
+                        return acc;
+                      }, {})
+                    }
+                  : {}
+              }
+            >
+              <Form.Item label="First Name" name="firstName" rules={[{ required: true, message: 'Please enter the first name!' }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item label="Last Name" name="lastName" rules={[{ required: true, message: 'Please enter the last name!' }]}>
+                <Input />
+              </Form.Item>
+
+              {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, dayIndex) => (
+                <div key={day}>
+                  <h3>{day}</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', marginTop: '8px' }}>
+                    {timeSlots.map((slot, slotIndex) => (
+                      <Form.Item key={slot} name={`day${dayIndex}_slot${slotIndex}`} valuePropName="checked" noStyle>
+                        <Checkbox style={{ marginLeft: '8px' }}>{slot}</Checkbox>
+                      </Form.Item>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  {formMode === 'create' ? 'Create' : 'Update'} Worker
+                </Button>
+                <Button type="default" onClick={() => setShowForm(false)} style={{ marginLeft: '8px' }}>
+                  Cancel
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
         )}
       </div>
 
@@ -174,4 +198,4 @@ const BookingsPage = () => {
   );
 };
 
-export default BookingsPage;
+export default WorkersPage;
