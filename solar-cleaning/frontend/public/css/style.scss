@@ -383,11 +383,11 @@ a:focus {
           width: 100%;
           height: auto;
           max-height: 100%;
-          fill: #726dae;
+          fill: $primary1;
           transition: all 0.3s;
 
           path {
-            fill: #726dae;
+            fill: $primary1;
           }
         }
       }

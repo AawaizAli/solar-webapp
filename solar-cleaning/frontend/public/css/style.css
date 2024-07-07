@@ -1,8 +1,25 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather+Sans:wght@400;700&display=swap");
+
 body {
   font-family: 'Lato', sans-serif;
   color: #040000;
 }
+
+.header-icon {
+  margin-right: 5px;
+}
+
+.login-form-button {
+  background-color: #0355cc !important;
+  border-color: #0355cc !important;
+}
+
+.login-form-button:hover,
+.login-form-button:focus {
+  background-color: #0344aa !important;
+  border-color: #0344aa !important;
+}
+
 .clients-say {
   padding-top: 30px;
 }
@@ -374,13 +391,13 @@ a:focus {
   width: 100%;
   height: auto;
   max-height: 100%;
-  fill: #726dae;
+  fill: #0355cc;
   -webkit-transition: all 0.3s;
   transition: all 0.3s;
 }
 
 .feature_section .feature_container .box .img-box svg path {
-  fill: #726dae;
+  fill: #0355cc;
 }
 
 .feature_section .feature_container .box .name {
