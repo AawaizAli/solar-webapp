@@ -1,13 +1,11 @@
-.clients-say {
-  padding-top: 30px;
-}
-
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather+Sans:wght@400;700&display=swap");
 body {
   font-family: 'Lato', sans-serif;
   color: #040000;
 }
-
+.clients-say {
+  padding-top: 30px;
+}
 .layout_padding {
   padding-top: 120px;
   padding-bottom: 120px;

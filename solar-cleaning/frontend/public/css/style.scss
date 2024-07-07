@@ -211,7 +211,7 @@ a:focus {
   padding: 0;
   width: 37px;
   height: 42px;
-  transition: all .3s;
+  transition: all 0.3s;
 
   span {
     display: block;
@@ -372,7 +372,7 @@ a:focus {
       padding: 45px 15px;
       background-color: $white;
       color: #555089;
-      transition: all.3s;
+      transition: all 0.3s;
       box-shadow: 0 0 15px 0 rgba($color: #000000, $alpha: .2);
 
       .img-box {
@@ -384,7 +384,7 @@ a:focus {
           height: auto;
           max-height: 100%;
           fill: #726dae;
-          transition: all.3s;
+          transition: all 0.3s;
 
           path {
             fill: #726dae;
@@ -503,7 +503,7 @@ a:focus {
     text-align: center;
     box-shadow: 0 0 5px 2px rgba($color: $black, $alpha: .15);
     padding: 25px 15px;
-    transition: all .3s;
+    transition: all 0.3s;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -518,7 +518,7 @@ a:focus {
       img {
         max-height: 100%;
         max-width: 100%;
-        transition: all .3s;
+        transition: all 0.3s;
       }
     }
 

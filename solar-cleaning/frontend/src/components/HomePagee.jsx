@@ -5,6 +5,10 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "../../public/css/responsive.css";
 import "../../public/css/style.css";
+import sliderImg from '../../public/slider-img.png';
+import client from '../../public/client-1.jpg';
+import professionalImg from '../../public/professional-img.png';
+import clientTwo from '../../public/client-2.jpg';
 
 const HomePagee = () => {
     return (
@@ -153,7 +157,7 @@ const HomePagee = () => {
                             <div className="col-md-6">
                                 <div className="img-box">
                                     <img
-                                        src="/images/slider-img.png"
+                                        src={sliderImg}
                                         alt="Slider Image"
                                     />
                                 </div>
@@ -244,7 +248,7 @@ const HomePagee = () => {
                         <div className="col-md-6">
                             <div className="img-box">
                                 <img
-                                    src="../../public/images/professional-img.png"
+                                    src={professionalImg}
                                     alt=""
                                 />
                             </div>
@@ -283,7 +287,7 @@ const HomePagee = () => {
                                     <div className="client_id">
                                         <div className="img-box">
                                             <img
-                                                src="../../public/images/client-1.jpg"
+                                                src={client}
                                                 alt=""
                                             />
                                         </div>
@@ -334,7 +338,7 @@ const HomePagee = () => {
                                     <div className="client_id">
                                         <div className="img-box">
                                             <img
-                                                src="../../public/images/client-2.jpg"
+                                                src={clientTwo}
                                                 alt=""
                                             />
                                         </div>
@@ -385,7 +389,7 @@ const HomePagee = () => {
                                     <div className="client_id">
                                         <div className="img-box">
                                             <img
-                                                src="../../public/images/client-1.jpg"
+                                                src={client}
                                                 alt=""
                                             />
                                         </div>
@@ -438,7 +442,7 @@ const HomePagee = () => {
                                     <div className="client_id">
                                         <div className="img-box">
                                             <img
-                                                src="../../public/images/client-2.jpg"
+                                                src={clientTwo}
                                                 alt=""
                                             />
                                         </div>
