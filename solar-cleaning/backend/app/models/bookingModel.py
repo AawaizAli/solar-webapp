@@ -16,12 +16,10 @@ class Booking(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'client_id': self.client_id,
-            'worker_id': self.worker_id,
+            'client_name': self.client.name,
+            'worker_name': self.worker.name,
             'date': self.date.strftime('%Y-%m-%d'),
             'time_slot': self.time_slot,
             'location': self.location,
-            'status': self.status,
-            'client': self.client.to_dict(),
-            'worker': self.worker.to_dict()
+            'status': self.status
         }

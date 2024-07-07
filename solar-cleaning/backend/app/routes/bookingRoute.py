@@ -2,6 +2,8 @@
 from flask import Blueprint, request, jsonify
 from ..models.bookingModel import Booking
 from ..models.availibilityModel import Availability
+from ..models.clientModel import Client
+from ..models.workerModel import Worker
 from .. import db
 from datetime import datetime
 
@@ -14,12 +16,18 @@ def manage_bookings():
         return jsonify([booking.to_dict() for booking in bookings]), 200
     elif request.method == 'POST':
         data = request.get_json()
-        if not all(key in data for key in ['client_id', 'worker_id', 'date', 'time_slot', 'location', 'status']):
+        if not all(key in data for key in ['client_name', 'worker_name', 'date', 'time_slot', 'location', 'status']):
             return jsonify({'error': 'Bad Request', 'message': 'Missing required fields'}), 400
+
+        client = Client.query.filter_by(name=data['client_name']).first()
+        worker = Worker.query.filter_by(name=data['worker_name']).first()
+
+        if not client or not worker:
+            return jsonify({'error': 'Not Found', 'message': 'Client or Worker not found'}), 404
 
         # Check worker availability
         availability = Availability.query.filter_by(
-            worker_id=data['worker_id'],
+            worker_id=worker.id,
             date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
             time_slot=data['time_slot'],
             is_available=True
@@ -29,8 +37,8 @@ def manage_bookings():
             return jsonify({'error': 'Conflict', 'message': 'Worker not available for the selected time slot'}), 409
 
         new_booking = Booking(
-            client_id=data['client_id'],
-            worker_id=data['worker_id'],
+            client_id=client.id,
+            worker_id=worker.id,
             date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
             time_slot=data['time_slot'],
             location=data['location'],
@@ -52,13 +60,19 @@ def handle_booking(booking_id):
         return jsonify(booking.to_dict()), 200
     elif request.method == 'PUT':
         data = request.get_json()
-        if not all(key in data for key in ['client_id', 'worker_id', 'date', 'time_slot', 'location', 'status']):
+        if not all(key in data for key in ['client_name', 'worker_name', 'date', 'time_slot', 'location', 'status']):
             return jsonify({'error': 'Bad Request', 'message': 'Missing required fields'}), 400
 
+        client = Client.query.filter_by(name=data['client_name']).first()
+        worker = Worker.query.filter_by(name=data['worker_name']).first()
+
+        if not client or not worker:
+            return jsonify({'error': 'Not Found', 'message': 'Client or Worker not found'}), 404
+
         # Check worker availability if the worker or time slot is changing
-        if data['worker_id'] != booking.worker_id or data['time_slot'] != booking.time_slot or data['date'] != booking.date.strftime('%Y-%m-%d'):
+        if data['worker_name'] != booking.worker.name or data['time_slot'] != booking.time_slot or data['date'] != booking.date.strftime('%Y-%m-%d'):
             availability = Availability.query.filter_by(
-                worker_id=data['worker_id'],
+                worker_id=worker.id,
                 date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
                 time_slot=data['time_slot'],
                 is_available=True
@@ -79,8 +93,8 @@ def handle_booking(booking_id):
             # Mark the new availability as false
             availability.is_available = False
 
-        booking.client_id = data['client_id']
-        booking.worker_id = data['worker_id']
+        booking.client_id = client.id
+        booking.worker_id = worker.id
         booking.date = datetime.strptime(data['date'], '%Y-%m-%d').date()
         booking.time_slot = data['time_slot']
         booking.location = data['location']
