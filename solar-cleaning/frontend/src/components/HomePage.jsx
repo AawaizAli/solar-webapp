@@ -76,7 +76,7 @@ const HomePage = () => {
                                     />
                                     <span>
                                         {" "}
-                                        Email : ghafoorsaleem@gmail.com{" "}
+                                        Email : hawktuah@gmail.com{" "}
                                     </span>
                                 </a>
                             </div>
@@ -128,7 +128,14 @@ const HomePage = () => {
                                                 <li className="nav-item">
                                                     <a
                                                         className="nav-link"
-                                                        href="service.html">
+                                                        href="">
+                                                        Search
+                                                    </a>
+                                                </li>
+                                                <li className="nav-item">
+                                                    <a
+                                                        className="nav-link"
+                                                        href="">
                                                         Reports
                                                     </a>
                                                 </li>
@@ -300,263 +307,8 @@ const HomePage = () => {
                 </div>
             </section>
             {/* end professional section */}
-            {/* client section */}
-            <section className="client_section">
-                <div className="container">
-                    <div className="heading_container heading_center clients-say">
-                        <h2>What Our Clients Say</h2>
-                    </div>
-                    <div className="carousel-wrap layout_padding2-top">
-                        <div className="owl-carousel">
-                            <div className="item">
-                                <div className="box">
-                                    <div className="client_id">
-                                        <div className="img-box">
-                                            <img src={client} alt="" />
-                                        </div>
-                                        <div className="client_detail">
-                                            <div className="client_info">
-                                                <h6>Ajmal Sethi</h6>
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                            </div>
-                                            <i
-                                                className="fa fa-quote-left"
-                                                aria-hidden="true"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="client_text">
-                                        <p>
-                                            chunks as necessary, making this the
-                                            first true generator on the
-                                            Internet. It uses a dictionary of
-                                            over 200 Latin words, combined with
-                                            a handful of model sentence
-                                            structures, to generate Lorem Ipsum
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="item">
-                                <div className="box">
-                                    <div className="client_id">
-                                        <div className="img-box">
-                                            <img src={clientTwo} alt="" />
-                                        </div>
-                                        <div className="client_detail">
-                                            <div className="client_info">
-                                                <h6>Ghulam Nawab Chandio</h6>
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                            </div>
-                                            <i
-                                                className="fa fa-quote-left"
-                                                aria-hidden="true"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="client_text">
-                                        <p>
-                                            chunks as necessary, making this the
-                                            first true generator on the
-                                            Internet. It uses a dictionary of
-                                            over 200 Latin words, combined with
-                                            a handful of model sentence
-                                            structures, to generate Lorem Ipsum
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="item">
-                                <div className="box">
-                                    <div className="client_id">
-                                        <div className="img-box">
-                                            <img src={client} alt="" />
-                                        </div>
-                                        <div className="client_detail">
-                                            <div className="client_info">
-                                                <h6>
-                                                    Ghafoor Saleem Sukkurwaro
-                                                </h6>
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                            </div>
-                                            <i
-                                                className="fa fa-quote-left"
-                                                aria-hidden="true"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="client_text">
-                                        <p>
-                                            chunks as necessary, making this the
-                                            first true generator on the
-                                            Internet. It uses a dictionary of
-                                            over 200 Latin words, combined with
-                                            a handful of model sentence
-                                            structures, to generate Lorem Ipsum
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="item">
-                                <div className="box">
-                                    <div className="client_id">
-                                        <div className="img-box">
-                                            <img src={clientTwo} alt="" />
-                                        </div>
-                                        <div className="client_detail">
-                                            <div className="client_info">
-                                                <h6>Jorch morik</h6>
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                                <i
-                                                    className="fa fa-star"
-                                                    aria-hidden="true"
-                                                />
-                                            </div>
-                                            <i
-                                                className="fa fa-quote-left"
-                                                aria-hidden="true"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="client_text">
-                                        <p>
-                                            chunks as necessary, making this the
-                                            first true generator on the
-                                            Internet. It uses a dictionary of
-                                            over 200 Latin words, combined with
-                                            a handful of model sentence
-                                            structures, to generate Lorem Ipsum
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            {/* end client section */}
-            {/* contact section */}
-            <section className="contact_section layout_padding">
-                <div className="container">
-                    <div className="heading_container">
-                        <h2>Contact Us</h2>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-6">
-                            <form action="">
-                                <div>
-                                    <input type="text" placeholder="Name" />
-                                </div>
-                                <div>
-                                    <input
-                                        type="text"
-                                        placeholder="Phone Number"
-                                    />
-                                </div>
-                                <div>
-                                    <input type="email" placeholder="Email" />
-                                </div>
-                                <div>
-                                    <input
-                                        type="text"
-                                        className="message-box"
-                                        placeholder="Message"
-                                    />
-                                </div>
-                                <div className="d-flex">
-                                    <button>SEND</button>
-                                </div>
-                            </form>
-                        </div>
-                        <div className="col-md-6">
-                            <div className="map_container">
-                                <div className="map">
-                                    <div
-                                        id="googleMap"
-                                        style={{
-                                            width: "100%",
-                                            height: "100%",
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            {/* end contact section */}
+            
+            
             {/* info section */}
             <section className="info_section">
                 <div className="container">
@@ -634,9 +386,9 @@ const HomePage = () => {
             <footer className="footer_section">
                 <div className="container">
                     <p>
-                        © <span id="displayDateYear" /> All Rights Reserved By
+                        © <span id="displayDateYear" /> All Rights Reserved By 
                         <a href="https://www.behance.net/aawaizali">
-                            Aawaiz Ali
+                             Aawaiz Ali
                         </a>
                     </p>
                 </div>

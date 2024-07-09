@@ -39,7 +39,7 @@ const LoginPage = () => {
                                     className="header-icon fa fa-envelope"
                                     aria-hidden="true"
                                 />
-                                <span>Email : drbhai@gmail.com</span>
+                                <span>Email : hawktuah@gmail.com</span>
                             </a>
                         </div>
                     </div>
