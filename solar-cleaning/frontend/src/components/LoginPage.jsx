@@ -28,11 +28,11 @@ const LoginPage = () => {
           <div className="container-fluid">
             <div className="contact_nav">
               <a href="">
-                <i className="fa fa-phone" aria-hidden="true" />
+                <i className="header-icon fa fa-phone" aria-hidden="true" />
                 <span>Call : 03153738555</span>
               </a>
               <a href="">
-                <i className="fa fa-envelope" aria-hidden="true" />
+                <i className="header-icon fa fa-envelope" aria-hidden="true" />
                 <span>Email : drbhai@gmail.com</span>
               </a>
             </div>
