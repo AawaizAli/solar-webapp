@@ -1,27 +1,29 @@
 # app/__init__.py
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
+from datetime import timedelta
 from app.config.config import Config
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
+
 jwt = JWTManager()
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    CORS(app)  # Enable CORS
+    # Set the JWT expiration time
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
-    jwt.init_app(app) 
+    jwt.init_app(app)
 
     # Import models to ensure they are registered
     from app.models import bookingModel, workerModel, userModel, clientModel
@@ -36,12 +38,10 @@ def create_app():
     from app.routes.clientRoute import client_bp
     from app.routes.reportRoute import report_bp
 
-    
     app.register_blueprint(booking_bp)
     app.register_blueprint(worker_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(client_bp)
     app.register_blueprint(report_bp)
-    
 
     return app

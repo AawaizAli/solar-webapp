@@ -1,8 +1,8 @@
-"""Initial migration
+"""intial-migration
 
-Revision ID: 95a1732a6815
+Revision ID: b873a03388e5
 Revises: 
-Create Date: 2024-07-08 13:15:45.606370
+Create Date: 2024-07-10 00:10:47.367099
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '95a1732a6815'
+revision = 'b873a03388e5'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,9 +21,11 @@ def upgrade():
     op.create_table('client',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
-    sa.Column('contact', sa.String(length=100), nullable=False),
+    sa.Column('contact_details', sa.String(length=100), nullable=False),
     sa.Column('address', sa.String(length=200), nullable=False),
-    sa.Column('number_of_panels', sa.Integer(), nullable=False),
+    sa.Column('latitude', sa.Float(), nullable=False),
+    sa.Column('longitude', sa.Float(), nullable=False),
+    sa.Column('total_panels', sa.Integer(), nullable=False),
     sa.Column('charges', sa.Float(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
@@ -37,6 +39,9 @@ def upgrade():
     op.create_table('worker',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
+    sa.Column('base_location', sa.String(length=200), nullable=False),
+    sa.Column('latitude', sa.Float(), nullable=False),
+    sa.Column('longitude', sa.Float(), nullable=False),
     sa.Column('availability', sa.JSON(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
@@ -46,7 +51,6 @@ def upgrade():
     sa.Column('worker_id', sa.Integer(), nullable=False),
     sa.Column('date', sa.Date(), nullable=False),
     sa.Column('time_slot', sa.String(length=20), nullable=False),
-    sa.Column('location', sa.String(length=200), nullable=False),
     sa.Column('status', sa.String(length=20), nullable=False),
     sa.ForeignKeyConstraint(['client_id'], ['client.id'], ),
     sa.ForeignKeyConstraint(['worker_id'], ['worker.id'], ),

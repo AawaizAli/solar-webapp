@@ -1,9 +1,9 @@
 # app/routes/client.py
 from flask import Blueprint, request, jsonify
 from ..models.clientModel import Client
+from ..utils import get_coordinates
 from .. import db
 from flask_jwt_extended import jwt_required
-
 
 client_bp = Blueprint('client_bp', __name__, url_prefix='/api/clients')
 
@@ -15,13 +15,20 @@ def manage_clients():
         return jsonify([client.to_dict() for client in clients]), 200
     elif request.method == 'POST':
         data = request.get_json()
-        if not all(key in data for key in ['name', 'contact', 'address', 'number_of_panels', 'charges']):
+        if not all(key in data for key in ['name', 'contact_details', 'address', 'total_panels', 'charges']):
             return jsonify({'error': 'Bad Request', 'message': 'Missing required fields'}), 400
+        
+        latitude, longitude = get_coordinates(data['address'])
+        if latitude is None or longitude is None:
+            return jsonify({'error': 'Invalid address'}), 400
+
         new_client = Client(
             name=data['name'],
-            contact=data['contact'],
+            contact_details=data['contact_details'],
             address=data['address'],
-            number_of_panels=data['number_of_panels'],
+            latitude=latitude,
+            longitude=longitude,
+            total_panels=data['total_panels'],
             charges=data['charges']
         )
         db.session.add(new_client)
@@ -37,13 +44,21 @@ def handle_client(client_id):
         return jsonify(client.to_dict()), 200
     elif request.method == 'PUT':
         data = request.get_json()
-        if not all(key in data for key in ['name', 'contact', 'address', 'number_of_panels', 'charges']):
-            return jsonify({'error': 'Bad Request', 'message': 'Missing required fields'}), 400
-        client.name = data['name']
-        client.contact = data['contact']
-        client.address = data['address']
-        client.number_of_panels = data['number_of_panels']
-        client.charges = data['charges']
+        if 'name' in data:
+            client.name = data['name']
+        if 'contact_details' in data:
+            client.contact_details = data['contact_details']
+        if 'address' in data:
+            client.address = data['address']
+            latitude, longitude = get_coordinates(data['address'])
+            if latitude is None or longitude is None:
+                return jsonify({'error': 'Invalid address'}), 400
+            client.latitude = latitude
+            client.longitude = longitude
+        if 'total_panels' in data:
+            client.total_panels = data['total_panels']
+        if 'charges' in data:
+            client.charges = data['charges']
         db.session.commit()
         return jsonify(client.to_dict()), 200
     elif request.method == 'DELETE':

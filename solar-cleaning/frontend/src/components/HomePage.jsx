@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {useSelector} from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
@@ -11,17 +12,17 @@ import professionalImg from "../../public/professional-img.png";
 import clientTwo from "../../public/client-2.jpg";
 
 const HomePage = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false); // Change this to `false` to simulate a logged-out state
+    const [isAuthenticated, setIsAuthenticated] = useState(true); // Change this to `false` to simulate a logged-out state
     const user = { username: "Aawaiz" }; // Mock user data
 
     // Use actual authentication state if available
-    // const authState = useSelector(state => state.auth);
-    // const actualIsAuthenticated = authState?.isAuthenticated ?? isAuthenticated;
-    // const actualUser = authState?.user ?? user;
+    const authState = useSelector(state => state.auth);
+    const actualIsAuthenticated = authState?.isAuthenticated ?? isAuthenticated;
+    const actualUser = authState?.user ?? user;
 
     // For debugging, use mock authentication state
-    const actualIsAuthenticated = isAuthenticated;
-    const actualUser = user;
+    // const actualIsAuthenticated = isAuthenticated;
+    // const actualUser = user;
 
     return (
         <>
@@ -76,7 +77,7 @@ const HomePage = () => {
                                     />
                                     <span>
                                         {" "}
-                                        Email : hawktuah@gmail.com{" "}
+                                        Email : solar123@gmail.com{" "}
                                     </span>
                                 </a>
                             </div>
