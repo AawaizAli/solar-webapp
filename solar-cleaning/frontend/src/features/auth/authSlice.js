@@ -31,7 +31,11 @@ export const login = createAsyncThunk(
     try {
       const response = await axiosInstance.post('/api/login', credentials);
       localStorage.setItem('access_token', response.data.access_token); // Store the token
-      return response.data; // Adjusted to return the entire response
+      console.log(response.data);
+      return {
+        access_token: response.data.access_token,
+        username: response.data.username,
+      };
     } catch (error) {
       return rejectWithValue(error.response.data.message);
     }
@@ -67,7 +71,7 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.user = action.payload.user; // Use the user info from the response
+        state.user = { username: action.payload.username };
         state.isAuthenticated = true;
         state.loading = false;
       })
