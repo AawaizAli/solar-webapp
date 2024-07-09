@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity,unset_jwt_cookies
 from app.models.userModel import User
 from app import db
 
@@ -41,7 +41,8 @@ def login():
 
     return jsonify({'message': 'Invalid credentials'}), 401
 
-@auth_bp.route('/api/logout', methods=['GET'])
+
+@auth_bp.route('/api/logout', methods=['POST'])  # Change to POST if it was GET before
 @jwt_required()  # Ensure that JWT is required
 def logout():
     logout_user()

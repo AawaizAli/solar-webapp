@@ -9,9 +9,14 @@ const LogoutPage = () => {
 
   useEffect(() => {
     const performLogout = async () => {
-    dispatch(logout());
-      navigate('/');
+      try {
+        await dispatch(logout());
+        navigate('/');
+      } catch (error) {
+        console.error('Failed to log out:', error);
+      }
     };
+
     performLogout();
   }, [dispatch, navigate]);
 

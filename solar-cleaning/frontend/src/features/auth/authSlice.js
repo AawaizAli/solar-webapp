@@ -12,6 +12,17 @@ const initialState = {
 const axiosInstance = axios.create({
   baseURL: 'http://127.0.0.1:5000',
 });
+// Add a request interceptor to include the JWT token in headers
+axiosInstance.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
 
 // Async thunk for login
 export const login = createAsyncThunk(
