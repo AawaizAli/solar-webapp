@@ -7,21 +7,24 @@ const initialState = {
   loading: false,
   error: null,
 };
+
 // Create an Axios instance with the base URL
 const axiosInstance = axios.create({
   baseURL: 'http://127.0.0.1:5000',
 });
+
 // Add a request interceptor to include the JWT token in headers
 axiosInstance.interceptors.request.use(
-  config => {
+  (config) => {
     const token = localStorage.getItem('access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  error => Promise.reject(error)
+  (error) => Promise.reject(error)
 );
+
 // Async thunk for login
 export const login = createAsyncThunk(
   'auth/login',
@@ -29,7 +32,7 @@ export const login = createAsyncThunk(
     try {
       const response = await axiosInstance.post('/api/login', credentials);
       localStorage.setItem('access_token', response.data.access_token); // Store the token
-      return response.data.user;
+      return response.data; // Adjusted to return the entire response
     } catch (error) {
       return rejectWithValue(error.response.data.message);
     }
@@ -64,7 +67,7 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.user = action.payload;
+        state.user = action.payload.user; // Use the user info from the response
         state.isAuthenticated = true;
         state.loading = false;
       })

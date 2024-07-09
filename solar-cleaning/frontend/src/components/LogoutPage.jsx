@@ -9,7 +9,7 @@ const LogoutPage = () => {
 
   useEffect(() => {
     const performLogout = async () => {
-      await dispatch(logout());
+    dispatch(logout());
       navigate('/');
     };
     performLogout();
