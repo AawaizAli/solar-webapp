@@ -28,6 +28,11 @@ body {
   padding-bottom: 120px;
 }
 
+.booking_padding {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
 .layout_padding2 {
   padding: 45px 0;
 }
@@ -337,6 +342,7 @@ a:focus {
   margin-top: 15px;
 }
 
+
 .slider_section .detail-box a:hover {
   background-color: transparent;
   color: #ff8a1d;
@@ -495,6 +501,11 @@ a:focus {
 .professional_section .detail-box a:hover {
   background-color: transparent;
   color: #ff8a1d;
+}
+
+.professional_section .detail-box .delete-button:hover {
+  background-color: transparent;
+  color: #f44336;
 }
 
 .service_section {

@@ -5,6 +5,9 @@ import LoginPage from './components/LoginPage';
 import BookingsPage from './components/BookingsPage';
 import LogoutPage from './components/LogoutPage';
 import WorkersPage from './components/WorkersPage';
+import Booking from './components/Booking';
+import Worker from './components/Worker';
+import Client from './components/Client';
 // import ReportsPage from './components/ReportsPage';
 
 const App = () => {
@@ -12,9 +15,10 @@ const App = () => {
     <Router>
       <Routes>
         <Route exact path="/" element={<HomePage />} />
-        <Route path="/bookings" element={<BookingsPage />} />
-        <Route path="/workers" element={<WorkersPage />} />
-        {/*<Route path="/reports" element={<ReportsPage />} /> */}
+        <Route path="/bookings" element={<Booking />} />
+        <Route path="/workers" element={<Worker />} />
+        <Route path="/clients" element={<Client />} />
+        {/* <Route path="/reports" element={<ReportsPage />} /> */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/logout" element={<LogoutPage />} />
 
