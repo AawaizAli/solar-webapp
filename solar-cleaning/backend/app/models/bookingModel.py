@@ -1,4 +1,4 @@
-# app/models/booking.py
+# app/models/bookingModel.py
 from .. import db
 
 class Booking(db.Model):
@@ -7,7 +7,6 @@ class Booking(db.Model):
     worker_id = db.Column(db.Integer, db.ForeignKey('worker.id'), nullable=False)
     date = db.Column(db.Date, nullable=False)
     time_slot = db.Column(db.String(20), nullable=False)
-    location = db.Column(db.String(200), nullable=False)
     status = db.Column(db.String(20), nullable=False)
 
     client = db.relationship('Client', backref=db.backref('bookings', lazy=True))
@@ -16,10 +15,11 @@ class Booking(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'client_name': self.client.name,
-            'worker_name': self.worker.name,
-            'date': self.date.strftime('%Y-%m-%d'),
+            'client_id': self.client_id,
+            'worker_id': self.worker_id,
+            'date': self.date,
             'time_slot': self.time_slot,
-            'location': self.location,
-            'status': self.status
+            'status': self.status,
+            'client': self.client.to_dict(),
+            'worker': self.worker.to_dict()
         }

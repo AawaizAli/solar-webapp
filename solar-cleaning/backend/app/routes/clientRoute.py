@@ -2,10 +2,13 @@
 from flask import Blueprint, request, jsonify
 from ..models.clientModel import Client
 from .. import db
+from flask_jwt_extended import jwt_required
+
 
 client_bp = Blueprint('client_bp', __name__, url_prefix='/api/clients')
 
 @client_bp.route('/', methods=['GET', 'POST'])
+@jwt_required()
 def manage_clients():
     if request.method == 'GET':
         clients = Client.query.all()
@@ -26,6 +29,7 @@ def manage_clients():
         return jsonify(new_client.to_dict()), 201
 
 @client_bp.route('/<int:client_id>', methods=['GET', 'PUT', 'DELETE'])
+@jwt_required()
 def handle_client(client_id):
     client = Client.query.get_or_404(client_id)
 

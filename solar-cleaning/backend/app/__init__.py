@@ -24,7 +24,7 @@ def create_app():
     jwt.init_app(app) 
 
     # Import models to ensure they are registered
-    from app.models import bookingModel, workerModel, userModel, clientModel, availibilityModel
+    from app.models import bookingModel, workerModel, userModel, clientModel
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -33,7 +33,6 @@ def create_app():
     from app.routes.bookingRoute import booking_bp
     from app.routes.workerRoute import worker_bp
     from app.routes.authRoute import auth_bp
-    from app.routes.availibilityRoute import availability_bp
     from app.routes.clientRoute import client_bp
     from app.routes.reportRoute import report_bp
 
@@ -41,7 +40,6 @@ def create_app():
     app.register_blueprint(booking_bp)
     app.register_blueprint(worker_bp)
     app.register_blueprint(auth_bp)
-    app.register_blueprint(availability_bp)
     app.register_blueprint(client_bp)
     app.register_blueprint(report_bp)
     

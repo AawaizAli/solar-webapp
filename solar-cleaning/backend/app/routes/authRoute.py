@@ -7,6 +7,27 @@ from app import db
 
 auth_bp = Blueprint('auth_bp', __name__)
 
+@auth_bp.route('/api/add_user', methods=['POST'])
+def add_user():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    
+    if not username or not password:
+        return jsonify({"error": "Username and password are required"}), 400
+    
+    # Check if user already exists
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
+        return jsonify({"error": "User already exists"}), 400
+    
+    hashed_password = generate_password_hash(password, method='sha256')
+    new_user = User(username=username, password=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
+    
+    return jsonify(new_user.serialize()), 201
+
 @auth_bp.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -25,3 +46,10 @@ def login():
 def logout():
     logout_user()
     return jsonify({'message': 'Logged out successfully'}), 200
+
+@auth_bp.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    return jsonify(logged_in_as=user.username), 200

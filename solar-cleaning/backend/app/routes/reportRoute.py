@@ -1,7 +1,7 @@
 # app/routes/report.py
 from flask import Blueprint, request, jsonify
 from ..models.bookingModel import Booking
-from ..models.availibilityModel import Availability
+from flask_jwt_extended import jwt_required
 from ..models.clientModel import Client
 from ..models.workerModel import Worker
 from .. import db
@@ -10,6 +10,7 @@ from datetime import datetime
 report_bp = Blueprint('report_bp', __name__, url_prefix='/api/reports')
 
 @report_bp.route('/daily-summary', methods=['GET'])
+@jwt_required()
 def daily_summary():
     date_str = request.args.get('date')
     if not date_str:
@@ -37,6 +38,7 @@ def daily_summary():
     return jsonify(summary), 200
 
 @report_bp.route('/monthly-summary', methods=['GET'])
+@jwt_required()
 def monthly_summary():
     month_str = request.args.get('month')
     if not month_str:
