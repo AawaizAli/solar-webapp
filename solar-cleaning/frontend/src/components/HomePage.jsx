@@ -15,11 +15,11 @@ import clientTwo from "../../public/client-2.jpg";
 const HomePage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Change this to `false` to simulate a logged-out state
   const user = { username: "Aawaiz" }; // Mock user data
-
   // Use actual authentication state if available
   const authState = useSelector((state) => state.auth);
   const actualIsAuthenticated = authState?.isAuthenticated ?? isAuthenticated;
   const actualUser = authState?.user ?? user;
+  console.log(actualUser);
 
   // For debugging, use mock authentication state
   // const actualIsAuthenticated = isAuthenticated;

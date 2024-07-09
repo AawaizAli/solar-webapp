@@ -8,6 +8,7 @@ const initialState = {
   error: null,
 };
 
+
 // Create an Axios instance with the base URL
 const axiosInstance = axios.create({
   baseURL: 'http://127.0.0.1:5000',
@@ -23,7 +24,6 @@ axiosInstance.interceptors.request.use(
   },
   error => Promise.reject(error)
 );
-
 // Async thunk for login
 export const login = createAsyncThunk(
   'auth/login',
