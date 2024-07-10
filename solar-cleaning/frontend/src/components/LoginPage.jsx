@@ -29,11 +29,11 @@ const LoginPage = () => {
             <div className="contact_nav">
               <a href="">
                 <i className="header-icon fa fa-phone" aria-hidden="true" />
-                <span>Call : 03153738555</span>
+                <span>Call : +92 3302061260</span>
               </a>
               <a href="">
                 <i className="header-icon fa fa-envelope" aria-hidden="true" />
-                <span>Email : drbhai@gmail.com</span>
+                <span>Email : tjsolarinfo@gmail.com </span>
               </a>
             </div>
           </div>
