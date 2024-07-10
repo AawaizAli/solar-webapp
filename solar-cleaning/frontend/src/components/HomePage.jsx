@@ -247,7 +247,7 @@ const HomePage = () => {
                             <h5 className="name">Bookings</h5>
                         </a>
                         <a
-                            href="/clients"
+                            href="/workers"
                             className="box"
                             style={{
                                 textDecoration: "none",

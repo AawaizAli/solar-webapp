@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
@@ -7,21 +8,22 @@ import "../../public/css/responsive.css";
 import "../../public/css/style.css";
 import sliderImg from "../../public/slider-img.png";
 import client from "../../public/client-1.jpg";
-import professionalImg from "../../public/professional-img.png";
 import clientTwo from "../../public/client-2.jpg";
+import professionalImg from "../../public/professional-img.png";
 
 const Booking = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(true); // Change this to `false` to simulate a logged-out state
-    const user = { username: "Aawaiz" }; // Mock user data
+    const [bookingId, setBookingId] = useState("");
+    const dispatch = useDispatch();
+    const authState = useSelector((state) => state.auth);
+    const actualIsAuthenticated = authState?.isAuthenticated ?? false;
+    const actualUser = authState?.user ?? { username: "Guest" };
 
-    // Use actual authentication state if available
-    // const authState = useSelector(state => state.auth);
-    // const actualIsAuthenticated = authState?.isAuthenticated ?? isAuthenticated;
-    // const actualUser = authState?.user ?? user;
-
-    // For debugging, use mock authentication state
-    const actualIsAuthenticated = isAuthenticated;
-    const actualUser = user;
+    const handleDeleteBooking = () => {
+        const id = prompt("Enter Booking ID to delete:");
+        if (id) {
+            dispatch(deleteBooking(id));
+        }
+    };
 
     return (
         <>
@@ -198,7 +200,13 @@ const Booking = () => {
                                 <br />
                                 <a href="">Update Booking</a>
                                 <br />
-                                <a className="delete-button" href="">Delete Booking</a>
+                                <a 
+                                    className="delete-button" 
+                                    href="#"
+                                    onClick={handleDeleteBooking}
+                                >
+                                    Delete Booking
+                                </a>
                             </div>
                         </div>
                     </div>
