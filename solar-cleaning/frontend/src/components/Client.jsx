@@ -79,7 +79,7 @@ const Client = () => {
                                     />
                                     <span>
                                         {" "}
-                                        Email : hawktuah@gmail.com{" "}
+                                        Email : tjsolarinfo@gmail.com{" "}
                                     </span>
                                 </a>
                             </div>
