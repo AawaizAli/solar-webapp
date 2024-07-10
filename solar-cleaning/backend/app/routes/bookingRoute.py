@@ -24,8 +24,9 @@ def get_slot_index(time_slot):
     }
     return slots.get(time_slot, -1)
 
-def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, recurrence):
+def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, recurrence, subscription_end):
     current_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+    subscription_end_date = datetime.strptime(subscription_end, '%Y-%m-%d').date()
     recurrence_days = {
         'daily': 1,
         'weekly': 7,
@@ -35,7 +36,7 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
 
     if recurrence in recurrence_days:
         interval = recurrence_days[recurrence]
-        for _ in range(12):  # Add 12 occurrences as an example, adjust as needed
+        while current_date <= subscription_end_date:
             day_index = get_day_index(current_date.strftime('%Y-%m-%d'))
             slot_index = get_slot_index(time_slot)
 
@@ -102,7 +103,8 @@ def manage_bookings():
             worker_id=closest_worker.id,
             date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
             time_slot=data['time_slot'],
-            status=data['status']
+            status=data['status'],
+            recurrence=data.get('recurrence')
         )
 
         # Mark availability as false
@@ -110,7 +112,7 @@ def manage_bookings():
         db.session.add(new_booking)
 
         if 'recurrence' in data:
-            add_recurring_bookings(client.id, closest_worker.id, data['date'], data['time_slot'], data['status'], data['recurrence'])
+            add_recurring_bookings(client.id, closest_worker.id, data['date'], data['time_slot'], data['status'], data['recurrence'], client.subscription_end)
 
         db.session.commit()
         return jsonify(new_booking.to_dict()), 201
@@ -154,6 +156,7 @@ def handle_booking(booking_id):
         booking.date = datetime.strptime(data['date'], '%Y-%m-%d').date()
         booking.time_slot = data['time_slot']
         booking.status = data['status']
+        booking.recurrence = data.get('recurrence', booking.recurrence)  # Update recurrence
         db.session.commit()
         return jsonify(booking.to_dict()), 200
     elif request.method == 'DELETE':

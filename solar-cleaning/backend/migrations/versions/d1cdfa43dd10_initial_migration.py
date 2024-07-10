@@ -1,8 +1,8 @@
-"""intial-migration
+"""Initial migration
 
-Revision ID: b873a03388e5
+Revision ID: d1cdfa43dd10
 Revises: 
-Create Date: 2024-07-10 00:10:47.367099
+Create Date: 2024-07-10 22:05:34.970379
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b873a03388e5'
+revision = 'd1cdfa43dd10'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,7 +26,10 @@ def upgrade():
     sa.Column('latitude', sa.Float(), nullable=False),
     sa.Column('longitude', sa.Float(), nullable=False),
     sa.Column('total_panels', sa.Integer(), nullable=False),
-    sa.Column('charges', sa.Float(), nullable=False),
+    sa.Column('charge_per_clean', sa.Float(), nullable=False),
+    sa.Column('subscription_plan', sa.String(length=20), nullable=True),
+    sa.Column('subscription_start', sa.Date(), nullable=True),
+    sa.Column('subscription_end', sa.Date(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user',
@@ -52,6 +55,7 @@ def upgrade():
     sa.Column('date', sa.Date(), nullable=False),
     sa.Column('time_slot', sa.String(length=20), nullable=False),
     sa.Column('status', sa.String(length=20), nullable=False),
+    sa.Column('recurrence', sa.String(length=20), nullable=True),
     sa.ForeignKeyConstraint(['client_id'], ['client.id'], ),
     sa.ForeignKeyConstraint(['worker_id'], ['worker.id'], ),
     sa.PrimaryKeyConstraint('id')

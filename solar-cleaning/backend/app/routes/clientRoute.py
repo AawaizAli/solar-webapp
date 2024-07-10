@@ -1,9 +1,10 @@
 # app/routes/client.py
 from flask import Blueprint, request, jsonify
-from ..models.clientModel import Client
-from ..utils import get_coordinates
-from .. import db
 from flask_jwt_extended import jwt_required
+from ..models.clientModel import Client
+from .. import db
+from datetime import datetime
+from ..utils import get_coordinates  # Import the get_coordinates function
 
 client_bp = Blueprint('client_bp', __name__, url_prefix='/api/clients')
 
@@ -15,21 +16,30 @@ def manage_clients():
         return jsonify([client.to_dict() for client in clients]), 200
     elif request.method == 'POST':
         data = request.get_json()
-        if not all(key in data for key in ['name', 'contact_details', 'address', 'total_panels', 'charges']):
+        if not all(key in data for key in ['name', 'contact', 'address', 'total_panels', 'charge_per_clean']):
             return jsonify({'error': 'Bad Request', 'message': 'Missing required fields'}), 400
-        
-        latitude, longitude = get_coordinates(data['address'])
-        if latitude is None or longitude is None:
-            return jsonify({'error': 'Invalid address'}), 400
 
+        # Get coordinates from address
+        coordinates = get_coordinates(data['address'])
+        if not coordinates:
+            return jsonify({'error': 'Bad Request', 'message': 'Invalid address'}), 400
+
+        latitude, longitude = coordinates
+
+        subscription_start = datetime.strptime(data['subscription_start'], '%Y-%m-%d').date() if 'subscription_start' in data else None
+        subscription_end = datetime.strptime(data['subscription_end'], '%Y-%m-%d').date() if 'subscription_end' in data else None
+        
         new_client = Client(
             name=data['name'],
-            contact_details=data['contact_details'],
+            contact_details=data['contact'],
             address=data['address'],
             latitude=latitude,
             longitude=longitude,
             total_panels=data['total_panels'],
-            charges=data['charges']
+            charge_per_clean=data['charge_per_clean'],  # Updated field
+            subscription_plan=data.get('subscription_plan'),
+            subscription_start=subscription_start,
+            subscription_end=subscription_end
         )
         db.session.add(new_client)
         db.session.commit()
@@ -44,21 +54,22 @@ def handle_client(client_id):
         return jsonify(client.to_dict()), 200
     elif request.method == 'PUT':
         data = request.get_json()
-        if 'name' in data:
-            client.name = data['name']
-        if 'contact_details' in data:
-            client.contact_details = data['contact_details']
+        client.name = data.get('name', client.name)
+        client.contact_details = data.get('contact', client.contact_details)
+        client.address = data.get('address', client.address)
+
+        # Get coordinates from address if address is updated
         if 'address' in data:
-            client.address = data['address']
-            latitude, longitude = get_coordinates(data['address'])
-            if latitude is None or longitude is None:
-                return jsonify({'error': 'Invalid address'}), 400
-            client.latitude = latitude
-            client.longitude = longitude
-        if 'total_panels' in data:
-            client.total_panels = data['total_panels']
-        if 'charges' in data:
-            client.charges = data['charges']
+            coordinates = get_coordinates(data['address'])
+            if not coordinates:
+                return jsonify({'error': 'Bad Request', 'message': 'Invalid address'}), 400
+            client.latitude, client.longitude = coordinates
+
+        client.total_panels = data.get('total_panels', client.total_panels)
+        client.charge_per_clean = data.get('charge_per_clean', client.charge_per_clean)  # Updated field
+        client.subscription_plan = data.get('subscription_plan', client.subscription_plan)
+        client.subscription_start = datetime.strptime(data['subscription_start'], '%Y-%m-%d').date() if 'subscription_start' in data else client.subscription_start
+        client.subscription_end = datetime.strptime(data['subscription_end'], '%Y-%m-%d').date() if 'subscription_end' in data else client.subscription_end
         db.session.commit()
         return jsonify(client.to_dict()), 200
     elif request.method == 'DELETE':
