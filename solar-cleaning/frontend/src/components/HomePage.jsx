@@ -59,14 +59,14 @@ const HomePage = () => {
                                         className="header-icon fa fa-phone"
                                         aria-hidden="true"
                                     />
-                                    <span>Call : 0321</span>
+                                    <span>Call : +92 3302061260</span>
                                 </a>
                                 <a href="">
                                     <i
                                         className="fa fa-envelope"
                                         aria-hidden="true"
                                     />
-                                    <span> Email : solar123@gmail.com </span>
+                                    <span> Email : tjsolarinfo@gmail.com </span>
                                 </a>
                             </div>
                         </div>
@@ -75,7 +75,7 @@ const HomePage = () => {
                         <div className="container-fluid">
                             <nav className="navbar navbar-expand-lg custom_nav-container">
                                 <a className="navbar-brand" href="/">
-                                    <span> SolarPod </span>
+                                    <span> TJ Solars </span>
                                 </a>
                                 <button
                                     className="navbar-toggler"
@@ -177,9 +177,7 @@ const HomePage = () => {
                                         Services
                                     </h1>
                                     <p>
-                                        Hello World Hello World Hello World
-                                        Hello World Hello World Hello World
-                                        Hello World Hello World Hello World
+                                    At TJ Solars, we provide top-notch repair and maintenance services for your solar panel systems. Our experienced technicians ensure that your panels operate at peak efficiency, saving you money and contributing to a greener planet. From routine inspections to emergency repairs, we've got you covered. Trust TJ Solars for reliable and professional solar panel care.
                                     </p>
                                     <a href="#professional_section">
                                         {" "}
@@ -320,7 +318,7 @@ const HomePage = () => {
                                                     />
                                                 </div>
                                                 <p>
-                                                    Sumaira Residency Mosmiyat
+                                                A56, X.1, Gulshan e Maymar, Karachi, Pakistan
                                                 </p>
                                             </div>
                                         </a>
@@ -334,7 +332,7 @@ const HomePage = () => {
                                                         aria-hidden="true"
                                                     />
                                                 </div>
-                                                <p>03153738555</p>
+                                                <p>+92 3302061260</p>
                                             </div>
                                         </a>
                                     </div>
@@ -347,7 +345,7 @@ const HomePage = () => {
                                                         aria-hidden="true"
                                                     />
                                                 </div>
-                                                <p>aawaizali8@gmail.com</p>
+                                                <p>tjsolarinfo@gmail.com</p>
                                             </div>
                                         </a>
                                     </div>
@@ -359,7 +357,7 @@ const HomePage = () => {
                 <div className="social-box">
                     <h4>Follow Us</h4>
                     <div className="box">
-                        <a href="">
+                        <a href="https://www.facebook.com/tjsolarcleaningservices">
                             <i className="fa fa-facebook" aria-hidden="true" />
                         </a>
                         <a href="">
@@ -368,7 +366,7 @@ const HomePage = () => {
                         <a href="">
                             <i className="fa fa-youtube" aria-hidden="true" />
                         </a>
-                        <a href="">
+                        <a href="https://www.instagram.com/tjsolars/">
                             <i className="fa fa-instagram" aria-hidden="true" />
                         </a>
                     </div>

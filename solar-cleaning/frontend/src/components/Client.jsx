@@ -67,7 +67,7 @@ const Client = () => {
                                         className="header-icon fa fa-phone"
                                         aria-hidden="true"
                                     />
-                                    <span>Call : 0321</span>
+                                    <span>Call : +92 3302061260</span>
                                 </a>
                                 <a href="">
                                     <i
@@ -86,7 +86,7 @@ const Client = () => {
                         <div className="container-fluid">
                             <nav className="navbar navbar-expand-lg custom_nav-container">
                                 <a className="navbar-brand" href="/">
-                                    <span> SolarPod </span>
+                                    <span> TJ Solars </span>
                                 </a>
                                 <button
                                     className="navbar-toggler"
@@ -225,7 +225,7 @@ const Client = () => {
                                                     />
                                                 </div>
                                                 <p>
-                                                    Sumaira Residency Mosmiyat
+                                                A56, X.1, Gulshan e Maymar, Karachi, Pakistan
                                                 </p>
                                             </div>
                                         </a>
@@ -252,7 +252,7 @@ const Client = () => {
                                                         aria-hidden="true"
                                                     />
                                                 </div>
-                                                <p>aawaizali8@gmail.com</p>
+                                                <p>tjsolarinfo@gmail.com</p>
                                             </div>
                                         </a>
                                     </div>
@@ -264,7 +264,7 @@ const Client = () => {
                 <div className="social-box">
                     <h4>Follow Us</h4>
                     <div className="box">
-                        <a href="">
+                        <a href="https://www.facebook.com/tjsolarcleaningservices">
                             <i className="fa fa-facebook" aria-hidden="true" />
                         </a>
                         <a href="">
@@ -273,7 +273,7 @@ const Client = () => {
                         <a href="">
                             <i className="fa fa-youtube" aria-hidden="true" />
                         </a>
-                        <a href="">
+                        <a href="https://www.instagram.com/tjsolars/">
                             <i className="fa fa-instagram" aria-hidden="true" />
                         </a>
                     </div>

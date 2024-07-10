@@ -42,7 +42,7 @@ const LoginPage = () => {
           <div className="container-fluid">
             <nav className="navbar navbar-expand-lg custom_nav-container">
               <a className="navbar-brand" href="/">
-                <span> SolarPod </span>
+                <span> TJ Solars </span>
               </a>
               <button
                 className="navbar-toggler"
