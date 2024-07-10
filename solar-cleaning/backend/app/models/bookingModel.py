@@ -8,6 +8,7 @@ class Booking(db.Model):
     date = db.Column(db.Date, nullable=False)
     time_slot = db.Column(db.String(20), nullable=False)
     status = db.Column(db.String(20), nullable=False)
+    recurrence = db.Column(db.String(20), nullable=True)  # New field for recurre
 
     client = db.relationship('Client', backref=db.backref('bookings', lazy=True))
     worker = db.relationship('Worker', backref=db.backref('bookings', lazy=True))
@@ -21,5 +22,6 @@ class Booking(db.Model):
             'time_slot': self.time_slot,
             'status': self.status,
             'client': self.client.to_dict(),
-            'worker': self.worker.to_dict()
+            'worker': self.worker.to_dict(),
+            'recurrence': self.recurrence
         }

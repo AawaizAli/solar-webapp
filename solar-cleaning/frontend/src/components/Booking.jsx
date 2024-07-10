@@ -10,7 +10,7 @@ import sliderImg from "../../public/slider-img.png";
 import client from "../../public/client-1.jpg";
 import clientTwo from "../../public/client-2.jpg";
 import professionalImg from "../../public/professional-img.png";
-
+import { deleteBooking } from '../features/bookings/bookingsSlice';
 const Booking = () => {
     const [bookingId, setBookingId] = useState("");
     const dispatch = useDispatch();
