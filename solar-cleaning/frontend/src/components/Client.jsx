@@ -9,19 +9,22 @@ import sliderImg from "../../public/slider-img.png";
 import client from "../../public/client-1.jpg";
 import professionalImg from "../../public/professional-img.png";
 import clientTwo from "../../public/client-2.jpg";
+import { deleteClient } from "../features/clients/clientsSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Client = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(true); // Change this to `false` to simulate a logged-out state
-    const user = { username: "Aawaiz" }; // Mock user data
+    const [clientId, setClientId] = useState("");
+    const dispatch = useDispatch();
+    const authState = useSelector((state) => state.auth);
+    const actualIsAuthenticated = authState?.isAuthenticated ?? false;
+    const actualUser = authState?.user ?? { username: "Guest" };
 
-    // Use actual authentication state if available
-    // const authState = useSelector(state => state.auth);
-    // const actualIsAuthenticated = authState?.isAuthenticated ?? isAuthenticated;
-    // const actualUser = authState?.user ?? user;
-
-    // For debugging, use mock authentication state
-    const actualIsAuthenticated = isAuthenticated;
-    const actualUser = user;
+    const handleDeleteClient = () => {
+        const id = prompt("Enter Client ID to delete:");
+        if (id) {
+            dispatch(deleteClient(id));
+        }
+    };
 
     return (
         <>
@@ -198,7 +201,13 @@ const Client = () => {
                                 <br />
                                 <a href="">Update Client</a>
                                 <br />
-                                <a className="delete-button" href="">Remove Worker</a>
+                                <a 
+                                    className="delete-button" 
+                                    href="#"
+                                    onClick={handleDeleteClient}
+                                >
+                                    Delete Client
+                                </a>
                             </div>
                         </div>
                     </div>
