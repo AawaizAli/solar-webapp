@@ -285,12 +285,7 @@ const HomePage = () => {
                                     Solar Cleaning Services.
                                 </h2>
                                 <p>
-                                    randomised words which don't look even
-                                    slightly believable. If you are going to use
-                                    a passage of Lorem Ipsum, you need to be
-                                    sure there isn't anything embarrassing
-                                    hidden in the middle of text. All randomised
-                                    words which don't look even slightly
+                                At TJ Solar, our expert team specializes in professional solar cleaning services that ensure your solar panels operate at their maximum efficiency. Regular cleaning can enhance energy production and prolong the lifespan of your panels. We use advanced cleaning techniques to remove dirt, debris, and grime, ensuring optimal performance. Trust us to keep your solar investment clean and productive.
                                 </p>
                                 <a href="/bookings">Book Now</a>
                             </div>
