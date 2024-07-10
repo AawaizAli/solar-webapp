@@ -2,13 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import LoginPage from './components/LoginPage';
-import BookingsPage from './components/BookingsPage';
 import LogoutPage from './components/LogoutPage';
-import WorkersPage from './components/WorkersPage';
 import Booking from './components/Booking';
 import Worker from './components/Worker';
 import Client from './components/Client';
-// import ReportsPage from './components/ReportsPage';
+import SearchPage from './components/SearchPage';
 
 const App = () => {
   return (
@@ -19,6 +17,7 @@ const App = () => {
         <Route path="/workers" element={<Worker />} />
         <Route path="/clients" element={<Client />} />
         {/* <Route path="/reports" element={<ReportsPage />} /> */}
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/logout" element={<LogoutPage />} />
 
