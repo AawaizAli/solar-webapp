@@ -165,9 +165,9 @@ const SearchPage = () => {
                     </div>
                 </header>
                 {/* end header section */}
-                
             </div>
-            {/* feature section */}
+            {/* Table Section beginning */}
+            {/* Table Section end */}
             {/* info section */}
             <section className="info_section">
                 <div className="container">

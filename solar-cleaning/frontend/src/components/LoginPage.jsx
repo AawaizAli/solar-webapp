@@ -83,9 +83,9 @@ const LoginPage = () => {
         >
           <Form.Item
             name="email"
-            rules={[{ required: true, message: 'Please input your Email!' }]}
+            rules={[{ required: true, message: 'Please input your Username!' }]}
           >
-            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
+            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
           </Form.Item>
           <Form.Item
             name="password"
