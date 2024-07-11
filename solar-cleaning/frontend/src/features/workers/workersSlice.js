@@ -25,11 +25,11 @@ axiosInstance.interceptors.request.use(
 );
 
 // Async thunk for fetching workers
-export const fetchWorkers = createAsyncThunk(
-  'workers/fetchWorkers',
+export const getAllWorkers = createAsyncThunk(
+  'workers/getAllWorkers',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('/api/workers');
+      const response = await axiosInstance.get('/api/getAllWorkers');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -84,15 +84,15 @@ const workersSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchWorkers.pending, (state) => {
+      .addCase(getAllWorkers.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchWorkers.fulfilled, (state, action) => {
+      .addCase(getAllWorkers.fulfilled, (state, action) => {
         state.workers = action.payload;
         state.loading = false;
       })
-      .addCase(fetchWorkers.rejected, (state, action) => {
+      .addCase(getAllWorkers.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       })

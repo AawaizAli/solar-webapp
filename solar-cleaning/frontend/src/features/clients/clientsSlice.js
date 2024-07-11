@@ -25,11 +25,11 @@ axiosInstance.interceptors.request.use(
 );
 
 // Async thunk for fetching clients
-export const fetchClients = createAsyncThunk(
-  'clients/fetchClients',
+export const getAllClients = createAsyncThunk(
+  'clients/getAllClients',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('/api/clients');
+      const response = await axiosInstance.get('/api/getAllClients');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -84,15 +84,15 @@ const clientsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchClients.pending, (state) => {
+      .addCase(getAllClients.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchClients.fulfilled, (state, action) => {
+      .addCase(getAllClients.fulfilled, (state, action) => {
         state.clients = action.payload;
         state.loading = false;
       })
-      .addCase(fetchClients.rejected, (state, action) => {
+      .addCase(getAllClients.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       })

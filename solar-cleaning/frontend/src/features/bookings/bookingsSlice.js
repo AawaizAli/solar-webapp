@@ -25,11 +25,11 @@ axiosInstance.interceptors.request.use(
 );
 
 // Async thunk for fetching bookings
-export const fetchBookings = createAsyncThunk(
-  'bookings/fetchBookings',
+export const getAllBookings = createAsyncThunk(
+  'bookings/getAllBookings',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('/api/bookings');
+      const response = await axiosInstance.get('/api/getAllBookings');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -84,15 +84,15 @@ const bookingsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchBookings.pending, (state) => {
+      .addCase(getAllBookings.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchBookings.fulfilled, (state, action) => {
+      .addCase(getAllBookings.fulfilled, (state, action) => {
         state.bookings = action.payload;
         state.loading = false;
       })
-      .addCase(fetchBookings.rejected, (state, action) => {
+      .addCase(getAllBookings.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       })

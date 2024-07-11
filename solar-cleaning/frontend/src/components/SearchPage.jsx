@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Table, Input, Button, Modal } from "antd";
+import { getAllBookings } from "../features/bookings/bookingsSlice";
+import { getAllClients } from "../features/clients/clientsSlice";
+import { getAllWorkers } from "../features/workers/workersSlice";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
@@ -16,10 +19,16 @@ const SearchPage = () => {
     const actualUser = authState?.user ?? { username: "Guest" };
 
     const [selectedOption, setSelectedOption] = useState(null);
-    const [data, setData] = useState([]);
-    const [searchQuery, setSearchQuery] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
     const [availabilityData, setAvailabilityData] = useState([]);
+
+    const dispatch = useDispatch();
+    const clients = useSelector((state) => state.clients.clients);
+    const workers = useSelector((state) => state.workers.workers);
+    const bookings = useSelector((state) => state.bookings.bookings);
+    const loadingClients = useSelector((state) => state.clients.loading);
+    const loadingWorkers = useSelector((state) => state.workers.loading);
+    const loadingBookings = useSelector((state) => state.bookings.loading);
 
     const handleMenuClick = (option) => {
         setSelectedOption(option);
@@ -27,37 +36,21 @@ const SearchPage = () => {
     };
 
     const fetchData = (option) => {
-        // Replace this with your actual fetch logic
-        console.log(`Fetching data for ${option}`);
-        // Dummy data for demonstration
         if (option === "Clients") {
-            setData([
-                { key: "1", id: "1", name: "John Doe", contact: "john@example.com", address: "123 Main St", panels: 10, charges: "$100", plan: "Monthly", start: "2023-01-01", end: "2024-01-01" },
-                { key: "2", id: "2", name: "Jane Smith", contact: "jane@example.com", address: "456 Oak St", panels: 8, charges: "$80", plan: "Annual", start: "2023-06-01", end: "2024-06-01" },
-            ]);
+            dispatch(getAllClients());
         } else if (option === "Workers") {
-            setData([
-                { key: "1", id: "1", name: "Worker One", location: "New York" },
-                { key: "2", id: "2", name: "Worker Two", location: "Los Angeles" },
-            ]);
+            dispatch(getAllWorkers());
         } else if (option === "Bookings") {
-            setData([
-                { key: "1", bookingid: "1", "client-id": "1", "worker-id": "1", "client-name": "John Doe", "worker-name": "Worker One", date: "2024-07-07", slot: "Morning", status: "Confirmed", reocc: "No" },
-                { key: "2", bookingid: "2", "client-id": "2", "worker-id": "2", "client-name": "Jane Smith", "worker-name": "Worker Two", date: "2024-07-08", slot: "Afternoon", status: "Pending", reocc: "Yes" },
-            ]);
+            dispatch(getAllBookings());
         }
     };
 
     const handleSearch = (value) => {
-        setSearchQuery(value);
-        // Implement search functionality here
         console.log(`Searching for ${value} in ${selectedOption}`);
     };
 
     const handleShowAvailability = (workerId) => {
-        // Fetch availability data for the worker and set it
         console.log(`Fetching availability for worker ${workerId}`);
-        // Dummy data for demonstration
         const dummyAvailability = Array(7).fill(null).map(() => Array(5).fill(0).map(() => Math.random() > 0.5 ? "Available" : "Unavailable"));
         setAvailabilityData(dummyAvailability);
         setModalVisible(true);
@@ -90,57 +83,27 @@ const SearchPage = () => {
         { title: "Reoccurrence", dataIndex: "reocc", key: "reocc" },
     ] : [];
 
+    const data = selectedOption === "Clients" ? clients :
+                 selectedOption === "Workers" ? workers :
+                 selectedOption === "Bookings" ? bookings : [];
+
+    const loading = selectedOption === "Clients" ? loadingClients :
+                    selectedOption === "Workers" ? loadingWorkers :
+                    selectedOption === "Bookings" ? loadingBookings : false;
+
     return (
         <>
-            {/* Basic */}
-            <meta charSet="utf-8" />
-            <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-            {/* Mobile Metas */}
-            <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1, shrink-to-fit=no"
-            />
-            {/* Site Metas */}
-            <meta name="keywords" content="" />
-            <meta name="description" content="" />
-            <meta name="author" content="" />
-            <title>SolarPod</title>
-            {/* slider stylesheet */}
-            <link
-                rel="stylesheet"
-                type="text/css"
-                href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
-            />
-            {/* bootstrap core css */}
-            <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
-            {/* font awesome style */}
-            <link
-                rel="stylesheet"
-                type="text/css"
-                href="css/font-awesome.min.css"
-            />
-            {/* Custom styles for this template */}
-            <link href="css/style.css" rel="stylesheet" />
-            {/* responsive style */}
-            <link href="css/responsive.css" rel="stylesheet" />
             <div className="hero_area">
-                {/* header section strats */}
                 <header className="header_section">
                     <div className="header_top">
                         <div className="container-fluid">
                             <div className="contact_nav">
                                 <a href="">
-                                    <i
-                                        className="header-icon fa fa-phone"
-                                        aria-hidden="true"
-                                    />
+                                    <i className="header-icon fa fa-phone" aria-hidden="true" />
                                     <span>Call : +92 3302061260</span>
                                 </a>
                                 <a href="">
-                                    <i
-                                        className="fa fa-envelope"
-                                        aria-hidden="true"
-                                    />
+                                    <i className="fa fa-envelope" aria-hidden="true" />
                                     <span> Email : tjsolarinfo@gmail.com </span>
                                 </a>
                             </div>
@@ -152,85 +115,43 @@ const SearchPage = () => {
                                 <a className="navbar-brand" href="/">
                                     <span> TJ Solars </span>
                                 </a>
-                                <button
-                                    className="navbar-toggler"
-                                    type="button"
-                                    data-toggle="collapse"
-                                    data-target="#navbarSupportedContent"
-                                    aria-controls="navbarSupportedContent"
-                                    aria-expanded="false"
-                                    aria-label="Toggle navigation">
+                                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                                     <span className=""> </span>
                                 </button>
-                                <div
-                                    className="collapse navbar-collapse"
-                                    id="navbarSupportedContent">
+                                <div className="collapse navbar-collapse" id="navbarSupportedContent">
                                     <ul className="navbar-nav">
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/">
-                                                Home
-                                            </a>
+                                            <a className="nav-link" href="/">Home</a>
                                         </li>
                                         {actualIsAuthenticated ? (
                                             <>
                                                 <li className="nav-item">
-                                                    <a
-                                                        href="/bookings"
-                                                        className="nav-link">
-                                                        Bookings
-                                                    </a>
+                                                    <a href="/bookings" className="nav-link">Bookings</a>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
-                                                        className="nav-link"
-                                                        href="/workers">
-                                                        Workers
-                                                    </a>
+                                                    <a className="nav-link" href="/workers">Workers</a>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
-                                                        className="nav-link"
-                                                        href="/clients">
-                                                        Clients
-                                                    </a>
+                                                    <a className="nav-link" href="/clients">Clients</a>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
-                                                        className="nav-link"
-                                                        href="">
-                                                        Search
-                                                    </a>
+                                                    <a className="nav-link" href="">Search</a>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
-                                                        className="nav-link"
-                                                        href="">
-                                                        Reports
-                                                    </a>
+                                                    <a className="nav-link" href="">Reports</a>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <Link
-                                                        className="nav-link"
-                                                        to="/logout">
-                                                        Logout
-                                                    </Link>
+                                                    <Link className="nav-link" to="/logout">Logout</Link>
                                                 </li>
                                             </>
                                         ) : (
                                             <li className="nav-item">
-                                                <a
-                                                    className="nav-link"
-                                                    href="/login">
-                                                    Login
-                                                </a>
+                                                <a className="nav-link" href="/login">Login</a>
                                             </li>
                                         )}
                                         {actualIsAuthenticated && (
                                             <li className="nav-item">
-                                                <span className="nav-link">
-                                                    Welcome,{" "}
-                                                    {actualUser.username}
-                                                </span>
+                                                <span className="nav-link">Welcome, {actualUser.username}</span>
                                             </li>
                                         )}
                                     </ul>
@@ -239,69 +160,35 @@ const SearchPage = () => {
                         </div>
                     </div>
                 </header>
-                {/* end header section */}
             </div>
-            {/* Table Section beginning */}
             <div className="container mt-4">
                 <div className="row mb-3">
                     <div className="col-md-12">
                         <div className="d-flex justify-content-center">
-                            <Button
-                                className={`mr-2 ${selectedOption === "Clients" ? "btn-primary" : ""}`}
-                                onClick={() => handleMenuClick("Clients")}
-                            >
-                                Clients
-                            </Button>
-                            <Button
-                                className={`mr-2 ${selectedOption === "Workers" ? "btn-primary" : ""}`}
-                                onClick={() => handleMenuClick("Workers")}
-                            >
-                                Workers
-                            </Button>
-                            <Button
-                                className={`${selectedOption === "Bookings" ? "btn-primary" : ""}`}
-                                onClick={() => handleMenuClick("Bookings")}
-                            >
-                                Bookings
-                            </Button>
+                            <Button className={`mr-2 ${selectedOption === "Clients" ? "btn-primary" : ""}`} onClick={() => handleMenuClick("Clients")}>Clients</Button>
+                            <Button className={`mr-2 ${selectedOption === "Workers" ? "btn-primary" : ""}`} onClick={() => handleMenuClick("Workers")}>Workers</Button>
+                            <Button className={`${selectedOption === "Bookings" ? "btn-primary" : ""}`} onClick={() => handleMenuClick("Bookings")}>Bookings</Button>
                         </div>
                     </div>
                 </div>
                 <div className="row mb-3">
                     <div className="col-md-12">
-                        <Search
-                            placeholder={`Search ${selectedOption}`}
-                            onSearch={handleSearch}
-                            enterButton
-                            disabled={!selectedOption}
-                        />
+                        <Search placeholder={`Search ${selectedOption}`} onSearch={handleSearch} enterButton disabled={!selectedOption} />
                     </div>
                 </div>
-                <Table columns={columns} dataSource={data} />
+                <Table columns={columns} dataSource={data} loading={loading} />
             </div>
-            <Modal
-                title="Worker Availability"
-                visible={modalVisible}
-                onCancel={() => setModalVisible(false)}
-                footer={null}
-            >
+            <Modal title="Worker Availability" open={modalVisible} onCancel={() => setModalVisible(false)} footer={null}>
                 <div className="availability-grid">
                     {availabilityData.map((week, weekIndex) => (
                         <div key={weekIndex} className="week-row">
                             {week.map((slot, slotIndex) => (
-                                <div
-                                    key={slotIndex}
-                                    className={`time-slot ${slot === "Available" ? "available" : "unavailable"}`}
-                                >
-                                    {slot}
-                                </div>
+                                <div key={slotIndex} className={`time-slot ${slot === "Available" ? "available" : "unavailable"}`}>{slot}</div>
                             ))}
                         </div>
                     ))}
                 </div>
             </Modal>
-            {/* Table Section end */}
-            {/* info section */}
             <section className="info_section">
                 <div className="container">
                     <h4>Get In Touch</h4>
@@ -313,14 +200,9 @@ const SearchPage = () => {
                                         <a href="">
                                             <div className="item">
                                                 <div className="img-box">
-                                                    <i
-                                                        className="fa fa-map-marker"
-                                                        aria-hidden="true"
-                                                    />
+                                                    <i className="fa fa-map-marker" aria-hidden="true" />
                                                 </div>
-                                                <p>
-                                                A56, X.1, Gulshan e Maymar, Karachi, Pakistan
-                                                </p>
+                                                <p>A56, X.1, Gulshan e Maymar, Karachi, Pakistan</p>
                                             </div>
                                         </a>
                                     </div>
@@ -328,10 +210,7 @@ const SearchPage = () => {
                                         <a href="">
                                             <div className="item">
                                                 <div className="img-box">
-                                                    <i
-                                                        className="fa fa-phone"
-                                                        aria-hidden="true"
-                                                    />
+                                                    <i className="fa fa-phone" aria-hidden="true" />
                                                 </div>
                                                 <p>+92 3302061260</p>
                                             </div>
@@ -341,10 +220,7 @@ const SearchPage = () => {
                                         <a href="">
                                             <div className="item">
                                                 <div className="img-box">
-                                                    <i
-                                                        className="fa fa-envelope"
-                                                        aria-hidden="true"
-                                                    />
+                                                    <i className="fa fa-envelope" aria-hidden="true" />
                                                 </div>
                                                 <p>tjsolarinfo@gmail.com</p>
                                             </div>
@@ -373,21 +249,11 @@ const SearchPage = () => {
                     </div>
                 </div>
             </section>
-            {/* end info_section */}
-            {/* footer section */}
             <footer className="footer_section">
                 <div className="container">
-                    <p>
-                        © <span id="displayDateYear" /> All Rights Reserved By
-                        <a href="https://www.behance.net/aawaizali">
-                            Aawaiz Ali
-                        </a>
-                    </p>
+                    <p>© <span id="displayDateYear" /> All Rights Reserved By <a href="https://www.behance.net/aawaizali">Aawaiz Ali</a></p>
                 </div>
             </footer>
-            {/* footer section */}
-            {/* Google Map */}
-            {/* End Google Map */}
         </>
     );
 };
