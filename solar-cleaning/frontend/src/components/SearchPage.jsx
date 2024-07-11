@@ -1,19 +1,75 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Table, Input, Button } from "antd";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "../../public/css/responsive.css";
 import "../../public/css/style.css";
-import sliderImg from "../../public/slider-img.png";
-import professionalImg from "../../public/professional-img.png";
+
+const { Search } = Input;
 
 const SearchPage = () => {
     const authState = useSelector((state) => state.auth);
     const actualIsAuthenticated = authState?.isAuthenticated ?? false;
     const actualUser = authState?.user ?? { username: "Guest" };
+
+    const [selectedOption, setSelectedOption] = useState(null);
+    const [data, setData] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const handleMenuClick = (option) => {
+        setSelectedOption(option);
+        fetchData(option);
+    };
+
+    const fetchData = (option) => {
+        // Replace this with your actual fetch logic
+        console.log(`Fetching data for ${option}`);
+        // Dummy data for demonstration
+        if (option === "Clients") {
+            setData([
+                { key: "1", name: "John Doe", contact: "john@example.com" },
+                { key: "2", name: "Jane Smith", contact: "jane@example.com" },
+            ]);
+        } else if (option === "Workers") {
+            setData([
+                { key: "1", name: "Worker One", job: "Installer" },
+                { key: "2", name: "Worker Two", job: "Technician" },
+            ]);
+        } else if (option === "Bookings") {
+            setData([
+                { key: "1", client: "John Doe", worker: "Worker One", date: "2024-07-07" },
+                { key: "2", client: "Jane Smith", worker: "Worker Two", date: "2024-07-08" },
+            ]);
+        }
+    };
+
+    const handleSearch = (value) => {
+        setSearchQuery(value);
+        // Implement search functionality here
+        console.log(`Searching for ${value} in ${selectedOption}`);
+    };
+
+    const columns = selectedOption === "Clients" ? [
+        { title: "ID", dataIndex: "id", key: "id" },
+        { title: "Name", dataIndex: "name", key: "name" },
+        { title: "Contact", dataIndex: "contact", key: "contact" },
+        { title: "Address", dataIndex: "address", key: "address" },
+        { title: "Total Panels", dataIndex: "panels", key: "panels" },
+        { title: "Charges per Clean", dataIndex: "charges", key: "charges" },
+        { title: "Subscription Plan", dataIndex: "plan", key: "plan" },
+        { title: "Subscription Start", dataIndex: "start", key: "start" },
+        { title: "Subscription End", dataIndex: "end", key: "end" },
+    ] : selectedOption === "Workers" ? [
+        { title: "Name", dataIndex: "name", key: "name" },
+        { title: "Job", dataIndex: "job", key: "job" },
+    ] : selectedOption === "Bookings" ? [
+        { title: "Client", dataIndex: "client", key: "client" },
+        { title: "Worker", dataIndex: "worker", key: "worker" },
+        { title: "Date", dataIndex: "date", key: "date" },
+    ] : [];
 
     return (
         <>
@@ -122,7 +178,7 @@ const SearchPage = () => {
                                                 <li className="nav-item">
                                                     <a
                                                         className="nav-link"
-                                                        href="">
+                                                        href="/search">
                                                         Search
                                                     </a>
                                                 </li>
@@ -167,6 +223,42 @@ const SearchPage = () => {
                 {/* end header section */}
             </div>
             {/* Table Section beginning */}
+            <div className="container mt-4">
+                <div className="row mb-3">
+                    <div className="col-md-12 d-flex justify-content-center">
+                        <Button
+                            type={selectedOption === "Clients" ? "primary" : "default"}
+                            onClick={() => handleMenuClick("Clients")}
+                        >
+                            Clients
+                        </Button>
+                        <Button
+                            type={selectedOption === "Workers" ? "primary" : "default"}
+                            onClick={() => handleMenuClick("Workers")}
+                            className="mx-2"
+                        >
+                            Workers
+                        </Button>
+                        <Button
+                            type={selectedOption === "Bookings" ? "primary" : "default"}
+                            onClick={() => handleMenuClick("Bookings")}
+                        >
+                            Bookings
+                        </Button>
+                    </div>
+                </div>
+                <div className="row mb-3">
+                    <div className="col-md-12">
+                        <Search
+                            placeholder="Search..."
+                            enterButton="Search"
+                            size="large"
+                            onSearch={handleSearch}
+                        />
+                    </div>
+                </div>
+                <Table columns={columns} dataSource={data} />
+            </div>
             {/* Table Section end */}
             {/* info section */}
             <section className="info_section">
