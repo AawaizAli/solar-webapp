@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { Table, Input, Button } from "antd";
+import { Table, Input, Button, Modal } from "antd";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
@@ -18,6 +18,8 @@ const SearchPage = () => {
     const [selectedOption, setSelectedOption] = useState(null);
     const [data, setData] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [modalVisible, setModalVisible] = useState(false);
+    const [availabilityData, setAvailabilityData] = useState([]);
 
     const handleMenuClick = (option) => {
         setSelectedOption(option);
@@ -30,18 +32,18 @@ const SearchPage = () => {
         // Dummy data for demonstration
         if (option === "Clients") {
             setData([
-                { key: "1", name: "John Doe", contact: "john@example.com" },
-                { key: "2", name: "Jane Smith", contact: "jane@example.com" },
+                { key: "1", id: "1", name: "John Doe", contact: "john@example.com", address: "123 Main St", panels: 10, charges: "$100", plan: "Monthly", start: "2023-01-01", end: "2024-01-01" },
+                { key: "2", id: "2", name: "Jane Smith", contact: "jane@example.com", address: "456 Oak St", panels: 8, charges: "$80", plan: "Annual", start: "2023-06-01", end: "2024-06-01" },
             ]);
         } else if (option === "Workers") {
             setData([
-                { key: "1", name: "Worker One", job: "Installer" },
-                { key: "2", name: "Worker Two", job: "Technician" },
+                { key: "1", id: "1", name: "Worker One", location: "New York" },
+                { key: "2", id: "2", name: "Worker Two", location: "Los Angeles" },
             ]);
         } else if (option === "Bookings") {
             setData([
-                { key: "1", client: "John Doe", worker: "Worker One", date: "2024-07-07" },
-                { key: "2", client: "Jane Smith", worker: "Worker Two", date: "2024-07-08" },
+                { key: "1", bookingid: "1", "client-id": "1", "worker-id": "1", "client-name": "John Doe", "worker-name": "Worker One", date: "2024-07-07", slot: "Morning", status: "Confirmed", reocc: "No" },
+                { key: "2", bookingid: "2", "client-id": "2", "worker-id": "2", "client-name": "Jane Smith", "worker-name": "Worker Two", date: "2024-07-08", slot: "Afternoon", status: "Pending", reocc: "Yes" },
             ]);
         }
     };
@@ -50,6 +52,15 @@ const SearchPage = () => {
         setSearchQuery(value);
         // Implement search functionality here
         console.log(`Searching for ${value} in ${selectedOption}`);
+    };
+
+    const handleShowAvailability = (workerId) => {
+        // Fetch availability data for the worker and set it
+        console.log(`Fetching availability for worker ${workerId}`);
+        // Dummy data for demonstration
+        const dummyAvailability = Array(7).fill(null).map(() => Array(5).fill(0).map(() => Math.random() > 0.5 ? "Available" : "Unavailable"));
+        setAvailabilityData(dummyAvailability);
+        setModalVisible(true);
     };
 
     const columns = selectedOption === "Clients" ? [
@@ -63,12 +74,20 @@ const SearchPage = () => {
         { title: "Subscription Start", dataIndex: "start", key: "start" },
         { title: "Subscription End", dataIndex: "end", key: "end" },
     ] : selectedOption === "Workers" ? [
+        { title: "ID", dataIndex: "id", key: "id" },
         { title: "Name", dataIndex: "name", key: "name" },
-        { title: "Job", dataIndex: "job", key: "job" },
+        { title: "Base Location", dataIndex: "location", key: "location" },
+        { title: "Availability", dataIndex: "id", key: "availability", render: (text, record) => <Button onClick={() => handleShowAvailability(record.id)}>Show Availability</Button> },
     ] : selectedOption === "Bookings" ? [
-        { title: "Client", dataIndex: "client", key: "client" },
-        { title: "Worker", dataIndex: "worker", key: "worker" },
+        { title: "Booking ID", dataIndex: "bookingid", key: "bookingid" },
+        { title: "Client ID", dataIndex: "client-id", key: "client-id" },
+        { title: "Worker ID", dataIndex: "worker-id", key: "worker-id" },
+        { title: "Client Name", dataIndex: "client-name", key: "client-name" },
+        { title: "Worker Name", dataIndex: "worker-name", key: "worker-name" },
         { title: "Date", dataIndex: "date", key: "date" },
+        { title: "Slot", dataIndex: "slot", key: "slot" },
+        { title: "Status", dataIndex: "status", key: "status" },
+        { title: "Reoccurrence", dataIndex: "reocc", key: "reocc" },
     ] : [];
 
     return (
@@ -178,7 +197,7 @@ const SearchPage = () => {
                                                 <li className="nav-item">
                                                     <a
                                                         className="nav-link"
-                                                        href="/search">
+                                                        href="">
                                                         Search
                                                     </a>
                                                 </li>
@@ -225,40 +244,62 @@ const SearchPage = () => {
             {/* Table Section beginning */}
             <div className="container mt-4">
                 <div className="row mb-3">
-                    <div className="col-md-12 d-flex justify-content-center">
-                        <Button
-                            type={selectedOption === "Clients" ? "primary" : "default"}
-                            onClick={() => handleMenuClick("Clients")}
-                        >
-                            Clients
-                        </Button>
-                        <Button
-                            type={selectedOption === "Workers" ? "primary" : "default"}
-                            onClick={() => handleMenuClick("Workers")}
-                            className="mx-2"
-                        >
-                            Workers
-                        </Button>
-                        <Button
-                            type={selectedOption === "Bookings" ? "primary" : "default"}
-                            onClick={() => handleMenuClick("Bookings")}
-                        >
-                            Bookings
-                        </Button>
+                    <div className="col-md-12">
+                        <div className="d-flex justify-content-center">
+                            <Button
+                                className={`mr-2 ${selectedOption === "Clients" ? "btn-primary" : ""}`}
+                                onClick={() => handleMenuClick("Clients")}
+                            >
+                                Clients
+                            </Button>
+                            <Button
+                                className={`mr-2 ${selectedOption === "Workers" ? "btn-primary" : ""}`}
+                                onClick={() => handleMenuClick("Workers")}
+                            >
+                                Workers
+                            </Button>
+                            <Button
+                                className={`${selectedOption === "Bookings" ? "btn-primary" : ""}`}
+                                onClick={() => handleMenuClick("Bookings")}
+                            >
+                                Bookings
+                            </Button>
+                        </div>
                     </div>
                 </div>
                 <div className="row mb-3">
                     <div className="col-md-12">
                         <Search
-                            placeholder="Search..."
-                            enterButton="Search"
-                            size="large"
+                            placeholder={`Search ${selectedOption}`}
                             onSearch={handleSearch}
+                            enterButton
+                            disabled={!selectedOption}
                         />
                     </div>
                 </div>
                 <Table columns={columns} dataSource={data} />
             </div>
+            <Modal
+                title="Worker Availability"
+                visible={modalVisible}
+                onCancel={() => setModalVisible(false)}
+                footer={null}
+            >
+                <div className="availability-grid">
+                    {availabilityData.map((week, weekIndex) => (
+                        <div key={weekIndex} className="week-row">
+                            {week.map((slot, slotIndex) => (
+                                <div
+                                    key={slotIndex}
+                                    className={`time-slot ${slot === "Available" ? "available" : "unavailable"}`}
+                                >
+                                    {slot}
+                                </div>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            </Modal>
             {/* Table Section end */}
             {/* info section */}
             <section className="info_section">
