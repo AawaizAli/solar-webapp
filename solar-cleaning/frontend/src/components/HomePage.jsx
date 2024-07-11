@@ -122,7 +122,7 @@ const HomePage = () => {
                                                 <li className="nav-item">
                                                     <a
                                                         className="nav-link"
-                                                        href="">
+                                                        href="/search">
                                                         Search
                                                     </a>
                                                 </li>
@@ -177,7 +177,16 @@ const HomePage = () => {
                                         Services
                                     </h1>
                                     <p>
-                                    At TJ Solars, we provide top-notch repair and maintenance services for your solar panel systems. Our experienced technicians ensure that your panels operate at peak efficiency, saving you money and contributing to a greener planet. From routine inspections to emergency repairs, we've got you covered. Trust TJ Solars for reliable and professional solar panel care.
+                                        At TJ Solars, we provide top-notch
+                                        repair and maintenance services for your
+                                        solar panel systems. Our experienced
+                                        technicians ensure that your panels
+                                        operate at peak efficiency, saving you
+                                        money and contributing to a greener
+                                        planet. From routine inspections to
+                                        emergency repairs, we've got you
+                                        covered. Trust TJ Solars for reliable
+                                        and professional solar panel care.
                                     </p>
                                     <a href="#professional_section">
                                         {" "}
@@ -285,7 +294,16 @@ const HomePage = () => {
                                     Solar Cleaning Services.
                                 </h2>
                                 <p>
-                                At TJ Solar, our expert team specializes in professional solar cleaning services that ensure your solar panels operate at their maximum efficiency. Regular cleaning can enhance energy production and prolong the lifespan of your panels. We use advanced cleaning techniques to remove dirt, debris, and grime, ensuring optimal performance. Trust us to keep your solar investment clean and productive.
+                                    At TJ Solar, our expert team specializes in
+                                    professional solar cleaning services that
+                                    ensure your solar panels operate at their
+                                    maximum efficiency. Regular cleaning can
+                                    enhance energy production and prolong the
+                                    lifespan of your panels. We use advanced
+                                    cleaning techniques to remove dirt, debris,
+                                    and grime, ensuring optimal performance.
+                                    Trust us to keep your solar investment clean
+                                    and productive.
                                 </p>
                                 <a href="/bookings">Book Now</a>
                             </div>
@@ -313,7 +331,8 @@ const HomePage = () => {
                                                     />
                                                 </div>
                                                 <p>
-                                                A56, X.1, Gulshan e Maymar, Karachi, Pakistan
+                                                    A56, X.1, Gulshan e Maymar,
+                                                    Karachi, Pakistan
                                                 </p>
                                             </div>
                                         </a>

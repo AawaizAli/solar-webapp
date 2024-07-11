@@ -51,45 +51,116 @@ const SearchPage = () => {
 
     const handleShowAvailability = (workerId) => {
         console.log(`Fetching availability for worker ${workerId}`);
-        const dummyAvailability = Array(7).fill(null).map(() => Array(5).fill(0).map(() => Math.random() > 0.5 ? "Available" : "Unavailable"));
+        const dummyAvailability = Array(7)
+            .fill(null)
+            .map(() =>
+                Array(5)
+                    .fill(0)
+                    .map(() =>
+                        Math.random() > 0.5 ? "Available" : "Unavailable"
+                    )
+            );
         setAvailabilityData(dummyAvailability);
         setModalVisible(true);
     };
 
-    const columns = selectedOption === "Clients" ? [
-        { title: "ID", dataIndex: "id", key: "id" },
-        { title: "Name", dataIndex: "name", key: "name" },
-        { title: "Contact", dataIndex: "contact", key: "contact" },
-        { title: "Address", dataIndex: "address", key: "address" },
-        { title: "Total Panels", dataIndex: "panels", key: "panels" },
-        { title: "Charges per Clean", dataIndex: "charges", key: "charges" },
-        { title: "Subscription Plan", dataIndex: "plan", key: "plan" },
-        { title: "Subscription Start", dataIndex: "start", key: "start" },
-        { title: "Subscription End", dataIndex: "end", key: "end" },
-    ] : selectedOption === "Workers" ? [
-        { title: "ID", dataIndex: "id", key: "id" },
-        { title: "Name", dataIndex: "name", key: "name" },
-        { title: "Base Location", dataIndex: "location", key: "location" },
-        { title: "Availability", dataIndex: "id", key: "availability", render: (text, record) => <Button onClick={() => handleShowAvailability(record.id)}>Show Availability</Button> },
-    ] : selectedOption === "Bookings" ? [
-        { title: "Booking ID", dataIndex: "bookingid", key: "bookingid" },
-        { title: "Client ID", dataIndex: "client-id", key: "client-id" },
-        { title: "Worker ID", dataIndex: "worker-id", key: "worker-id" },
-        { title: "Client Name", dataIndex: "client-name", key: "client-name" },
-        { title: "Worker Name", dataIndex: "worker-name", key: "worker-name" },
-        { title: "Date", dataIndex: "date", key: "date" },
-        { title: "Slot", dataIndex: "slot", key: "slot" },
-        { title: "Status", dataIndex: "status", key: "status" },
-        { title: "Reoccurrence", dataIndex: "reocc", key: "reocc" },
-    ] : [];
+    const columns =
+        selectedOption === "Clients"
+            ? [
+                  { title: "ID", dataIndex: "id", key: "id" },
+                  { title: "Name", dataIndex: "name", key: "name" },
+                  { title: "Contact", dataIndex: "contact", key: "contact" },
+                  { title: "Address", dataIndex: "address", key: "address" },
+                  { title: "Total Panels", dataIndex: "panels", key: "panels" },
+                  {
+                      title: "Charges per Clean",
+                      dataIndex: "charges",
+                      key: "charges",
+                  },
+                  {
+                      title: "Subscription Plan",
+                      dataIndex: "plan",
+                      key: "plan",
+                  },
+                  {
+                      title: "Subscription Start",
+                      dataIndex: "start",
+                      key: "start",
+                  },
+                  { title: "Subscription End", dataIndex: "end", key: "end" },
+              ]
+            : selectedOption === "Workers"
+            ? [
+                  { title: "ID", dataIndex: "id", key: "id" },
+                  { title: "Name", dataIndex: "name", key: "name" },
+                  {
+                      title: "Base Location",
+                      dataIndex: "location",
+                      key: "location",
+                  },
+                  {
+                      title: "Availability",
+                      dataIndex: "id",
+                      key: "availability",
+                      render: (text, record) => (
+                          <Button
+                              onClick={() => handleShowAvailability(record.id)}>
+                              Show Availability
+                          </Button>
+                      ),
+                  },
+              ]
+            : selectedOption === "Bookings"
+            ? [
+                  {
+                      title: "Booking ID",
+                      dataIndex: "bookingid",
+                      key: "bookingid",
+                  },
+                  {
+                      title: "Client ID",
+                      dataIndex: "client-id",
+                      key: "client-id",
+                  },
+                  {
+                      title: "Worker ID",
+                      dataIndex: "worker-id",
+                      key: "worker-id",
+                  },
+                  {
+                      title: "Client Name",
+                      dataIndex: "client-name",
+                      key: "client-name",
+                  },
+                  {
+                      title: "Worker Name",
+                      dataIndex: "worker-name",
+                      key: "worker-name",
+                  },
+                  { title: "Date", dataIndex: "date", key: "date" },
+                  { title: "Slot", dataIndex: "slot", key: "slot" },
+                  { title: "Status", dataIndex: "status", key: "status" },
+                  { title: "Reoccurrence", dataIndex: "reocc", key: "reocc" },
+              ]
+            : [];
 
-    const data = selectedOption === "Clients" ? clients :
-                 selectedOption === "Workers" ? workers :
-                 selectedOption === "Bookings" ? bookings : [];
+    const data =
+        selectedOption === "Clients"
+            ? clients
+            : selectedOption === "Workers"
+            ? workers
+            : selectedOption === "Bookings"
+            ? bookings
+            : [];
 
-    const loading = selectedOption === "Clients" ? loadingClients :
-                    selectedOption === "Workers" ? loadingWorkers :
-                    selectedOption === "Bookings" ? loadingBookings : false;
+    const loading =
+        selectedOption === "Clients"
+            ? loadingClients
+            : selectedOption === "Workers"
+            ? loadingWorkers
+            : selectedOption === "Bookings"
+            ? loadingBookings
+            : false;
 
     return (
         <>
@@ -99,11 +170,17 @@ const SearchPage = () => {
                         <div className="container-fluid">
                             <div className="contact_nav">
                                 <a href="">
-                                    <i className="header-icon fa fa-phone" aria-hidden="true" />
+                                    <i
+                                        className="header-icon fa fa-phone"
+                                        aria-hidden="true"
+                                    />
                                     <span>Call : +92 3302061260</span>
                                 </a>
                                 <a href="">
-                                    <i className="fa fa-envelope" aria-hidden="true" />
+                                    <i
+                                        className="fa fa-envelope"
+                                        aria-hidden="true"
+                                    />
                                     <span> Email : tjsolarinfo@gmail.com </span>
                                 </a>
                             </div>
@@ -115,43 +192,85 @@ const SearchPage = () => {
                                 <a className="navbar-brand" href="/">
                                     <span> TJ Solars </span>
                                 </a>
-                                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                <button
+                                    className="navbar-toggler"
+                                    type="button"
+                                    data-toggle="collapse"
+                                    data-target="#navbarSupportedContent"
+                                    aria-controls="navbarSupportedContent"
+                                    aria-expanded="false"
+                                    aria-label="Toggle navigation">
                                     <span className=""> </span>
                                 </button>
-                                <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                                <div
+                                    className="collapse navbar-collapse"
+                                    id="navbarSupportedContent">
                                     <ul className="navbar-nav">
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/">Home</a>
+                                            <a className="nav-link" href="/">
+                                                Home
+                                            </a>
                                         </li>
                                         {actualIsAuthenticated ? (
                                             <>
                                                 <li className="nav-item">
-                                                    <a href="/bookings" className="nav-link">Bookings</a>
+                                                    <a
+                                                        href="/bookings"
+                                                        className="nav-link">
+                                                        Bookings
+                                                    </a>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a className="nav-link" href="/workers">Workers</a>
+                                                    <a
+                                                        className="nav-link"
+                                                        href="/workers">
+                                                        Workers
+                                                    </a>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a className="nav-link" href="/clients">Clients</a>
+                                                    <a
+                                                        className="nav-link"
+                                                        href="/clients">
+                                                        Clients
+                                                    </a>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a className="nav-link" href="">Search</a>
+                                                    <a
+                                                        className="nav-link"
+                                                        href="/search">
+                                                        Search
+                                                    </a>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a className="nav-link" href="">Reports</a>
+                                                    <a
+                                                        className="nav-link"
+                                                        href="">
+                                                        Reports
+                                                    </a>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <Link className="nav-link" to="/logout">Logout</Link>
+                                                    <Link
+                                                        className="nav-link"
+                                                        to="/logout">
+                                                        Logout
+                                                    </Link>
                                                 </li>
                                             </>
                                         ) : (
                                             <li className="nav-item">
-                                                <a className="nav-link" href="/login">Login</a>
+                                                <a
+                                                    className="nav-link"
+                                                    href="/login">
+                                                    Login
+                                                </a>
                                             </li>
                                         )}
                                         {actualIsAuthenticated && (
                                             <li className="nav-item">
-                                                <span className="nav-link">Welcome, {actualUser.username}</span>
+                                                <span className="nav-link">
+                                                    Welcome,{" "}
+                                                    {actualUser.username}
+                                                </span>
                                             </li>
                                         )}
                                     </ul>
@@ -165,25 +284,66 @@ const SearchPage = () => {
                 <div className="row mb-3">
                     <div className="col-md-12">
                         <div className="d-flex justify-content-center">
-                            <Button className={`mr-2 ${selectedOption === "Clients" ? "btn-primary" : ""}`} onClick={() => handleMenuClick("Clients")}>Clients</Button>
-                            <Button className={`mr-2 ${selectedOption === "Workers" ? "btn-primary" : ""}`} onClick={() => handleMenuClick("Workers")}>Workers</Button>
-                            <Button className={`${selectedOption === "Bookings" ? "btn-primary" : ""}`} onClick={() => handleMenuClick("Bookings")}>Bookings</Button>
+                            <Button
+                                className={`search-menu-btn mr-2 ${
+                                    selectedOption === "Clients"
+                                        ? "btn-primary"
+                                        : ""
+                                }`}
+                                onClick={() => handleMenuClick("Clients")}>
+                                Clients
+                            </Button>
+                            <Button
+                                className={`search-menu-btn mr-2 ${
+                                    selectedOption === "Workers"
+                                        ? "btn-primary"
+                                        : ""
+                                }`}
+                                onClick={() => handleMenuClick("Workers")}>
+                                Workers
+                            </Button>
+                            <Button
+                                className={`search-menu-btn ${
+                                    selectedOption === "Bookings"
+                                        ? "btn-primary"
+                                        : ""
+                                }`}
+                                onClick={() => handleMenuClick("Bookings")}>
+                                Bookings
+                            </Button>
                         </div>
                     </div>
                 </div>
                 <div className="row mb-3">
                     <div className="col-md-12">
-                        <Search placeholder={`Search ${selectedOption}`} onSearch={handleSearch} enterButton disabled={!selectedOption} />
+                        <Search
+                            placeholder={`Search ${selectedOption}`}
+                            onSearch={handleSearch}
+                            enterButton
+                            disabled={!selectedOption}
+                        />
                     </div>
                 </div>
                 <Table columns={columns} dataSource={data} loading={loading} />
             </div>
-            <Modal title="Worker Availability" open={modalVisible} onCancel={() => setModalVisible(false)} footer={null}>
+            <Modal
+                title="Worker Availability"
+                open={modalVisible}
+                onCancel={() => setModalVisible(false)}
+                footer={null}>
                 <div className="availability-grid">
                     {availabilityData.map((week, weekIndex) => (
                         <div key={weekIndex} className="week-row">
                             {week.map((slot, slotIndex) => (
-                                <div key={slotIndex} className={`time-slot ${slot === "Available" ? "available" : "unavailable"}`}>{slot}</div>
+                                <div
+                                    key={slotIndex}
+                                    className={`time-slot ${
+                                        slot === "Available"
+                                            ? "available"
+                                            : "unavailable"
+                                    }`}>
+                                    {slot}
+                                </div>
                             ))}
                         </div>
                     ))}
@@ -200,9 +360,15 @@ const SearchPage = () => {
                                         <a href="">
                                             <div className="item">
                                                 <div className="img-box">
-                                                    <i className="fa fa-map-marker" aria-hidden="true" />
+                                                    <i
+                                                        className="fa fa-map-marker"
+                                                        aria-hidden="true"
+                                                    />
                                                 </div>
-                                                <p>A56, X.1, Gulshan e Maymar, Karachi, Pakistan</p>
+                                                <p>
+                                                    A56, X.1, Gulshan e Maymar,
+                                                    Karachi, Pakistan
+                                                </p>
                                             </div>
                                         </a>
                                     </div>
@@ -210,7 +376,10 @@ const SearchPage = () => {
                                         <a href="">
                                             <div className="item">
                                                 <div className="img-box">
-                                                    <i className="fa fa-phone" aria-hidden="true" />
+                                                    <i
+                                                        className="fa fa-phone"
+                                                        aria-hidden="true"
+                                                    />
                                                 </div>
                                                 <p>+92 3302061260</p>
                                             </div>
@@ -220,7 +389,10 @@ const SearchPage = () => {
                                         <a href="">
                                             <div className="item">
                                                 <div className="img-box">
-                                                    <i className="fa fa-envelope" aria-hidden="true" />
+                                                    <i
+                                                        className="fa fa-envelope"
+                                                        aria-hidden="true"
+                                                    />
                                                 </div>
                                                 <p>tjsolarinfo@gmail.com</p>
                                             </div>
@@ -251,7 +423,12 @@ const SearchPage = () => {
             </section>
             <footer className="footer_section">
                 <div className="container">
-                    <p>© <span id="displayDateYear" /> All Rights Reserved By <a href="https://www.behance.net/aawaizali">Aawaiz Ali</a></p>
+                    <p>
+                        © <span id="displayDateYear" /> All Rights Reserved By{" "}
+                        <a href="https://www.behance.net/aawaizali">
+                            Aawaiz Ali
+                        </a>
+                    </p>
                 </div>
             </footer>
         </>
