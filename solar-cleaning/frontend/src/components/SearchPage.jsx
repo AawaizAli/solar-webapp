@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Table, Input, Button, Modal } from "antd";
+import { Table, Input, Button, Modal, Select } from "antd";
 import { getAllBookings } from "../features/bookings/bookingsSlice";
 import { getAllClients } from "../features/clients/clientsSlice";
 import { getAllWorkers } from "../features/workers/workersSlice";
@@ -12,6 +12,7 @@ import "../../public/css/responsive.css";
 import "../../public/css/style.css";
 
 const { Search } = Input;
+const { Option } = Select;
 
 const SearchPage = () => {
     const authState = useSelector((state) => state.auth);
@@ -19,6 +20,7 @@ const SearchPage = () => {
     const actualUser = authState?.user ?? { username: "Guest" };
 
     const [selectedOption, setSelectedOption] = useState(null);
+    const [selectedField, setSelectedField] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [availabilityData, setAvailabilityData] = useState([]);
 
@@ -32,6 +34,7 @@ const SearchPage = () => {
 
     const handleMenuClick = (option) => {
         setSelectedOption(option);
+        setSelectedField(null); // Reset the selected field
         fetchData(option);
     };
 
@@ -46,7 +49,7 @@ const SearchPage = () => {
     };
 
     const handleSearch = (value) => {
-        console.log(`Searching for ${value} in ${selectedOption}`);
+        console.log(`Searching for ${value} in ${selectedOption} by ${selectedField}`);
     };
 
     const handleShowAvailability = (workerId) => {
@@ -161,6 +164,40 @@ const SearchPage = () => {
             : selectedOption === "Bookings"
             ? loadingBookings
             : false;
+
+    const fields =
+        selectedOption === "Clients"
+            ? [
+                  { label: "ID", value: "id" },
+                  { label: "Name", value: "name" },
+                  { label: "Contact", value: "contact" },
+                  { label: "Address", value: "address" },
+                  { label: "Total Panels", value: "panels" },
+                  { label: "Charges per Clean", value: "charges" },
+                  { label: "Subscription Plan", value: "plan" },
+                  { label: "Subscription Start", value: "start" },
+                  { label: "Subscription End", value: "end" },
+              ]
+            : selectedOption === "Workers"
+            ? [
+                  { label: "ID", value: "id" },
+                  { label: "Name", value: "name" },
+                  { label: "Base Location", value: "location" },
+                  { label: "Availability", value: "availability" },
+              ]
+            : selectedOption === "Bookings"
+            ? [
+                  { label: "Booking ID", value: "bookingid" },
+                  { label: "Client ID", value: "client-id" },
+                  { label: "Worker ID", value: "worker-id" },
+                  { label: "Client Name", value: "client-name" },
+                  { label: "Worker Name", value: "worker-name" },
+                  { label: "Date", value: "date" },
+                  { label: "Slot", value: "slot" },
+                  { label: "Status", value: "status" },
+                  { label: "Reoccurrence", value: "reocc" },
+              ]
+            : [];
 
     return (
         <>
@@ -315,13 +352,39 @@ const SearchPage = () => {
                     </div>
                 </div>
                 <div className="row mb-3">
-                    <div className="col-md-12">
+                    <div className="col-md-2 d-flex align-items-center">
+                        <span>Search By:</span>
+                    </div>
+                    <div className="col-md-3">
+                        <Select
+                            style={{ width: '100%' }}
+                            placeholder="Select field"
+                            onChange={setSelectedField}
+                            disabled={!selectedOption}
+                        >
+                            {fields.map((field) => (
+                                <Option key={field.value} value={field.value}>
+                                    {field.label}
+                                </Option>
+                            ))}
+                        </Select>
+                    </div>
+                    <div className="col-md-5">
                         <Search
                             placeholder={`Search ${selectedOption}`}
                             onSearch={handleSearch}
                             enterButton
-                            disabled={!selectedOption}
+                            disabled={!selectedField}
                         />
+                    </div>
+                    <div className="col-md-2">
+                        <Button
+                            type="primary"
+                            onClick={() => handleSearch()}
+                            disabled={!selectedField}
+                        >
+                            Search
+                        </Button>
                     </div>
                 </div>
                 <Table columns={columns} dataSource={data} loading={loading} />
