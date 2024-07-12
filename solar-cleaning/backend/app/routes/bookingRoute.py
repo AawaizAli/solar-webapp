@@ -26,7 +26,7 @@ def get_slot_index(time_slot):
 
 def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, recurrence, subscription_end):
     current_date = datetime.strptime(start_date, '%Y-%m-%d').date()
-    subscription_end_date = datetime.strptime(subscription_end, '%Y-%m-%d').date()
+    subscription_end_date = datetime.strptime(subscription_end, '%Y-%m-%d').date() if isinstance(subscription_end, str) else subscription_end
     recurrence_days = {
         'daily': 1,
         'weekly': 7,
@@ -55,6 +55,7 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
             current_date += timedelta(days=interval)
 
     db.session.commit()
+
 
 @booking_bp.route('/create-booking', methods=['POST'])
 @jwt_required()

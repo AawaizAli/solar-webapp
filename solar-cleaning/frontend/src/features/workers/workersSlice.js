@@ -29,7 +29,7 @@ export const getAllWorkers = createAsyncThunk(
   'workers/get-all-workers',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('/api/get-all-workers');
+      const response = await axiosInstance.get('/api/workers/get-all-workers');
       console.log(response.data)
       return response.data;
     } catch (error) {
@@ -40,10 +40,10 @@ export const getAllWorkers = createAsyncThunk(
 
 // Async thunk for creating a worker
 export const createWorker = createAsyncThunk(
-  'workers/createWorker',
+  'workers/create-worker',
   async (workerData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post('/api/workers', workerData);
+      const response = await axiosInstance.post('/api/workers/create-worker', workerData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -53,10 +53,10 @@ export const createWorker = createAsyncThunk(
 
 // Async thunk for updating a worker
 export const updateWorker = createAsyncThunk(
-  'workers/updateWorker',
+  'workers/update-worker',
   async ({ id, updatedData }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.put(`/api/workers/${id}`, updatedData);
+      const response = await axiosInstance.put(`/api/workers/update-worker/${id}`, updatedData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -69,7 +69,7 @@ export const deleteWorker = createAsyncThunk(
   'workers/deleteWorker',
   async (id, { rejectWithValue }) => {
     try {
-      await axiosInstance.delete(`/api/workers/${id}`);
+      await axiosInstance.delete(`/api/workers/delete-worker/${id}`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response.data.message);

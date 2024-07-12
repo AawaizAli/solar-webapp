@@ -27,7 +27,7 @@ export const getAllBookings = createAsyncThunk(
   'bookings/get-all-bookings',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('/api/get-all-bookings');
+      const response = await axiosInstance.get('/api/bookings/get-all-bookings');
       console.log(response.data);
       return response.data;
     } catch (error) {
@@ -67,7 +67,7 @@ export const deleteBooking = createAsyncThunk(
   'bookings/deleteBooking',
   async (id, { rejectWithValue }) => {
     try {
-      await axiosInstance.delete(`/api/bookings/${id}`);
+      await axiosInstance.delete(`/api/bookings/delete-booking/${id}`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response.data.message);

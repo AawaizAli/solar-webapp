@@ -29,7 +29,7 @@ export const getAllClients = createAsyncThunk(
   'clients/get-all-clients',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('/api/get-all-clients');
+      const response = await axiosInstance.get('/api/clients/get-all-clients');
       console.log(response.data);
       return response.data;
     } catch (error) {
@@ -66,10 +66,10 @@ export const updateClient = createAsyncThunk(
 
 // Async thunk for deleting a client
 export const deleteClient = createAsyncThunk(
-  'clients/deleteClient',
+  'clients/delete-client',
   async (id, { rejectWithValue }) => {
     try {
-      await axiosInstance.delete(`/api/clients/${id}`);
+      await axiosInstance.delete(`/api/clients/delete-client/${id}`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
