@@ -26,10 +26,11 @@ axiosInstance.interceptors.request.use(
 
 // Async thunk for fetching workers
 export const getAllWorkers = createAsyncThunk(
-  'workers/getAllWorkers',
+  'workers/get-all-workers',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('/api/getAllWorkers');
+      const response = await axiosInstance.get('/api/get-all-workers');
+      console.log(response.data)
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);

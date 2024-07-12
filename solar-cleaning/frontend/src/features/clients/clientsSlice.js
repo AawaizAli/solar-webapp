@@ -26,10 +26,11 @@ axiosInstance.interceptors.request.use(
 
 // Async thunk for fetching clients
 export const getAllClients = createAsyncThunk(
-  'clients/getAllClients',
+  'clients/get-all-clients',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('/api/getAllClients');
+      const response = await axiosInstance.get('/api/get-all-clients');
+      console.log(response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);

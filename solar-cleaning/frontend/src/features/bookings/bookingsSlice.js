@@ -7,12 +7,10 @@ const initialState = {
   error: null,
 };
 
-// Create an Axios instance with the base URL
 const axiosInstance = axios.create({
   baseURL: 'http://127.0.0.1:5000',
 });
 
-// Add a request interceptor to include the JWT token in headers
 axiosInstance.interceptors.request.use(
   config => {
     const token = localStorage.getItem('access_token');
@@ -26,10 +24,11 @@ axiosInstance.interceptors.request.use(
 
 // Async thunk for fetching bookings
 export const getAllBookings = createAsyncThunk(
-  'bookings/getAllBookings',
+  'bookings/get-all-bookings',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('/api/getAllBookings');
+      const response = await axiosInstance.get('/api/get-all-bookings');
+      console.log(response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
