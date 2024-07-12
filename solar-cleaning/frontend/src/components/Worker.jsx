@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { deleteWorker } from "../features/workers/workersSlice";
+import { useDispatch, useSelector } from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
@@ -11,17 +13,18 @@ import professionalImg from "../../public/professional-img.png";
 import clientTwo from "../../public/client-2.jpg";
 
 const Worker = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(true); // Change this to `false` to simulate a logged-out state
-    const user = { username: "Aawaiz" }; // Mock user data
+    const [workerId, setWokerId] = useState("");
+    const dispatch = useDispatch();
+    const authState = useSelector((state) => state.auth);
+    const actualIsAuthenticated = authState?.isAuthenticated ?? false;
+    const actualUser = authState?.user ?? { username: "Guest" };
 
-    // Use actual authentication state if available
-    // const authState = useSelector(state => state.auth);
-    // const actualIsAuthenticated = authState?.isAuthenticated ?? isAuthenticated;
-    // const actualUser = authState?.user ?? user;
-
-    // For debugging, use mock authentication state
-    const actualIsAuthenticated = isAuthenticated;
-    const actualUser = user;
+    const handleDeleteWorker = () => {
+        const id = prompt("Enter Worker ID to delete:");
+        if (id) {
+            dispatch(deleteWorker(id));
+        }
+    };
 
     return (
         <>
@@ -67,7 +70,7 @@ const Worker = () => {
                                         className="header-icon fa fa-phone"
                                         aria-hidden="true"
                                     />
-                                    <span>Call : +92 3302061260</span>
+                                    <span> Call : +92 3302061260</span>
                                 </a>
                                 <a href="">
                                     <i
@@ -75,7 +78,7 @@ const Worker = () => {
                                         aria-hidden="true"
                                     />
                                     <span>
-                                        {" "}
+                                        {"  "}
                                         Email : tjsolarinfo@gmail.com{" "}
                                     </span>
                                 </a>
@@ -103,9 +106,7 @@ const Worker = () => {
                                     id="navbarSupportedContent">
                                     <ul className="navbar-nav">
                                         <li className="nav-item">
-                                            <a
-                                                className="nav-link"
-                                                href="/">
+                                            <a className="nav-link" href="/">
                                                 Home
                                             </a>
                                         </li>
@@ -190,23 +191,25 @@ const Worker = () => {
                         </div>
                         <div className="col-md-6">
                             <div className="detail-box center-detail-box">
-                                <h2>
-                                    manage your workers
-                                </h2>
-                                
+                                <h2>manage your workers</h2>
+
                                 <a href="">Add Worker</a>
                                 <br />
                                 <a href="">Update Worker</a>
                                 <br />
-                                <a className="delete-button" href="">Kick worker</a>
+                                <a
+                                    className="delete-button"
+                                    href="#"
+                                    onClick={handleDeleteWorker}>
+                                    Kick worker
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
             {/* end professional section */}
-            
-            
+
             {/* info section */}
             <section className="info_section">
                 <div className="container">
@@ -225,7 +228,8 @@ const Worker = () => {
                                                     />
                                                 </div>
                                                 <p>
-                                                A56, X.1, Gulshan e Maymar, Karachi, Pakistan
+                                                    A56, X.1, Gulshan e Maymar,
+                                                    Karachi, Pakistan
                                                 </p>
                                             </div>
                                         </a>
@@ -284,9 +288,9 @@ const Worker = () => {
             <footer className="footer_section">
                 <div className="container">
                     <p>
-                        © <span id="displayDateYear" /> All Rights Reserved By 
+                        © <span id="displayDateYear" /> All Rights Reserved By
                         <a href="https://www.behance.net/aawaizali">
-                             Aawaiz Ali
+                            Aawaiz Ali
                         </a>
                     </p>
                 </div>
