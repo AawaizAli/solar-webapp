@@ -189,7 +189,7 @@ const SearchPage = () => {
                       key: "charge_per_clean",
                   },
                   {
-                      title: "Subscription Plan",
+                      title: "Subscription Plan (Months)",
                       dataIndex: "subscription_plan",
                       key: "subscription_plan",
                   },

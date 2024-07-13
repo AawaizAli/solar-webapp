@@ -11,7 +11,7 @@ class Client(db.Model):
     longitude = db.Column(db.Float, nullable=False)
     total_panels = db.Column(db.Integer, nullable=False)
     charge_per_clean = db.Column(db.Float, nullable=False)  # Updated field
-    subscription_plan = db.Column(db.String(20), nullable=True)  # New field for subscription plan
+    subscription_plan = db.Column(db.Integer, nullable=True)   # New field for subscription plan
     subscription_start = db.Column(db.Date, nullable=True)  # New field for subscription start date
     subscription_end = db.Column(db.Date, nullable=True)  # New field for subscription end date
 

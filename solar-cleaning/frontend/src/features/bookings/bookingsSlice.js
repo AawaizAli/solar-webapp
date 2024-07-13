@@ -174,11 +174,11 @@ export const getByRecurrence = createAsyncThunk(
 
 // Async thunk for creating a booking
 export const createBooking = createAsyncThunk(
-    "bookings/createBooking",
+    "bookings/create-booking",
     async (bookingData, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post(
-                "/api/create-booking",
+                "/api/bookings/create-booking",
                 bookingData
             );
             return response.data;

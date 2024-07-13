@@ -33,7 +33,7 @@ def add_client():
         longitude=longitude,
         total_panels=data['total_panels'],
         charge_per_clean=data['charge_per_clean'],  # Updated field
-        subscription_plan=data.get('subscription_plan'),
+        subscription_plan=int(data['subscription_plan']) if 'subscription_plan' in data else None,
         subscription_start=subscription_start,
         subscription_end=subscription_end
     )

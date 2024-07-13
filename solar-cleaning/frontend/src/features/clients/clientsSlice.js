@@ -61,9 +61,9 @@ export const getAllClients = createAsyncThunk(
   'clients/get-all-clients',
   async (_, { rejectWithValue }) => {
     try {
-      // const response = await axiosInstance.get('/api/clients/get-all-clients');
-      console.log(dummyRes)
-      return dummyRes;
+      const response = await axiosInstance.get('/api/clients/get-all-clients');
+      // console.log(dummyRes)
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
     }
@@ -135,11 +135,15 @@ export const getByCharges = createAsyncThunk(
 
 // Async thunk for creating a client
 export const createClient = createAsyncThunk(
-    "clients/createClient",
+    "clients/add-client",
     async (clientData, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post(
+<<<<<<< HEAD
                 "/api/add-client",
+=======
+                "/api/clients/add-client",
+>>>>>>> c15fd24e7b4c6fec5263710d1eba4e57923e55c1
                 clientData
             );
             return response.data;
