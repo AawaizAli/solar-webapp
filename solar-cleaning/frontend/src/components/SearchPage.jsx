@@ -153,19 +153,14 @@ const SearchPage = () => {
     };
 
     const handleShowAvailability = (workerId) => {
-        console.log(`Fetching availability for worker ${workerId}`);
-        const dummyAvailability = Array(7)
-            .fill(null)
-            .map(() =>
-                Array(5)
-                    .fill(0)
-                    .map(() =>
-                        Math.random() > 0.5 ? "Available" : "Unavailable"
-                    )
-            );
-        setAvailabilityData(dummyAvailability);
-        setModalVisible(true);
-    };
+        const selectedWorker = workers.find((worker) => worker.id === workerId);
+        if (selectedWorker) {
+            setAvailabilityData(selectedWorker.availability);
+            setModalVisible(true);
+        } else {
+            console.error("Worker not found");
+        }
+    };    
 
     const columns =
         selectedOption === "Clients"
@@ -551,29 +546,32 @@ const SearchPage = () => {
                 </div>
                 <Table columns={columns} dataSource={data} loading={loading} rowKey="id" />
             </div>
-            <Modal
-                title="Worker Availability"
-                open={modalVisible}
-                onCancel={() => setModalVisible(false)}
-                footer={null}>
-                <div className="availability-grid">
-                    {availabilityData.map((week, weekIndex) => (
-                        <div key={weekIndex} className="week-row">
-                            {week.map((slot, slotIndex) => (
-                                <div
-                                    key={slotIndex}
-                                    className={`time-slot ${
-                                        slot === "Available"
-                                            ? "available"
-                                            : "unavailable"
-                                    }`}>
-                                    {slot}
-                                </div>
-                            ))}
+<Modal
+    title="Worker Availability"
+    visible={modalVisible}
+    onCancel={() => setModalVisible(false)}
+    footer={null}>
+    <div className="availability-grid">
+        {availabilityData.length > 0 ? (
+            availabilityData.map((week, weekIndex) => (
+                <div key={weekIndex} className="week-row">
+                    {week.map((slot, slotIndex) => (
+                        <div
+                            key={slotIndex}
+                            className={`time-slot ${
+                                slot ? "available" : "unavailable"
+                            }`}>
+                            {slot ? "Available" : "Unavailable"}
                         </div>
                     ))}
                 </div>
-            </Modal>
+            ))
+        ) : (
+            <p>No availability data to display.</p>
+        )}
+    </div>
+</Modal>
+
             <section className="info_section">
                 <div className="container">
                     <h4>Get In Touch</h4>

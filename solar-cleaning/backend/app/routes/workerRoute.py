@@ -24,7 +24,7 @@ def create_worker():
         base_location=data['base_location'],
         latitude=latitude,
         longitude=longitude,
-        availability=[[True] * 5 for _ in range(7)]
+        availability=data['availability']
     )
     db.session.add(new_worker)
     db.session.commit()
