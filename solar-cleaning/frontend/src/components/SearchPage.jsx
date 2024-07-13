@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Table, Input, Button, Modal, Select } from "antd";
-import { getAllBookings } from "../features/bookings/bookingsSlice";
-import { getAllClients } from "../features/clients/clientsSlice";
-import { getAllWorkers } from "../features/workers/workersSlice";
 
 import {
+    getAllWorkers,
     getById,
     getByName,
     getByBaseLocation,
@@ -167,8 +165,8 @@ const SearchPage = () => {
                   },
                   {
                       title: "Charges per Clean",
-                      dataIndex: "charges",
-                      key: "charges",
+                      dataIndex: "charge_per_clean",
+                      key: "charge_per_clean",
                   },
                   {
                       title: "Subscription Plan",

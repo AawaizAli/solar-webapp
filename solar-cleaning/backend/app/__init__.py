@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from app.config.config import Config
+import datetime  # Import the datetime module
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -16,6 +17,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=7)
 
     CORS(app, resources={r"/*": {"origins": "*"}})
 

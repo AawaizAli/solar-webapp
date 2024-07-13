@@ -55,7 +55,7 @@ export const getByName = createAsyncThunk(
   'clients/getByName',
   async (name, { getState }) => {
     const clients = getState().clients.clients;
-    return filterClients(clients, 'name', name);
+    return filterClients(clients, 'client_name', name);
   }
 );
 
@@ -89,9 +89,13 @@ export const getByTotalPanels = createAsyncThunk(
 // Async thunk for fetching clients by charges per clean
 export const getByCharges = createAsyncThunk(
   'clients/getByCharges',
-  async (charges, { getState }) => {
-    const clients = getState().clients.clients;
-    return filterClients(clients, 'charges', charges);
+  async (charges, { getState, rejectWithValue }) => {
+    try {
+      const clients = getState().clients.clients;
+      return clients.filter(client => client.charge_per_clean === charges);
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
 );
 
