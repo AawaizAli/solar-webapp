@@ -12,7 +12,13 @@ const initialState = {
 // Create an Axios instance with the base URL
 const axiosInstance = axios.create({
   baseURL: 'http://127.0.0.1:5000',
+  headers: {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+  }
 });
+
+
 // Add a request interceptor to include the JWT token in headers
 axiosInstance.interceptors.request.use(
   config => {
