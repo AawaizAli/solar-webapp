@@ -139,7 +139,11 @@ export const createClient = createAsyncThunk(
     async (clientData, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post(
+<<<<<<< HEAD
+                "/api/add-client",
+=======
                 "/api/clients/add-client",
+>>>>>>> c15fd24e7b4c6fec5263710d1eba4e57923e55c1
                 clientData
             );
             return response.data;

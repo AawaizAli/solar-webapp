@@ -159,7 +159,7 @@ const Client = () => {
                                 message: "Please input the charge per clean!",
                             },
                         ]}>
-                        <Input type="number" />
+                        <Input type="number" addonAfter="PKR" />
                     </Form.Item>
                     <Form.Item
                         name="subscription_plan"

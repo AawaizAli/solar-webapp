@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { deleteWorker } from "../features/workers/workersSlice";
+import { deleteWorker, createWorker } from "../features/workers/workersSlice";
+import { Modal, Form, Input, Checkbox, Button } from "antd";
+
 import { useDispatch, useSelector } from "react-redux";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "../../public/css/responsive.css";
 import "../../public/css/style.css";
-import sliderImg from "../../public/slider-img.png";
-import client from "../../public/client-1.jpg";
 import professionalImg from "../../public/professional-img.png";
-import clientTwo from "../../public/client-2.jpg";
 
 const Worker = () => {
     const [workerId, setWokerId] = useState("");
@@ -18,6 +18,47 @@ const Worker = () => {
     const authState = useSelector((state) => state.auth);
     const actualIsAuthenticated = authState?.isAuthenticated ?? false;
     const actualUser = authState?.user ?? { username: "Guest" };
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [form] = Form.useForm();
+
+    const initialAvailability = Array(7).fill(Array(5).fill(false));
+    const [availability, setAvailability] = useState(initialAvailability);
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+        form.resetFields();
+        setAvailability(initialAvailability);
+    };
+
+    const handleOk = () => {
+        form.validateFields()
+            .then((values) => {
+                const newWorker = {
+                    ...values,
+                    availability: availability,
+                };
+                dispatch(createWorker(newWorker));
+                setIsModalVisible(false);
+                form.resetFields();
+                setAvailability(initialAvailability);
+            })
+            .catch((info) => {
+                console.log("Validate Failed:", info);
+            });
+    };
+
+    const handleAvailabilityChange = (dayIndex, slotIndex) => {
+        const newAvailability = availability.map((day, dIndex) =>
+            day.map((slot, sIndex) =>
+                dIndex === dayIndex && sIndex === slotIndex ? !slot : slot
+            )
+        );
+        setAvailability(newAvailability);
+    };
 
     const handleDeleteWorker = () => {
         const id = prompt("Enter Worker ID to delete:");
@@ -61,6 +102,81 @@ const Worker = () => {
             <link href="css/responsive.css" rel="stylesheet" />
             <div className="hero_area">
                 {/* header section strats */}
+                <Modal
+                    title="Add Worker"
+                    open={isModalVisible}
+                    onOk={handleOk}
+                    onCancel={handleCancel}>
+                    <Form form={form} layout="vertical">
+                        <Form.Item
+                            name="name"
+                            label="Name"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please input the worker name!",
+                                },
+                            ]}>
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="base_location"
+                            label="Base Location"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please input the base location!",
+                                },
+                            ]}>
+                            <Input />
+                        </Form.Item>
+                        <Form.Item label="Availability">
+                            {[
+                                "Monday",
+                                "Tuesday",
+                                "Wednesday",
+                                "Thursday",
+                                "Friday",
+                                "Saturday",
+                                "Sunday",
+                            ].map((day, dayIndex) => (
+                                <div key={dayIndex}>
+                                    <br />
+                                    <span className="day-in-availability">
+                                        {day}
+                                    </span>
+                                    <br />
+                                    <br />
+                                    {[
+                                        "09:00-11:00",
+                                        "11:00-13:00",
+                                        "13:00-15:00",
+                                        "15:00-17:00",
+                                        "17:00-19:00",
+                                    ].map((slot, slotIndex) => (
+                                        <Checkbox
+                                            className="slot-in-availability"
+                                            key={slotIndex}
+                                            checked={
+                                                availability[dayIndex][
+                                                    slotIndex
+                                                ]
+                                            }
+                                            onChange={() =>
+                                                handleAvailabilityChange(
+                                                    dayIndex,
+                                                    slotIndex
+                                                )
+                                            }>
+                                            {slot}
+                                        </Checkbox>
+                                    ))}
+                                </div>
+                            ))}
+                        </Form.Item>
+                    </Form>
+                </Modal>
+
                 <header className="header_section">
                     <div className="header_top">
                         <div className="container-fluid">
@@ -193,7 +309,10 @@ const Worker = () => {
                             <div className="detail-box center-detail-box">
                                 <h2>manage your workers</h2>
 
-                                <a href="">Add Worker</a>
+                                <a href="#" onClick={showModal}>
+                                    Add Worker
+                                </a>
+
                                 <br />
                                 <a href="">Update Worker</a>
                                 <br />
