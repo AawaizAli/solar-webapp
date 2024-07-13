@@ -4,7 +4,8 @@ from flask_jwt_extended import jwt_required
 from ..models.clientModel import Client
 from .. import db
 from datetime import datetime
-from ..utils import get_coordinates  # Import the get_coordinates function
+from dateutil.relativedelta import relativedelta
+# from ..utils import get_coordinates  # Import the get_coordinates function
 
 client_bp = Blueprint('client_bp', __name__, url_prefix='/api/clients')
 
@@ -12,28 +13,24 @@ client_bp = Blueprint('client_bp', __name__, url_prefix='/api/clients')
 @jwt_required()
 def add_client():
     data = request.get_json()
-    if not all(key in data for key in ['name', 'contact_details', 'address', 'total_panels', 'charge_per_clean']):
+    if not all(key in data for key in ['name', 'contact_details', 'address', 'total_panels', 'charge_per_clean', 'subscription_start', 'subscription_plan']):
         return jsonify({'error': 'Bad Request', 'message': 'Missing required fields'}), 400
 
-    # Get coordinates from address
-    coordinates = get_coordinates(data['address'])
-    if not coordinates:
-        return jsonify({'error': 'Bad Request', 'message': 'Invalid address'}), 400
+    subscription_start = datetime.strptime(data['subscription_start'], '%Y-%m-%d').date()
+    subscription_plan = int(data['subscription_plan']) if 'subscription_plan' in data else 0
 
-    latitude, longitude = coordinates
+    # Calculate subscription_end date
+    subscription_end = subscription_start + relativedelta(months=subscription_plan)
 
-    subscription_start = datetime.strptime(data['subscription_start'], '%Y-%m-%d').date() if 'subscription_start' in data else None
-    subscription_end = datetime.strptime(data['subscription_end'], '%Y-%m-%d').date() if 'subscription_end' in data else None
-    
     new_client = Client(
         name=data['name'],
         contact_details=data['contact_details'],
         address=data['address'],
-        latitude=latitude,
-        longitude=longitude,
+        latitude=data['latitude'],
+        longitude=data['longitude'],
         total_panels=data['total_panels'],
         charge_per_clean=data['charge_per_clean'],  # Updated field
-        subscription_plan=int(data['subscription_plan']) if 'subscription_plan' in data else None,
+        subscription_plan=subscription_plan,
         subscription_start=subscription_start,
         subscription_end=subscription_end
     )

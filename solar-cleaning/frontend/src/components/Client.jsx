@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteClient, createClient } from "../features/clients/clientsSlice";
 
-import { Modal, Form, Input, Select, Button } from "antd";
+import { Modal, Form, Input, Button } from "antd";
+import AddressForm from "../components/AddressForm";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
@@ -21,6 +22,8 @@ const Client = () => {
     const actualUser = authState?.user ?? { username: "Guest" };
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
     const [form] = Form.useForm();
+    const [latitude, setLatitude] = useState(null);
+    const [longitude, setLongitude] = useState(null);
 
     const showCreateModal = () => {
         setIsCreateModalVisible(true);
@@ -31,10 +34,27 @@ const Client = () => {
     };
 
     const handleCreateClient = (values) => {
-        dispatch(createClient(values)).then(() => {
+        const { subscription_start, subscription_plan } = values;
+        const subscription_end = new Date(subscription_start);
+        subscription_end.setMonth(subscription_end.getMonth() + parseInt(subscription_plan));
+
+        const clientData = {
+            ...values,
+            latitude,
+            longitude,
+            subscription_end: subscription_end.toISOString().split('T')[0],
+        };
+
+        dispatch(createClient(clientData)).then(() => {
             setIsCreateModalVisible(false);
             form.resetFields();
         });
+    };
+
+    const handleAddressChange = (address, lat, lon) => {
+        form.setFieldsValue({ address });
+        setLatitude(lat);
+        setLongitude(lon);
     };
 
     const handleDeleteClient = () => {
@@ -117,7 +137,7 @@ const Client = () => {
                                 message: "Please input the address!",
                             },
                         ]}>
-                        <Input />
+                        <AddressForm onAddressChange={handleAddressChange} />
                     </Form.Item>
                     <Form.Item
                         name="total_panels"
@@ -155,10 +175,13 @@ const Client = () => {
                     </Form.Item>
                     <Form.Item
                         name="subscription_start"
-                        label="Subscription Start">
-                        <Input type="date" />
-                    </Form.Item>
-                    <Form.Item name="subscription_end" label="Subscription End">
+                        label="Subscription Start"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input the subscription start date!",
+                            },
+                        ]}>
                         <Input type="date" />
                     </Form.Item>
                     <Form.Item>
