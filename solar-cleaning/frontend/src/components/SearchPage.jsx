@@ -4,6 +4,13 @@ import { Table, Input, Button, Modal, Select } from "antd";
 import { getAllBookings } from "../features/bookings/bookingsSlice";
 import { getAllClients } from "../features/clients/clientsSlice";
 import { getAllWorkers } from "../features/workers/workersSlice";
+
+import {
+    getById,
+    getByName,
+    getByBaseLocation,
+} from "../features/workers/workersSlice";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
@@ -23,6 +30,8 @@ const SearchPage = () => {
     const [selectedField, setSelectedField] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [availabilityData, setAvailabilityData] = useState([]);
+    const [searchField, setSearchField] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const dispatch = useDispatch();
     const clients = useSelector((state) => state.clients.clients);
@@ -44,12 +53,34 @@ const SearchPage = () => {
         } else if (option === "Workers") {
             dispatch(getAllWorkers());
         } else if (option === "Bookings") {
-            dispatch(getAllBookings());
+            dispatch(getAllBookings()).then((action) => {
+                if (action.payload) {
+                    const mappedBookings = action.payload.map((booking) => ({
+                        ...booking,
+                        client_name: booking.client.name,
+                        worker_name: booking.worker.name,
+                    }));
+                    setData(mappedBookings);
+                }
+            });
         }
     };
 
-    const handleSearch = (value) => {
-        console.log(`Searching for ${value} in ${selectedOption} by ${selectedField}`);
+    const handleSearch = () => {
+        if (!selectedOption || !searchField || !searchQuery) {
+            return;
+        }
+
+        if (selectedOption === "Workers") {
+            if (searchField === "ID") {
+                dispatch(getById(searchQuery));
+            } else if (searchField === "Name") {
+                dispatch(getByName(searchQuery));
+            } else if (searchField === "Base Location") {
+                dispatch(getByBaseLocation(searchQuery));
+            }
+        }
+        // Add similar logic for Clients and Bookings if needed
     };
 
     const handleShowAvailability = (workerId) => {
@@ -72,9 +103,17 @@ const SearchPage = () => {
             ? [
                   { title: "ID", dataIndex: "id", key: "id" },
                   { title: "Name", dataIndex: "name", key: "name" },
-                  { title: "Contact", dataIndex: "contact", key: "contact" },
+                  {
+                      title: "Contact",
+                      dataIndex: "contact_details",
+                      key: "contact_details",
+                  },
                   { title: "Address", dataIndex: "address", key: "address" },
-                  { title: "Total Panels", dataIndex: "panels", key: "panels" },
+                  {
+                      title: "Total Panels",
+                      dataIndex: "total_panels",
+                      key: "total_panels",
+                  },
                   {
                       title: "Charges per Clean",
                       dataIndex: "charges",
@@ -82,15 +121,19 @@ const SearchPage = () => {
                   },
                   {
                       title: "Subscription Plan",
-                      dataIndex: "plan",
-                      key: "plan",
+                      dataIndex: "subscription_plan",
+                      key: "subscription_plan",
                   },
                   {
                       title: "Subscription Start",
-                      dataIndex: "start",
-                      key: "start",
+                      dataIndex: "subscription_start",
+                      key: "subscription_start",
                   },
-                  { title: "Subscription End", dataIndex: "end", key: "end" },
+                  {
+                      title: "Subscription End",
+                      dataIndex: "subscription_end",
+                      key: "subscription_end",
+                  },
               ]
             : selectedOption === "Workers"
             ? [
@@ -98,8 +141,8 @@ const SearchPage = () => {
                   { title: "Name", dataIndex: "name", key: "name" },
                   {
                       title: "Base Location",
-                      dataIndex: "location",
-                      key: "location",
+                      dataIndex: "base_location",
+                      key: "base_location",
                   },
                   {
                       title: "Availability",
@@ -115,35 +158,35 @@ const SearchPage = () => {
               ]
             : selectedOption === "Bookings"
             ? [
-                  {
-                      title: "Booking ID",
-                      dataIndex: "bookingid",
-                      key: "bookingid",
-                  },
+                  { title: "Booking ID", dataIndex: "id", key: "id" },
                   {
                       title: "Client ID",
-                      dataIndex: "client-id",
-                      key: "client-id",
+                      dataIndex: "client_id",
+                      key: "client_id",
                   },
                   {
                       title: "Worker ID",
-                      dataIndex: "worker-id",
-                      key: "worker-id",
+                      dataIndex: "worker_id",
+                      key: "worker_id",
                   },
                   {
                       title: "Client Name",
-                      dataIndex: "client-name",
-                      key: "client-name",
+                      dataIndex: "client_name",
+                      key: "client_name",
                   },
                   {
                       title: "Worker Name",
-                      dataIndex: "worker-name",
-                      key: "worker-name",
+                      dataIndex: "worker_name",
+                      key: "worker_name",
                   },
                   { title: "Date", dataIndex: "date", key: "date" },
-                  { title: "Slot", dataIndex: "slot", key: "slot" },
+                  { title: "Slot", dataIndex: "time_slot", key: "time_slot" },
                   { title: "Status", dataIndex: "status", key: "status" },
-                  { title: "Reoccurrence", dataIndex: "reocc", key: "reocc" },
+                  {
+                      title: "Reoccurrence",
+                      dataIndex: "recurrence",
+                      key: "recurrence",
+                  },
               ]
             : [];
 
@@ -170,32 +213,32 @@ const SearchPage = () => {
             ? [
                   { label: "ID", value: "id" },
                   { label: "Name", value: "name" },
-                  { label: "Contact", value: "contact" },
+                  { label: "Contact", value: "contact_details" },
                   { label: "Address", value: "address" },
-                  { label: "Total Panels", value: "panels" },
+                  { label: "Total Panels", value: "total_panels" },
                   { label: "Charges per Clean", value: "charges" },
-                  { label: "Subscription Plan", value: "plan" },
-                  { label: "Subscription Start", value: "start" },
-                  { label: "Subscription End", value: "end" },
+                  { label: "Subscription Plan", value: "subscription_plan" },
+                  { label: "Subscription Start", value: "subscription_start" },
+                  { label: "Subscription End", value: "subscription_end" },
               ]
             : selectedOption === "Workers"
             ? [
                   { label: "ID", value: "id" },
                   { label: "Name", value: "name" },
-                  { label: "Base Location", value: "location" },
+                  { label: "Base Location", value: "base_location" },
                   { label: "Availability", value: "availability" },
               ]
             : selectedOption === "Bookings"
             ? [
-                  { label: "Booking ID", value: "bookingid" },
-                  { label: "Client ID", value: "client-id" },
-                  { label: "Worker ID", value: "worker-id" },
-                  { label: "Client Name", value: "client-name" },
-                  { label: "Worker Name", value: "worker-name" },
+                  { label: "Booking ID", value: "id" },
+                  { label: "Client ID", value: "client_id" },
+                  { label: "Worker ID", value: "worker_id" },
+                  { label: "Client Name", value: "client_name" },
+                  { label: "Worker Name", value: "worker_name" },
                   { label: "Date", value: "date" },
-                  { label: "Slot", value: "slot" },
+                  { label: "Slot", value: "time_slot" },
                   { label: "Status", value: "status" },
-                  { label: "Reoccurrence", value: "reocc" },
+                  { label: "Reoccurrence", value: "recurrence" },
               ]
             : [];
 
@@ -357,16 +400,68 @@ const SearchPage = () => {
                     </div>
                     <div className="col-md-3">
                         <Select
-                            style={{ width: '100%' }}
+                            style={{ width: "100%" }}
                             placeholder="Select field"
-                            onChange={setSelectedField}
-                            disabled={!selectedOption}
-                        >
-                            {fields.map((field) => (
-                                <Option key={field.value} value={field.value}>
-                                    {field.label}
-                                </Option>
-                            ))}
+                            onChange={(value) => setSearchField(value)}
+                            disabled={!selectedOption}>
+                            {selectedOption === "Clients" && (
+                                <>
+                                    <Option value="id">ID</Option>
+                                    <Option value="name">Name</Option>
+                                    <Option value="contact_details">
+                                        Contact
+                                    </Option>
+                                    <Option value="address">Address</Option>
+                                    <Option value="total_panels">
+                                        Total Panels
+                                    </Option>
+                                    <Option value="charges">
+                                        Charges per Clean
+                                    </Option>
+                                    <Option value="subscription_plan">
+                                        Subscription Plan
+                                    </Option>
+                                    <Option value="subscription_start">
+                                        Subscription Start
+                                    </Option>
+                                    <Option value="subscription_end">
+                                        Subscription End
+                                    </Option>
+                                </>
+                            )}
+                            {selectedOption === "Workers" && (
+                                <>
+                                    <Option value="id">ID</Option>
+                                    <Option value="name">Name</Option>
+                                    <Option value="base_location">
+                                        Base Location
+                                    </Option>
+                                    <Option value="availability">
+                                        Availability
+                                    </Option>
+                                </>
+                            )}
+                            {selectedOption === "Bookings" && (
+                                <>
+                                    <Option value="id">
+                                        Booking ID
+                                    </Option>
+                                    <Option value="client_id">Client ID</Option>
+                                    <Option value="worker_id">Worker ID</Option>
+                                    <Option value="client_name">
+                                        Client Name
+                                    </Option>
+                                    <Option value="worker_name">
+                                        Worker Name
+                                    </Option>
+                                    <Option value="date">Date</Option>
+                                    <Option value="time_slot">Slot</Option>
+                                    <Option value="status">Status</Option>
+                                    <Option value="recurrence">
+                                        Reoccurrence
+                                    </Option>
+                                </>
+                            )}
                         </Select>
                     </div>
                     <div className="col-md-5">
@@ -381,8 +476,7 @@ const SearchPage = () => {
                         <Button
                             type="primary"
                             onClick={() => handleSearch()}
-                            disabled={!selectedField}
-                        >
+                            disabled={!selectedField}>
                             Search
                         </Button>
                     </div>
