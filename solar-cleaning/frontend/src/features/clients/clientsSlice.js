@@ -22,15 +22,15 @@ const dummyRes = [
       "total_panels": 20
   },
   {
-      "address": "PECHS, Karachi, Pakistan",
-      "charge_per_clean": 600.0,
-      "contact_details": "1122334455",
+      "address": "DHA, Lawhore, Pakistan",
+      "charge_per_clean": 999999999,
+      "contact_details": "031313131313",
       "id": 3,
       "latitude": 24.8684802,
       "longitude": 67.05872422961852,
-      "name": "Client Three",
+      "name": "iznaaaurrr waqaurrrr",
       "subscription_end": "2024-12-31",
-      "subscription_plan": "biweekly",
+      "subscription_plan": "bimonthly",
       "subscription_start": "2024-01-01",
       "total_panels": 25
   }
@@ -135,7 +135,7 @@ export const createClient = createAsyncThunk(
     async (clientData, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post(
-                "/api/clients",
+                "/api/create-client",
                 clientData
             );
             return response.data;

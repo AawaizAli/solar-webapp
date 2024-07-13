@@ -1,16 +1,17 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteClient, createClient } from "../features/clients/clientsSlice";
+
+import { Modal, Form, Input, Select, Button } from "antd";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "../../public/css/responsive.css";
 import "../../public/css/style.css";
-import sliderImg from "../../public/slider-img.png";
-import client from "../../public/client-1.jpg";
+
 import professionalImg from "../../public/professional-img.png";
-import clientTwo from "../../public/client-2.jpg";
-import { deleteClient } from "../features/clients/clientsSlice";
-import { useDispatch, useSelector } from "react-redux";
 
 const Client = () => {
     const [clientId, setClientId] = useState("");
@@ -18,6 +19,23 @@ const Client = () => {
     const authState = useSelector((state) => state.auth);
     const actualIsAuthenticated = authState?.isAuthenticated ?? false;
     const actualUser = authState?.user ?? { username: "Guest" };
+    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+    const [form] = Form.useForm();
+
+    const showCreateModal = () => {
+        setIsCreateModalVisible(true);
+    };
+
+    const handleCreateModalCancel = () => {
+        setIsCreateModalVisible(false);
+    };
+
+    const handleCreateClient = (values) => {
+        dispatch(createClient(values)).then(() => {
+            setIsCreateModalVisible(false);
+            form.resetFields();
+        });
+    };
 
     const handleDeleteClient = () => {
         const id = prompt("Enter Client ID to delete:");
@@ -59,6 +77,97 @@ const Client = () => {
             <link href="css/style.css" rel="stylesheet" />
             {/* responsive style */}
             <link href="css/responsive.css" rel="stylesheet" />
+            <Modal
+                title="Create Client"
+                visible={isCreateModalVisible}
+                onCancel={handleCreateModalCancel}
+                footer={null}>
+                <Form
+                    form={form}
+                    onFinish={handleCreateClient}
+                    layout="vertical">
+                    <Form.Item
+                        name="name"
+                        label="Name"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input the client name!",
+                            },
+                        ]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name="contact_details"
+                        label="Contact Details"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input the contact details!",
+                            },
+                        ]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name="address"
+                        label="Address"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input the address!",
+                            },
+                        ]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name="total_panels"
+                        label="Total Panels"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input the total panels!",
+                            },
+                        ]}>
+                        <Input type="number" />
+                    </Form.Item>
+                    <Form.Item
+                        name="charge_per_clean"
+                        label="Charge per Clean"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input the charge per clean!",
+                            },
+                        ]}>
+                        <Input type="number" />
+                    </Form.Item>
+                    <Form.Item
+                        name="subscription_period"
+                        label="Subscription Period (months)"
+                        rules={[
+                            {
+                                required: true,
+                                message:
+                                    "Please input the subscription period in months!",
+                            },
+                        ]}>
+                        <Input type="number" addonAfter="months" />
+                    </Form.Item>
+                    <Form.Item
+                        name="subscription_start"
+                        label="Subscription Start">
+                        <Input type="date" />
+                    </Form.Item>
+                    <Form.Item name="subscription_end" label="Subscription End">
+                        <Input type="date" />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Create Client
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
             <div className="hero_area">
                 {/* header section strats */}
                 <header className="header_section">
@@ -77,10 +186,7 @@ const Client = () => {
                                         className="fa fa-envelope"
                                         aria-hidden="true"
                                     />
-                                    <span>
-                                        {" "}
-                                        Email : tjsolarinfo@gmail.com{" "}
-                                    </span>
+                                    <span> Email : tjsolarinfo@gmail.com </span>
                                 </a>
                             </div>
                         </div>
@@ -106,9 +212,7 @@ const Client = () => {
                                     id="navbarSupportedContent">
                                     <ul className="navbar-nav">
                                         <li className="nav-item">
-                                            <a
-                                                className="nav-link"
-                                                href="/">
+                                            <a className="nav-link" href="/">
                                                 Home
                                             </a>
                                         </li>
@@ -193,19 +297,18 @@ const Client = () => {
                         </div>
                         <div className="col-md-6">
                             <div className="detail-box center-detail-box">
-                                <h2>
-                                    manage your clients
-                                </h2>
-                                
-                                <a href="">Add Client</a>
+                                <h2>manage your clients</h2>
+
+                                <a href="#" onClick={showCreateModal}>
+                                    Add Client
+                                </a>
                                 <br />
                                 <a href="">Update Client</a>
                                 <br />
-                                <a 
-                                    className="delete-button" 
+                                <a
+                                    className="delete-button"
                                     href="#"
-                                    onClick={handleDeleteClient}
-                                >
+                                    onClick={handleDeleteClient}>
                                     Delete Client
                                 </a>
                             </div>
@@ -214,8 +317,7 @@ const Client = () => {
                 </div>
             </section>
             {/* end professional section */}
-            
-            
+
             {/* info section */}
             <section className="info_section">
                 <div className="container">
@@ -234,7 +336,8 @@ const Client = () => {
                                                     />
                                                 </div>
                                                 <p>
-                                                A56, X.1, Gulshan e Maymar, Karachi, Pakistan
+                                                    A56, X.1, Gulshan e Maymar,
+                                                    Karachi, Pakistan
                                                 </p>
                                             </div>
                                         </a>
@@ -293,9 +396,9 @@ const Client = () => {
             <footer className="footer_section">
                 <div className="container">
                     <p>
-                        © <span id="displayDateYear" /> All Rights Reserved By 
+                        © <span id="displayDateYear" /> All Rights Reserved By
                         <a href="https://www.behance.net/aawaizali">
-                             Aawaiz Ali
+                            Aawaiz Ali
                         </a>
                     </p>
                 </div>

@@ -104,16 +104,8 @@ const Booking = () => {
                             ]}>
                             <Input />
                         </Form.Item>
-                        <Form.Item
-                            name="worker_id"
-                            label="Worker ID"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input the worker ID!",
-                                },
-                            ]}>
-                            <Input />
+                        <Form.Item name="worker_id" label="Worker ID">
+                            <Input placeholder="Leave empty for automatic assignment" />
                         </Form.Item>
                         <Form.Item
                             name="date"
