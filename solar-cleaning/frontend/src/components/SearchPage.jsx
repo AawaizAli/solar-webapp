@@ -11,6 +11,27 @@ import {
     getByBaseLocation,
 } from "../features/workers/workersSlice";
 
+import {
+    getAllBookings,
+    getByClientId as getBookingByClientId,
+    getByWorkerId as getBookingByWorkerId,
+    getByClientName as getBookingByClientName,
+    getByWorkerName as getBookingByWorkerName,
+    getByStatus,
+    getByTimeSlot,
+    getByRecurrence
+} from "../features/bookings/bookingsSlice";
+
+import {
+    getAllClients,
+    getById as getClientById,
+    getByName as getClientByName,
+    getByContact as getClientByContact,
+    getByAddress as getClientByAddress,
+    getByTotalPanels as getClientByTotalPanels,
+    getByCharges as getClientByCharges
+} from "../features/clients/clientsSlice";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
@@ -44,6 +65,7 @@ const SearchPage = () => {
     const handleMenuClick = (option) => {
         setSelectedOption(option);
         setSelectedField(null); // Reset the selected field
+        setSearchQuery("");
         fetchData(option);
     };
 
@@ -79,8 +101,37 @@ const SearchPage = () => {
             } else if (searchField === "Base Location") {
                 dispatch(getByBaseLocation(searchQuery));
             }
+        } else if (selectedOption === "Clients") {
+            if (searchField === "ID") {
+                dispatch(getClientById(searchQuery));
+            } else if (searchField === "Name") {
+                dispatch(getClientByName(searchQuery));
+            } else if (searchField === "Contact") {
+                dispatch(getClientByContact(searchQuery));
+            } else if (searchField === "Address") {
+                dispatch(getClientByAddress(searchQuery));
+            } else if (searchField === "Total Panels") {
+                dispatch(getClientByTotalPanels(searchQuery));
+            } else if (searchField === "Charges per Clean") {
+                dispatch(getClientByCharges(searchQuery));
+            }
+        } else if (selectedOption === "Bookings") {
+            if (searchField === "Client ID") {
+                dispatch(getBookingByClientId(searchQuery));
+            } else if (searchField === "Worker ID") {
+                dispatch(getBookingByWorkerId(searchQuery));
+            } else if (searchField === "Client Name") {
+                dispatch(getBookingByClientName(searchQuery));
+            } else if (searchField === "Worker Name") {
+                dispatch(getBookingByWorkerName(searchQuery));
+            } else if (searchField === "Status") {
+                dispatch(getByStatus(searchQuery));
+            } else if (searchField === "Slot") {
+                dispatch(getByTimeSlot(searchQuery));
+            } else if (searchField === "Reoccurrence") {
+                dispatch(getByRecurrence(searchQuery));
+            }
         }
-        // Add similar logic for Clients and Bookings if needed
     };
 
     const handleShowAvailability = (workerId) => {
@@ -443,9 +494,7 @@ const SearchPage = () => {
                             )}
                             {selectedOption === "Bookings" && (
                                 <>
-                                    <Option value="id">
-                                        Booking ID
-                                    </Option>
+                                    <Option value="id">Booking ID</Option>
                                     <Option value="client_id">Client ID</Option>
                                     <Option value="worker_id">Worker ID</Option>
                                     <Option value="client_name">
