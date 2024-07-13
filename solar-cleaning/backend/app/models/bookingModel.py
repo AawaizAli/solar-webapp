@@ -18,7 +18,7 @@ class Booking(db.Model):
             'id': self.id,
             'client_id': self.client_id,
             'worker_id': self.worker_id,
-            'date': self.date,
+            'date': self.date.strftime('%Y-%m-%d'),
             'time_slot': self.time_slot,
             'status': self.status,
             'client': self.client.to_dict(),

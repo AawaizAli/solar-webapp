@@ -89,12 +89,14 @@ const SearchPage = () => {
     };
 
     const handleSearch = () => {
-        if (!selectedOption || !searchField || !searchQuery) {
+        console.log("Searching for:", selectedOption, selectedField, searchQuery);
+        if (!selectedOption || !selectedField || !searchQuery) {
+            // console.log("Searching for:", selectedOption, selectedField, searchQuery);
             return;
         }
-
-        if (selectedOption === "Workers") {
-            if (searchField === "ID") {
+        // console.log("Searching for:", selectedOption, selectedField, searchQuery);
+        else if (selectedOption === "Workers") {
+            if (selectedField === "id") {
                 dispatch(getById(searchQuery));
             } else if (searchField === "Name") {
                 dispatch(getByName(searchQuery));
@@ -453,7 +455,7 @@ const SearchPage = () => {
                         <Select
                             style={{ width: "100%" }}
                             placeholder="Select field"
-                            onChange={(value) => setSearchField(value)}
+                            onChange={(value) => setSelectedField(value)}
                             disabled={!selectedOption}>
                             {selectedOption === "Clients" && (
                                 <>
@@ -516,6 +518,7 @@ const SearchPage = () => {
                     <div className="col-md-5">
                         <Search
                             placeholder={`Search ${selectedOption}`}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             onSearch={handleSearch}
                             enterButton
                             disabled={!selectedField}
@@ -524,7 +527,7 @@ const SearchPage = () => {
                     <div className="col-md-2">
                         <Button
                             type="primary"
-                            onClick={() => handleSearch()}
+                            onClick={handleSearch}
                             disabled={!selectedField}>
                             Search
                         </Button>
