@@ -49,6 +49,7 @@ const SearchPage = () => {
     const [selectedField, setSelectedField] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [availabilityData, setAvailabilityData] = useState([]);
+    const[tableData, setTableData] = useState([])
     const [searchField, setSearchField] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -77,10 +78,11 @@ const SearchPage = () => {
                 if (action.payload) {
                     const mappedBookings = action.payload.map((booking) => ({
                         ...booking,
+                        key: booking.id, 
                         client_name: booking.client.name,
                         worker_name: booking.worker.name,
                     }));
-                    setData(mappedBookings);
+                    setTableData(mappedBookings);
                 }
             });
         }
@@ -245,7 +247,7 @@ const SearchPage = () => {
             : selectedOption === "Workers"
             ? workers
             : selectedOption === "Bookings"
-            ? bookings
+            ? tableData 
             : [];
 
     const loading =
@@ -528,7 +530,7 @@ const SearchPage = () => {
                         </Button>
                     </div>
                 </div>
-                <Table columns={columns} dataSource={data} loading={loading} />
+                <Table columns={columns} dataSource={data} loading={loading} rowKey="id" />
             </div>
             <Modal
                 title="Worker Availability"

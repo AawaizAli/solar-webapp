@@ -82,7 +82,7 @@ export const getByClientName = createAsyncThunk(
                 await dispatch(getAllBookings());
             }
             const bookings = state.bookings.bookings.filter((booking) =>
-                booking.client_name
+                booking.client.name
                     .toLowerCase()
                     .includes(clientName.toLowerCase())
             );
@@ -102,7 +102,7 @@ export const getByWorkerName = createAsyncThunk(
                 await dispatch(getAllBookings());
             }
             const bookings = state.bookings.bookings.filter((booking) =>
-                booking.worker_name
+                booking.worker.name
                     .toLowerCase()
                     .includes(workerName.toLowerCase())
             );

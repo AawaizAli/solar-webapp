@@ -55,7 +55,7 @@ export const getByName = createAsyncThunk(
   'clients/getByName',
   async (name, { getState }) => {
     const clients = getState().clients.clients;
-    return filterClients(clients, 'client_name', name);
+    return filterClients(clients, 'name', name);
   }
 );
 
