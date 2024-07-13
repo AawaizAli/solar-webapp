@@ -70,9 +70,25 @@ const SearchPage = () => {
 
     const fetchData = (option) => {
         if (option === "Clients") {
-            dispatch(getAllClients());
+            dispatch(getAllClients()).then((action) => {
+                if (action.payload) {
+                    const mappedClients = action.payload.map((client) => ({
+                        ...client,
+                        key: client.id,
+                    }));
+                    setTableData(mappedClients);
+                }
+            });
         } else if (option === "Workers") {
-            dispatch(getAllWorkers());
+            dispatch(getAllWorkers()).then((action) => {
+                if (action.payload) {
+                    const mappedWorkers = action.payload.map((worker) => ({
+                        ...worker,
+                        key: worker.id,
+                    }));
+                    setTableData(mappedWorkers);
+                }
+            });
         } else if (option === "Bookings") {
             dispatch(getAllBookings()).then((action) => {
                 if (action.payload) {
@@ -245,9 +261,9 @@ const SearchPage = () => {
 
     const data =
         selectedOption === "Clients"
-            ? clients
+            ? tableData
             : selectedOption === "Workers"
-            ? workers
+            ? tableData
             : selectedOption === "Bookings"
             ? tableData 
             : [];

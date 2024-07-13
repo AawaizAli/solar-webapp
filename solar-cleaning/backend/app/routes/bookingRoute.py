@@ -47,7 +47,8 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
                     worker_id=worker_id,
                     date=current_date,
                     time_slot=time_slot,
-                    status=status
+                    status=status,
+                    recurrence=recurrence
                 )
                 worker.availability[day_index][slot_index] = False
                 db.session.add(new_booking)
