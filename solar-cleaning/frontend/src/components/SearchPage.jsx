@@ -105,12 +105,10 @@ const SearchPage = () => {
     };
 
     const handleSearch = () => {
-        console.log("Searching for:", selectedOption, selectedField, searchQuery);
         if (!selectedOption || !selectedField || !searchQuery) {
-            // console.log("Searching for:", selectedOption, selectedField, searchQuery);
+            console.log("Searching for:", selectedOption, selectedField, searchQuery);
             return;
         }
-        // console.log("Searching for:", selectedOption, selectedField, searchQuery);
         else if (selectedOption === "Workers") {
             if (selectedField === "id") {
                 dispatch(getById(searchQuery));
