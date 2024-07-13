@@ -13,6 +13,14 @@ body {
   margin: 0 10px;
 }
 
+.day-in-availability {
+  margin: 20px 0 !important;
+}
+
+.slot-in-availability {
+  font-size: 13px;
+}
+
 .login-form-button {
   background-color: #0355cc !important;
   border-color: #0355cc !important;
