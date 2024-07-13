@@ -142,7 +142,7 @@ const Client = () => {
                         <Input type="number" />
                     </Form.Item>
                     <Form.Item
-                        name="subscription_period"
+                        name="subscription_plan"
                         label="Subscription Period (months)"
                         rules={[
                             {
