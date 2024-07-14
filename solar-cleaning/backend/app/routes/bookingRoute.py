@@ -38,28 +38,31 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
         'monthly': 30
     }
 
-    if recurrence in recurrence_days:
-        interval = recurrence_days[recurrence]
-        while current_date <= subscription_end_date:
-            day_index = get_day_index(current_date.strftime('%Y-%m-%d'))
-            slot_index, time_slot_str = get_slot_index(time_slot)
+    interval = recurrence_days.get(recurrence)
+    if not interval:
+        return
 
-            worker = Worker.query.get(worker_id)
-            if worker and worker.availability[day_index][slot_index]:
-                new_booking = Booking(
-                    client_id=client_id,
-                    worker_id=worker_id,
-                    date=current_date,
-                    time_slot=time_slot_str,  # Use the string representation of the time slot
-                    status=status,
-                    recurrence=recurrence
-                )
-                worker.availability[day_index][slot_index] = False
-                db.session.add(new_booking)
+    while current_date <= subscription_end_date:
+        day_index = get_day_index(current_date.strftime('%Y-%m-%d'))
+        slot_index, time_slot_str = get_slot_index(time_slot)
 
-            current_date += timedelta(days=interval)
+        worker = Worker.query.get(worker_id)
+        if worker and worker.availability[day_index][slot_index]:
+            new_booking = Booking(
+                client_id=client_id,
+                worker_id=worker_id,
+                date=current_date,
+                time_slot=time_slot_str,  # Use the string representation of the time slot
+                status=status,
+                recurrence=recurrence
+            )
+            worker.availability[day_index][slot_index] = False  # Update the availability
+            db.session.add(new_booking)
+
+        current_date += timedelta(days=interval)
 
     db.session.commit()
+
 
 @booking_bp.route('/create-booking', methods=['POST'])
 @jwt_required()
@@ -121,7 +124,7 @@ def create_booking():
         recurrence=data.get('recurrence')
     )
 
-    closest_worker.availability[day_index][slot_index] = False
+    closest_worker.availability[day_index][slot_index] = False  # Update the availability
     db.session.add(new_booking)
 
     if 'recurrence' in data:
@@ -134,6 +137,8 @@ def create_booking():
         return jsonify({'error': 'Internal Server Error', 'message': 'An error occurred while saving the booking'}), 500
 
     return jsonify(new_booking.to_dict()), 201
+
+
 @booking_bp.route('/get-all-bookings', methods=['GET'])
 @jwt_required()
 def get_all_bookings():
