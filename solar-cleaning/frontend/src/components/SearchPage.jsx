@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Table, Input, Button, Modal, Select } from "antd";
-
 import {
     getAllWorkers,
     getById,
     getByName,
     getByBaseLocation,
 } from "../features/workers/workersSlice";
-
 import {
     getAllBookings,
     getByClientId as getBookingByClientId,
@@ -17,9 +15,8 @@ import {
     getByWorkerName as getBookingByWorkerName,
     getByStatus,
     getByTimeSlot,
-    getByRecurrence
+    getByRecurrence,
 } from "../features/bookings/bookingsSlice";
-
 import {
     getAllClients,
     getById as getClientById,
@@ -27,7 +24,7 @@ import {
     getByContact as getClientByContact,
     getByAddress as getClientByAddress,
     getByTotalPanels as getClientByTotalPanels,
-    getByCharges as getClientByCharges
+    getByCharges as getClientByCharges,
 } from "../features/clients/clientsSlice";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -49,8 +46,7 @@ const SearchPage = () => {
     const [selectedField, setSelectedField] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [availabilityData, setAvailabilityData] = useState([]);
-    const[tableData, setTableData] = useState([])
-    const [searchField, setSearchField] = useState(null);
+    const [tableData, setTableData] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
 
     const dispatch = useDispatch();
@@ -94,7 +90,7 @@ const SearchPage = () => {
                 if (action.payload) {
                     const mappedBookings = action.payload.map((booking) => ({
                         ...booking,
-                        key: booking.id, 
+                        key: booking.id,
                         client_name: booking.client.name,
                         worker_name: booking.worker.name,
                     }));
@@ -105,47 +101,194 @@ const SearchPage = () => {
     };
 
     const handleSearch = () => {
+        console.log("handleSearch");
+
         if (!selectedOption || !selectedField || !searchQuery) {
-            console.log("Searching for:", selectedOption, selectedField, searchQuery);
+            console.log("something missing");
             return;
         }
-        else if (selectedOption === "Workers") {
-            if (selectedField === "id") {
-                dispatch(getById(searchQuery));
-            } else if (searchField === "Name") {
-                dispatch(getByName(searchQuery));
-            } else if (searchField === "Base Location") {
-                dispatch(getByBaseLocation(searchQuery));
+
+        if (selectedOption === "Workers") {
+            if (selectedField === "ID") {
+                dispatch(getById(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
+            } else if (selectedField === "Name") {
+                dispatch(getByName(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
+            } else if (selectedField === "Base Location") {
+                dispatch(getByBaseLocation(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
             }
         } else if (selectedOption === "Clients") {
-            if (searchField === "ID") {
-                dispatch(getClientById(searchQuery));
-            } else if (searchField === "Name") {
-                dispatch(getClientByName(searchQuery));
-            } else if (searchField === "Contact") {
-                dispatch(getClientByContact(searchQuery));
-            } else if (searchField === "Address") {
-                dispatch(getClientByAddress(searchQuery));
-            } else if (searchField === "Total Panels") {
-                dispatch(getClientByTotalPanels(searchQuery));
-            } else if (searchField === "Charges per Clean") {
-                dispatch(getClientByCharges(searchQuery));
+            if (selectedField === "ID") {
+                dispatch(getClientById(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
+            } else if (selectedField === "Name") {
+                dispatch(getClientByName(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
+            } else if (selectedField === "Contact") {
+                dispatch(getClientByContact(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
+            } else if (selectedField === "Address") {
+                dispatch(getClientByAddress(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
+            } else if (selectedField === "Total Panels") {
+                dispatch(getClientByTotalPanels(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
+            } else if (selectedField === "Charges per Clean") {
+                dispatch(getClientByCharges(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
             }
         } else if (selectedOption === "Bookings") {
-            if (searchField === "Client ID") {
-                dispatch(getBookingByClientId(searchQuery));
-            } else if (searchField === "Worker ID") {
-                dispatch(getBookingByWorkerId(searchQuery));
-            } else if (searchField === "Client Name") {
-                dispatch(getBookingByClientName(searchQuery));
-            } else if (searchField === "Worker Name") {
-                dispatch(getBookingByWorkerName(searchQuery));
-            } else if (searchField === "Status") {
-                dispatch(getByStatus(searchQuery));
-            } else if (searchField === "Slot") {
-                dispatch(getByTimeSlot(searchQuery));
-            } else if (searchField === "Reoccurrence") {
-                dispatch(getByRecurrence(searchQuery));
+            if (selectedField === "Client ID") {
+                dispatch(getBookingByClientId(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
+            } else if (selectedField === "Worker ID") {
+                dispatch(getBookingByWorkerId(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
+            } else if (selectedField === "Client Name") {
+                dispatch(getBookingByClientName(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
+            } else if (selectedField === "Worker Name") {
+                dispatch(getBookingByWorkerName(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
+            } else if (selectedField === "Status") {
+                dispatch(getByStatus(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
+            } else if (selectedField === "Slot") {
+                dispatch(getByTimeSlot(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
+            } else if (selectedField === "Reoccurrence") {
+                dispatch(getByRecurrence(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
             }
         }
     };
@@ -257,14 +400,7 @@ const SearchPage = () => {
               ]
             : [];
 
-    const data =
-        selectedOption === "Clients"
-            ? tableData
-            : selectedOption === "Workers"
-            ? tableData
-            : selectedOption === "Bookings"
-            ? tableData 
-            : [];
+    const data = tableData;
 
     const loading =
         selectedOption === "Clients"
@@ -283,7 +419,7 @@ const SearchPage = () => {
                   { label: "Contact", value: "contact_details" },
                   { label: "Address", value: "address" },
                   { label: "Total Panels", value: "total_panels" },
-                  { label: "Charges per Clean", value: "charges" },
+                  { label: "Charges per Clean", value: "charge_per_clean" },
                   { label: "Subscription Plan", value: "subscription_plan" },
                   { label: "Subscription Start", value: "subscription_start" },
                   { label: "Subscription End", value: "subscription_end" },
@@ -465,7 +601,7 @@ const SearchPage = () => {
                     <div className="col-md-2 d-flex align-items-center">
                         <span>Search By:</span>
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                         <Select
                             style={{ width: "100%" }}
                             placeholder="Select field"
@@ -473,63 +609,63 @@ const SearchPage = () => {
                             disabled={!selectedOption}>
                             {selectedOption === "Clients" && (
                                 <>
-                                    <Option value="id">ID</Option>
-                                    <Option value="name">Name</Option>
-                                    <Option value="contact_details">
-                                        Contact
-                                    </Option>
-                                    <Option value="address">Address</Option>
-                                    <Option value="total_panels">
+                                    <Option value="ID">ID</Option>
+                                    <Option value="Name">Name</Option>
+                                    <Option value="Contact">Contact</Option>
+                                    <Option value="Address">Address</Option>
+                                    <Option value="Total Panels">
                                         Total Panels
                                     </Option>
-                                    <Option value="charges">
+                                    <Option value="Charges per Clean">
                                         Charges per Clean
                                     </Option>
-                                    <Option value="subscription_plan">
+                                    <Option value="Subscription Plan">
                                         Subscription Plan
                                     </Option>
-                                    <Option value="subscription_start">
+                                    <Option value="Subscription Start">
                                         Subscription Start
                                     </Option>
-                                    <Option value="subscription_end">
+                                    <Option value="Subscription End">
                                         Subscription End
                                     </Option>
                                 </>
                             )}
                             {selectedOption === "Workers" && (
                                 <>
-                                    <Option value="id">ID</Option>
-                                    <Option value="name">Name</Option>
-                                    <Option value="base_location">
+                                    <Option value="ID">ID</Option>
+                                    <Option value="Name">Name</Option>
+                                    <Option value="Base Location">
                                         Base Location
                                     </Option>
-                                    <Option value="availability">
+                                    <Option value="Availability">
                                         Availability
                                     </Option>
                                 </>
                             )}
                             {selectedOption === "Bookings" && (
                                 <>
-                                    <Option value="id">Booking ID</Option>
-                                    <Option value="client_id">Client ID</Option>
-                                    <Option value="worker_id">Worker ID</Option>
-                                    <Option value="client_name">
+                                    <Option value="Booking ID">
+                                        Booking ID
+                                    </Option>
+                                    <Option value="Client ID">Client ID</Option>
+                                    <Option value="Worker ID">Worker ID</Option>
+                                    <Option value="Client Name">
                                         Client Name
                                     </Option>
-                                    <Option value="worker_name">
+                                    <Option value="Worker Name">
                                         Worker Name
                                     </Option>
-                                    <Option value="date">Date</Option>
-                                    <Option value="time_slot">Slot</Option>
-                                    <Option value="status">Status</Option>
-                                    <Option value="recurrence">
+                                    <Option value="Date">Date</Option>
+                                    <Option value="Slot">Slot</Option>
+                                    <Option value="Status">Status</Option>
+                                    <Option value="Reoccurrence">
                                         Reoccurrence
                                     </Option>
                                 </>
                             )}
                         </Select>
                     </div>
-                    <div className="col-md-5">
+                    <div className="col-md-6">
                         <Search
                             placeholder={`Search ${selectedOption}`}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -538,16 +674,13 @@ const SearchPage = () => {
                             disabled={!selectedField}
                         />
                     </div>
-                    <div className="col-md-2">
-                        <Button
-                            type="primary"
-                            onClick={handleSearch}
-                            disabled={!selectedField}>
-                            Search
-                        </Button>
-                    </div>
                 </div>
-                <Table columns={columns} dataSource={data} loading={loading} rowKey="id" />
+                <Table
+                    columns={columns}
+                    dataSource={data}
+                    loading={loading}
+                    rowKey="id"
+                />
             </div>
             <Modal
                 title="Worker Availability"

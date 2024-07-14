@@ -107,6 +107,7 @@ export const getByAddress = createAsyncThunk(
   'clients/getByAddress',
   async (address, { getState }) => {
     const clients = getState().clients.clients;
+    console.log(filterClients(clients, 'address', address));
     return filterClients(clients, 'address', address);
   }
 );
