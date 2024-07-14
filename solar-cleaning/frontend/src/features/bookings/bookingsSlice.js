@@ -8,12 +8,12 @@ const initialState = {
 };
 
 const axiosInstance = axios.create({
-    baseURL: 'http://127.0.0.1:5000',
+    baseURL: "http://127.0.0.1:5000",
     headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    }
-  });
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+    },
+});
 
 axiosInstance.interceptors.request.use(
     (config) => {
@@ -41,38 +41,55 @@ export const getAllBookings = createAsyncThunk(
     }
 );
 
-export const getByClientId = createAsyncThunk(
-    "bookings/get-by-client-id",
-    async (clientId, { rejectWithValue, dispatch, getState }) => {
+export const getById = createAsyncThunk(
+    "bookings/get-by-id",
+    async (id, { rejectWithValue, dispatch, getState }) => {
         try {
             const state = getState();
             if (state.bookings.bookings.length === 0) {
                 await dispatch(getAllBookings());
             }
-            const bookings = state.bookings.bookings.filter(
-                (booking) => booking.client_id === clientId
+            const booking = state.bookings.bookings.find(
+                (booking) => booking.id === parseInt(id, 10)
             );
-            return bookings;
+            if (!booking) {
+                throw new Error("Booking not found");
+            }
+            return booking;
         } catch (error) {
-            return rejectWithValue(error.response.data.message);
+            return rejectWithValue(error.message);
         }
     }
 );
 
-export const getByWorkerId = createAsyncThunk(
-    "bookings/get-by-worker-id",
-    async (workerId, { rejectWithValue, dispatch, getState }) => {
+// Async thunk for fetching bookings by client ID
+export const getByClientId = createAsyncThunk(
+    "bookings/get-by-client-id",
+    async (clientId, { rejectWithValue, dispatch }) => {
         try {
-            const state = getState();
-            if (state.bookings.bookings.length === 0) {
-                await dispatch(getAllBookings());
-            }
-            const bookings = state.bookings.bookings.filter(
-                (booking) => booking.worker_id === workerId
+            const response = await dispatch(getAllBookings());
+            const bookings = response.payload.filter(
+                (booking) => booking.client_id.toString() === clientId
             );
             return bookings;
         } catch (error) {
-            return rejectWithValue(error.response.data.message);
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+// Async thunk for fetching bookings by worker ID
+export const getByWorkerId = createAsyncThunk(
+    "bookings/get-by-worker-id",
+    async (workerId, { rejectWithValue, dispatch }) => {
+        try {
+            const response = await dispatch(getAllBookings());
+            const bookings = response.payload.filter(
+                (booking) => booking.worker_id.toString() === workerId
+            );
+            return bookings;
+        } catch (error) {
+            return rejectWithValue(error.message);
         }
     }
 );
@@ -174,15 +191,18 @@ export const getByRecurrence = createAsyncThunk(
 
 // Async thunk for creating a booking
 export const createBooking = createAsyncThunk(
-  'bookings/create-booking',
-  async (bookingData, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post('/api/bookings/create-booking', bookingData);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data.message);
+    "bookings/create-booking",
+    async (bookingData, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                "/api/bookings/create-booking",
+                bookingData
+            );
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data.message);
+        }
     }
-  }
 );
 
 // Async thunk for updating a booking

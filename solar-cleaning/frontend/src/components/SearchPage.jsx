@@ -9,6 +9,7 @@ import {
 } from "../features/workers/workersSlice";
 import {
     getAllBookings,
+    getById as getBookingById,
     getByClientId as getBookingByClientId,
     getByWorkerId as getBookingByWorkerId,
     getByClientName as getBookingByClientName,
@@ -25,6 +26,7 @@ import {
     getByAddress as getClientByAddress,
     getByTotalPanels as getClientByTotalPanels,
     getByCharges as getClientByCharges,
+    getBySubscriptionPlan,
 } from "../features/clients/clientsSlice";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -210,15 +212,41 @@ const SearchPage = () => {
                         );
                     }
                 });
+            } else if (selectedField === "Subscription Plan") {
+                dispatch(getBySubscriptionPlan(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData(
+                            action.payload.map((item) => ({
+                                ...item,
+                                key: item.id,
+                            }))
+                        );
+                    }
+                });
             }
         } else if (selectedOption === "Bookings") {
-            if (selectedField === "Client ID") {
+            if (selectedField === "Booking ID") {
+                dispatch(getBookingById(searchQuery)).then((action) => {
+                    if (action.payload) {
+                        setTableData([
+                            {
+                                ...action.payload,
+                                key: action.payload.id,
+                                client_name: action.payload.client.name,
+                                worker_name: action.payload.worker.name,
+                            },
+                        ]);
+                    }
+                });
+            } else if (selectedField === "Client ID") {
                 dispatch(getBookingByClientId(searchQuery)).then((action) => {
                     if (action.payload) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
+                                client_name: item.client.name,
+                                worker_name: item.worker.name,
                             }))
                         );
                     }
@@ -230,6 +258,8 @@ const SearchPage = () => {
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
+                                client_name: item.client.name,
+                                worker_name: item.worker.name,
                             }))
                         );
                     }
@@ -241,6 +271,8 @@ const SearchPage = () => {
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
+                                client_name: item.client.name,
+                                worker_name: item.worker.name,
                             }))
                         );
                     }
@@ -252,6 +284,8 @@ const SearchPage = () => {
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
+                                client_name: item.client.name,
+                                worker_name: item.worker.name,
                             }))
                         );
                     }
@@ -263,6 +297,8 @@ const SearchPage = () => {
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
+                                client_name: item.client.name,
+                                worker_name: item.worker.name,
                             }))
                         );
                     }
@@ -274,6 +310,8 @@ const SearchPage = () => {
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
+                                client_name: item.client.name,
+                                worker_name: item.worker.name,
                             }))
                         );
                     }
@@ -285,6 +323,8 @@ const SearchPage = () => {
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
+                                client_name: item.client.name,
+                                worker_name: item.worker.name,
                             }))
                         );
                     }
@@ -301,7 +341,7 @@ const SearchPage = () => {
         } else {
             console.error("Worker not found");
         }
-    };    
+    };
 
     const columns =
         selectedOption === "Clients"
@@ -608,13 +648,7 @@ const SearchPage = () => {
                                         Charges per Clean
                                     </Option>
                                     <Option value="Subscription Plan">
-                                        Subscription Plan
-                                    </Option>
-                                    <Option value="Subscription Start">
-                                        Subscription Start
-                                    </Option>
-                                    <Option value="Subscription End">
-                                        Subscription End
+                                        Subscription Plan (Months)
                                     </Option>
                                 </>
                             )}
@@ -670,31 +704,31 @@ const SearchPage = () => {
                     rowKey="id"
                 />
             </div>
-<Modal
-    title="Worker Availability"
-    open={modalVisible}
-    onCancel={() => setModalVisible(false)}
-    footer={null}>
-    <div className="availability-grid">
-        {availabilityData.length > 0 ? (
-            availabilityData.map((week, weekIndex) => (
-                <div key={weekIndex} className="week-row">
-                    {week.map((slot, slotIndex) => (
-                        <div
-                            key={slotIndex}
-                            className={`time-slot ${
-                                slot ? "available" : "unavailable"
-                            }`}>
-                            {slot ? "Available" : "Unavailable"}
-                        </div>
-                    ))}
+            <Modal
+                title="Worker Availability"
+                open={modalVisible}
+                onCancel={() => setModalVisible(false)}
+                footer={null}>
+                <div className="availability-grid">
+                    {availabilityData.length > 0 ? (
+                        availabilityData.map((week, weekIndex) => (
+                            <div key={weekIndex} className="week-row">
+                                {week.map((slot, slotIndex) => (
+                                    <div
+                                        key={slotIndex}
+                                        className={`time-slot ${
+                                            slot ? "available" : "unavailable"
+                                        }`}>
+                                        {slot ? "Available" : "Unavailable"}
+                                    </div>
+                                ))}
+                            </div>
+                        ))
+                    ) : (
+                        <p>No availability data to display.</p>
+                    )}
                 </div>
-            ))
-        ) : (
-            <p>No availability data to display.</p>
-        )}
-    </div>
-</Modal>
+            </Modal>
 
             <section className="info_section">
                 <div className="container">
