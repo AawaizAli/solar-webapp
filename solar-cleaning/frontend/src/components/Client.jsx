@@ -36,15 +36,13 @@ const Client = () => {
     const handleCreateClient = (values) => {
         const { subscription_start, subscription_plan } = values;
         const subscription_end = new Date(subscription_start);
-        subscription_end.setMonth(
-            subscription_end.getMonth() + parseInt(subscription_plan)
-        );
+        subscription_end.setMonth(subscription_end.getMonth() + parseInt(subscription_plan));
 
         const clientData = {
             ...values,
             latitude,
             longitude,
-            subscription_end: subscription_end.toISOString().split("T")[0],
+            subscription_end: subscription_end.toISOString().split('T')[0],
         };
 
         dispatch(createClient(clientData)).then(() => {
@@ -139,7 +137,7 @@ const Client = () => {
                                 message: "Please input the address!",
                             },
                         ]}>
-                        <Input />
+                        <AddressForm onAddressChange={handleAddressChange} />
                     </Form.Item>
                     <Form.Item
                         name="total_panels"
@@ -181,8 +179,7 @@ const Client = () => {
                         rules={[
                             {
                                 required: true,
-                                message:
-                                    "Please input the subscription start date!",
+                                message: "Please input the subscription start date!",
                             },
                         ]}>
                         <Input type="date" />
