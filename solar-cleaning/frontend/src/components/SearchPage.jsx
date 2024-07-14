@@ -672,7 +672,7 @@ const SearchPage = () => {
             </div>
 <Modal
     title="Worker Availability"
-    visible={modalVisible}
+    open={modalVisible}
     onCancel={() => setModalVisible(false)}
     footer={null}>
     <div className="availability-grid">
@@ -773,7 +773,7 @@ const SearchPage = () => {
                     <p>
                         © <span id="displayDateYear" /> All Rights Reserved By{" "}
                         <a href="https://www.behance.net/aawaizali">
-                            Aawaiz Ali
+                            TJ Solars
                         </a>
                     </p>
                 </div>

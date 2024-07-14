@@ -468,7 +468,7 @@ const Booking = () => {
                     <p>
                         © <span id="displayDateYear" /> All Rights Reserved By
                         <a href="https://www.behance.net/aawaizali">
-                            Aawaiz Ali
+                                TJ Solars
                         </a>
                     </p>
                 </div>
