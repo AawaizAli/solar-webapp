@@ -1,5 +1,17 @@
 # app/models/bookingModel.py
 from .. import db
+from datetime import datetime
+
+
+def get_time_slot_str(index):
+    slots = {
+        0: "09:00-11:00",
+        1: "11:00-13:00",
+        2: "13:00-15:00",
+        3: "15:00-17:00",
+        4: "17:00-19:00"
+    }
+    return slots.get(index, "Invalid time slot")
 
 class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)

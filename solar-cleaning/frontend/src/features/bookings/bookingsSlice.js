@@ -174,18 +174,15 @@ export const getByRecurrence = createAsyncThunk(
 
 // Async thunk for creating a booking
 export const createBooking = createAsyncThunk(
-    "bookings/create-booking",
-    async (bookingData, { rejectWithValue }) => {
-        try {
-            const response = await axiosInstance.post(
-                "/api/bookings/create-booking",
-                bookingData
-            );
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response.data.message);
-        }
+  'bookings/create-booking',
+  async (bookingData, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post('/api/bookings/create-booking', bookingData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
     }
+  }
 );
 
 // Async thunk for updating a booking

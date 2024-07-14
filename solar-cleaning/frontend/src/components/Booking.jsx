@@ -36,11 +36,23 @@ const Booking = () => {
     };
 
     const handleCreateBooking = (values) => {
-        dispatch(createBooking(values)).then(() => {
-            setIsCreateModalVisible(false);
-            form.resetFields();
-        });
-    };
+        const formattedValues = {
+            ...values,
+            client_id: parseInt(values.client_id, 10),
+            worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
+            time_slot: parseInt(values.time_slot, 10),  // Convert time_slot to an integer
+        };
+        console.log("Form Values:", formattedValues);  // Debug statement
+        dispatch(createBooking(formattedValues))
+            .then(() => {
+                setIsCreateModalVisible(false);
+                form.resetFields();
+            })
+            .catch((error) => {
+                console.error("Error creating booking:", error);
+            });
+    };    
+    
 
     const handleDeleteBooking = () => {
         const id = prompt("Enter Booking ID to delete:");
