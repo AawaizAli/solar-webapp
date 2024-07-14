@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { deleteWorker, createWorker } from "../features/workers/workersSlice";
+import {
+    deleteWorker,
+    createWorker,
+    getAllWorkers,
+    updateWorker,
+} from "../features/workers/workersSlice";
 import { Modal, Form, Input, Checkbox, Button } from "antd";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +18,7 @@ import "../../public/css/style.css";
 import professionalImg from "../../public/professional-img.png";
 
 const Worker = () => {
-    const [workerId, setWokerId] = useState("");
+    const [workerId, setWorkerId] = useState("");
     const dispatch = useDispatch();
     const authState = useSelector((state) => state.auth);
     const actualIsAuthenticated = authState?.isAuthenticated ?? false;
@@ -25,6 +30,7 @@ const Worker = () => {
     const [availability, setAvailability] = useState(initialAvailability);
 
     const showModal = () => {
+        setWorkerId(""); // Clear workerId for create mode
         setIsModalVisible(true);
     };
 
@@ -37,11 +43,17 @@ const Worker = () => {
     const handleOk = () => {
         form.validateFields()
             .then((values) => {
-                const newWorker = {
+                const workerData = {
                     ...values,
                     availability: availability,
                 };
-                dispatch(createWorker(newWorker));
+                if (workerId) {
+                    dispatch(
+                        updateWorker({ id: workerId, updatedData: workerData })
+                    );
+                } else {
+                    dispatch(createWorker(workerData));
+                }
                 setIsModalVisible(false);
                 form.resetFields();
                 setAvailability(initialAvailability);
@@ -64,6 +76,27 @@ const Worker = () => {
         const id = prompt("Enter Worker ID to delete:");
         if (id) {
             dispatch(deleteWorker(id));
+        }
+    };
+
+    const handleEditWorker = () => {
+        const id = prompt("Enter Worker ID to edit:");
+        if (id) {
+            dispatch(getAllWorkers()).then((action) => {
+                const worker = action.payload.find(
+                    (worker) => worker.id === parseInt(id)
+                );
+                if (worker) {
+                    form.setFieldsValue({
+                        ...worker,
+                    });
+                    setAvailability(worker.availability);
+                    setWorkerId(id); // Set workerId for editing mode
+                    setIsModalVisible(true);
+                } else {
+                    alert("Worker not found!");
+                }
+            });
         }
     };
 
@@ -103,7 +136,7 @@ const Worker = () => {
             <div className="hero_area">
                 {/* header section strats */}
                 <Modal
-                    title="Add Worker"
+                    title={workerId ? "Update Worker" : "Add Worker"}
                     open={isModalVisible}
                     onOk={handleOk}
                     onCancel={handleCancel}>
@@ -314,7 +347,9 @@ const Worker = () => {
                                 </a>
 
                                 <br />
-                                <a href="">Update Worker</a>
+                                <a href="#" onClick={handleEditWorker}>
+                                    Update Worker
+                                </a>
                                 <br />
                                 <a
                                     className="delete-button"
