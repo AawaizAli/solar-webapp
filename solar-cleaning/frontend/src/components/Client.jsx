@@ -460,7 +460,7 @@ const Client = () => {
                     <p>
                         © <span id="displayDateYear" /> All Rights Reserved By
                         <a href="https://www.behance.net/aawaizali">
-                            TJ Solars
+                            Aawaiz Ali
                         </a>
                     </p>
                 </div>

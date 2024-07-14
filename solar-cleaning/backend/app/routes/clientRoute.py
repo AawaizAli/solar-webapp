@@ -6,7 +6,7 @@ from ..models.bookingModel import Booking
 from .. import db
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-# from ..utils import get_coordinates  # Import the get_coordinates function
+from ..utils import get_coordinates  # Import the get_coordinates function
 
 client_bp = Blueprint('client_bp', __name__, url_prefix='/api/clients')
 
@@ -19,6 +19,7 @@ def add_client():
 
     subscription_start = datetime.strptime(data['subscription_start'], '%Y-%m-%d').date()
     subscription_plan = int(data['subscription_plan']) if 'subscription_plan' in data else 0
+    latitude,longitude = get_coordinates(data['address'])
 
     # Calculate subscription_end date
     subscription_end = subscription_start + relativedelta(months=subscription_plan)
@@ -27,8 +28,8 @@ def add_client():
         name=data['name'],
         contact_details=data['contact_details'],
         address=data['address'],
-        latitude=data['latitude'],
-        longitude=data['longitude'],
+        latitude=latitude,
+        longitude=longitude,
         total_panels=data['total_panels'],
         charge_per_clean=data['charge_per_clean'],  # Updated field
         subscription_plan=subscription_plan,
