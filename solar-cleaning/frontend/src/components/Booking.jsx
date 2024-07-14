@@ -15,6 +15,8 @@ import professionalImg from "../../public/professional-img.png";
 import {
     deleteBooking,
     createBooking,
+    getAllBookings,
+    updateBooking,
 } from "../features/bookings/bookingsSlice";
 
 const Booking = () => {
@@ -23,11 +25,14 @@ const Booking = () => {
     const authState = useSelector((state) => state.auth);
     const actualIsAuthenticated = authState?.isAuthenticated ?? false;
     const actualUser = authState?.user ?? { username: "Guest" };
+    const [isEditMode, setIsEditMode] = useState(false);
 
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
     const [form] = Form.useForm();
 
     const showCreateModal = () => {
+        setBookingId("");
+        setIsEditMode(false);
         setIsCreateModalVisible(true);
     };
 
@@ -35,24 +40,62 @@ const Booking = () => {
         setIsCreateModalVisible(false);
     };
 
+    const handleEditBooking = () => {
+        const id = prompt("Enter Booking ID to edit:");
+        if (id) {
+            dispatch(getAllBookings()).then((action) => {
+                const booking = action.payload.find(
+                    (booking) => booking.id === parseInt(id)
+                );
+                if (booking) {
+                    form.setFieldsValue({
+                        ...booking,
+                        client_id: booking.client_id.toString(),
+                        worker_id: booking.worker_id
+                            ? booking.worker_id.toString()
+                            : "",
+                        time_slot: booking.time_slot.toString(),
+                    });
+                    setBookingId(id); // Set bookingId for editing mode
+                    setIsEditMode(true);
+                    setIsCreateModalVisible(true);
+                } else {
+                    alert("Booking not found!");
+                }
+            });
+        }
+    };
+
     const handleCreateBooking = (values) => {
         const formattedValues = {
             ...values,
             client_id: parseInt(values.client_id, 10),
             worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
-            time_slot: parseInt(values.time_slot, 10),  // Convert time_slot to an integer
+            time_slot: parseInt(values.time_slot, 10), // Convert time_slot to an integer
         };
-        console.log("Form Values:", formattedValues);  // Debug statement
-        dispatch(createBooking(formattedValues))
-            .then(() => {
-                setIsCreateModalVisible(false);
-                form.resetFields();
-            })
-            .catch((error) => {
-                console.error("Error creating booking:", error);
-            });
-    };    
-    
+        if (isEditMode) {
+            dispatch(
+                updateBooking({ id: bookingId, updatedData: formattedValues })
+            )
+                .then(() => {
+                    setIsCreateModalVisible(false);
+                    form.resetFields();
+                    setIsEditMode(false);
+                })
+                .catch((error) => {
+                    console.error("Error updating booking:", error);
+                });
+        } else {
+            dispatch(createBooking(formattedValues))
+                .then(() => {
+                    setIsCreateModalVisible(false);
+                    form.resetFields();
+                })
+                .catch((error) => {
+                    console.error("Error creating booking:", error);
+                });
+        }
+    };
 
     const handleDeleteBooking = () => {
         const id = prompt("Enter Booking ID to delete:");
@@ -97,7 +140,7 @@ const Booking = () => {
             <div className="hero_area">
                 {/* header section strats */}
                 <Modal
-                    title="Create Booking"
+                    title={isEditMode ? "Update Booking" : "Create Booking"}
                     open={isCreateModalVisible}
                     onCancel={handleCreateModalCancel}
                     footer={null}>
@@ -193,7 +236,9 @@ const Booking = () => {
                         </Form.Item>
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
-                                Create Booking
+                                {isEditMode
+                                    ? "Update Booking"
+                                    : "Create Booking"}
                             </Button>
                         </Form.Item>
                     </Form>
@@ -332,7 +377,10 @@ const Booking = () => {
                                     Create Booking
                                 </a>
                                 <br />
-                                <a href="">Update Booking</a>
+                                <a href="#" onClick={handleEditBooking}>
+                                    Update Booking
+                                </a>
+
                                 <br />
                                 <a
                                     className="delete-button"
