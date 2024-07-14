@@ -2,6 +2,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from ..models.clientModel import Client
+from ..models.bookingModel import Booking
 from .. import db
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
@@ -49,9 +50,23 @@ def get_all_clients():
 @jwt_required()
 def delete_client(client_id):
     client = Client.query.get_or_404(client_id)
+
+    # Find all bookings related to this client
+    related_bookings = Booking.query.filter_by(client_id=client_id).all()
+
+    # Update or delete related bookings before deleting the client
+    for booking in related_bookings:
+        db.session.delete(booking)
+
     db.session.delete(client)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        print(f"Error committing to the database: {e}")
+        return jsonify({'error': 'Internal Server Error', 'message': 'An error occurred while deleting the client'}), 500
+
     return jsonify({'message': 'Client deleted successfully'}), 200
+
 
 @client_bp.route('/get-client-by-id/<int:client_id>', methods=['GET'])
 @jwt_required()
