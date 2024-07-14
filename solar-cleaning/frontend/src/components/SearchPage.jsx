@@ -5,7 +5,7 @@ import {
     getAllWorkers,
     getById,
     getByName,
-    getByArea,
+    getByArea as getWorkerByArea,
 } from "../features/workers/workersSlice";
 import {
     getAllBookings,
@@ -20,6 +20,7 @@ import {
 } from "../features/bookings/bookingsSlice";
 import {
     getAllClients,
+    getByArea as getClientByArea,
     getById as getClientById,
     getByName as getClientByName,
     getByContact as getClientByContact,
@@ -128,7 +129,7 @@ const SearchPage = () => {
                     }
                 });
             } else if (selectedField === "Area") {
-                dispatch(getByArea(searchQuery)).then((action) => {
+                dispatch(getWorkerByArea(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(action.payload);
                     } else {
@@ -185,6 +186,14 @@ const SearchPage = () => {
                                 key: item.id,
                             }))
                         );
+                    } else {
+                        setTableData([]);
+                    }
+                });
+            } else if (selectedField === "Area") {
+                dispatch(getClientByArea(searchQuery)).then((action) => {
+                    if (Array.isArray(action.payload)) {
+                        setTableData(action.payload);
                     } else {
                         setTableData([]);
                     }

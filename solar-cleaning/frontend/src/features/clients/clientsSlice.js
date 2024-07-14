@@ -116,6 +116,26 @@ export const getByAddress = createAsyncThunk(
     }
 );
 
+export const getByArea = createAsyncThunk(
+    "clients/get-by-area",
+    async (area, { rejectWithValue, dispatch, getState }) => {
+        try {
+            const state = getState();
+            if (state.workers.workers.length === 0) {
+                await dispatch(getAllClients());
+            }
+            const clients = state.clients.clients.filter(
+                (client) =>
+                    client.area &&
+                    client.area.toLowerCase().includes(area.toLowerCase())
+            );
+            return clients;
+        } catch (error) {
+            return rejectWithValue(error.response.data.message);
+        }
+    }
+);
+
 // Async thunk for fetching clients by total panels
 export const getByTotalPanels = createAsyncThunk(
     "clients/getByTotalPanels",
@@ -269,6 +289,18 @@ const clientsSlice = createSlice({
                 state.loading = false;
             })
             .addCase(getByAddress.rejected, (state, action) => {
+                state.error = action.payload;
+                state.loading = false;
+            })
+            .addCase(getByArea.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getByArea.fulfilled, (state, action) => {
+                state.clients = action.payload;
+                state.loading = false;
+            })
+            .addCase(getByArea.rejected, (state, action) => {
                 state.error = action.payload;
                 state.loading = false;
             })

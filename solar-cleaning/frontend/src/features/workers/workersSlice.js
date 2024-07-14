@@ -101,8 +101,10 @@ export const getByArea = createAsyncThunk(
             if (state.workers.workers.length === 0) {
                 await dispatch(getAllWorkers());
             }
-            const workers = state.workers.workers.filter((worker) =>
-                worker.area.toLowerCase().includes(area.toLowerCase())
+            const workers = state.workers.workers.filter(
+                (worker) =>
+                    worker.area &&
+                    worker.area.toLowerCase().includes(area.toLowerCase())
             );
             return workers;
         } catch (error) {
