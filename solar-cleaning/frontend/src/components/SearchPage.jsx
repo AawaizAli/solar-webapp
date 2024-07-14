@@ -345,9 +345,9 @@ const SearchPage = () => {
                   { title: "ID", dataIndex: "id", key: "id" },
                   { title: "Name", dataIndex: "name", key: "name" },
                   {
-                      title: "Base Location",
-                      dataIndex: "base_location",
-                      key: "base_location",
+                      title: "Area",
+                      dataIndex: "area",
+                      key: "area",
                   },
                   {
                       title: "Availability",
@@ -423,7 +423,7 @@ const SearchPage = () => {
             ? [
                   { label: "ID", value: "id" },
                   { label: "Name", value: "name" },
-                  { label: "Base Location", value: "base_location" },
+                  { label: "Area", value: "area" },
                   { label: "Availability", value: "availability" },
               ]
             : selectedOption === "Bookings"

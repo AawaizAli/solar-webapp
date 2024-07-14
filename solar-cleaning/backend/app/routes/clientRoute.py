@@ -14,12 +14,12 @@ client_bp = Blueprint('client_bp', __name__, url_prefix='/api/clients')
 @jwt_required()
 def add_client():
     data = request.get_json()
-    if not all(key in data for key in ['name', 'contact_details', 'address', 'total_panels', 'charge_per_clean', 'subscription_start', 'subscription_plan']):
+    if not all(key in data for key in ['name', 'contact_details', 'address', 'total_panels', 'charge_per_clean', 'subscription_start', 'subscription_plan','area']):
         return jsonify({'error': 'Bad Request', 'message': 'Missing required fields'}), 400
 
     subscription_start = datetime.strptime(data['subscription_start'], '%Y-%m-%d').date()
     subscription_plan = int(data['subscription_plan']) if 'subscription_plan' in data else 0
-    latitude,longitude = get_coordinates(data['address'])
+    latitude,longitude = get_coordinates(data['area'])
 
     # Calculate subscription_end date
     subscription_end = subscription_start + relativedelta(months=subscription_plan)
@@ -28,6 +28,7 @@ def add_client():
         name=data['name'],
         contact_details=data['contact_details'],
         address=data['address'],
+        area=data['area'],
         latitude=latitude,
         longitude=longitude,
         total_panels=data['total_panels'],
@@ -83,12 +84,13 @@ def update_client(client_id):
     client.name = data.get('name', client.name)
     client.contact_details = data.get('contact', client.contact_details)
     client.address = data.get('address', client.address)
+    client.area = data.get('area', client.area)  # Add area field update
 
     # Get coordinates from address if address is updated
-    if 'address' in data:
-        coordinates = get_coordinates(data['address'])
+    if 'area' in data:
+        coordinates = get_coordinates(data['area'])
         if not coordinates:
-            return jsonify({'error': 'Bad Request', 'message': 'Invalid address'}), 400
+            return jsonify({'error': 'Bad Request', 'message': 'Invalid area'}), 400
         client.latitude, client.longitude = coordinates
 
     client.total_panels = data.get('total_panels', client.total_panels)
@@ -98,6 +100,7 @@ def update_client(client_id):
     client.subscription_end = datetime.strptime(data['subscription_end'], '%Y-%m-%d').date() if 'subscription_end' in data else client.subscription_end
     db.session.commit()
     return jsonify(client.to_dict()), 200
+
 
 
 

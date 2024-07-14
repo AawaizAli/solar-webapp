@@ -12,16 +12,16 @@ worker_bp = Blueprint('worker_bp', __name__, url_prefix='/api/workers')
 @jwt_required()
 def create_worker():
     data = request.get_json()
-    if not all(key in data for key in ['name', 'base_location']):
+    if not all(key in data for key in ['name', 'area']):
         return jsonify({'error': 'Bad Request', 'message': 'Name and base_location are required'}), 400
 
-    latitude, longitude = get_coordinates(data['base_location'])
+    latitude, longitude = get_coordinates(data['area'])
     if latitude is None or longitude is None:
-        return jsonify({'error': 'Invalid base location'}), 400
+        return jsonify({'error': 'Invalid base area'}), 400
 
     new_worker = Worker(
         name=data['name'],
-        base_location=data['base_location'],
+        area=data['area'],
         latitude=latitude,
         longitude=longitude,
         availability=data['availability']
@@ -51,11 +51,11 @@ def update_worker(worker_id):
     data = request.get_json()
     if 'name' in data:
         worker.name = data['name']
-    if 'base_location' in data:
-        worker.base_location = data['base_location']
-        latitude, longitude = get_coordinates(data['base_location'])
+    if 'area' in data:
+        worker.area = data['area']
+        latitude, longitude = get_coordinates(data['area'])
         if latitude is None or longitude is None:
-            return jsonify({'error': 'Invalid base location'}), 400
+            return jsonify({'error': 'Invalid base area'}), 400
         worker.latitude = latitude
         worker.longitude = longitude
     if 'availability' in data:

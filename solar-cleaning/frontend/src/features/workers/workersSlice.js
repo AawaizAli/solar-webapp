@@ -93,7 +93,7 @@ export const getByBaseLocation = createAsyncThunk(
                 await dispatch(getAllWorkers());
             }
             const workers = state.workers.workers.filter((worker) =>
-                worker.base_location
+                worker.area
                     .toLowerCase()
                     .includes(location.toLowerCase())
             );
