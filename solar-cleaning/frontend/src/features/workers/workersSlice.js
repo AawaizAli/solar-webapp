@@ -9,12 +9,12 @@ const initialState = {
 
 // Create an Axios instance with the base URL
 const axiosInstance = axios.create({
-    baseURL: 'http://127.0.0.1:5000',
+    baseURL: "http://127.0.0.1:5000",
     headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    }
-  });
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+    },
+});
 
 // Add a request interceptor to include the JWT token in headers
 axiosInstance.interceptors.request.use(
@@ -34,6 +34,15 @@ export const getAllWorkers = createAsyncThunk(
         try {
             const response = await axiosInstance.get(
                 "/api/workers/get-all-workers"
+            );
+            console.log(
+                response.data.map((worker) => ({
+                    ...worker,
+                    availability:
+                        typeof worker.availability === "string"
+                            ? JSON.parse(worker.availability)
+                            : worker.availability,
+                }))
             );
             return response.data.map((worker) => ({
                 ...worker,
@@ -84,18 +93,16 @@ export const getByName = createAsyncThunk(
     }
 );
 
-export const getByBaseLocation = createAsyncThunk(
-    "workers/get-by-base-location",
-    async (location, { rejectWithValue, dispatch, getState }) => {
+export const getByArea = createAsyncThunk(
+    "workers/get-by-area",
+    async (area, { rejectWithValue, dispatch, getState }) => {
         try {
             const state = getState();
             if (state.workers.workers.length === 0) {
                 await dispatch(getAllWorkers());
             }
             const workers = state.workers.workers.filter((worker) =>
-                worker.area
-                    .toLowerCase()
-                    .includes(location.toLowerCase())
+                worker.area.toLowerCase().includes(area.toLowerCase())
             );
             return workers;
         } catch (error) {
@@ -193,15 +200,17 @@ const workersSlice = createSlice({
                 state.error = action.payload;
                 state.loading = false;
             })
-            .addCase(getByBaseLocation.pending, (state) => {
+            .addCase(getByArea.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(getByBaseLocation.fulfilled, (state, action) => {
-                state.workers = action.payload;
+            .addCase(getByArea.fulfilled, (state, action) => {
                 state.loading = false;
+                if (action.payload.length > 0) {
+                    state.workers = action.payload;
+                }
             })
-            .addCase(getByBaseLocation.rejected, (state, action) => {
+            .addCase(getByArea.rejected, (state, action) => {
                 state.error = action.payload;
                 state.loading = false;
             })

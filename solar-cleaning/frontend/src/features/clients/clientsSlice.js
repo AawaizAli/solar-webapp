@@ -64,7 +64,7 @@ export const getAllClients = createAsyncThunk(
             const response = await axiosInstance.get(
                 "/api/clients/get-all-clients"
             );
-            // console.log(dummyRes)
+            console.log(response.data)
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data.message);

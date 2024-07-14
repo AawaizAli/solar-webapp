@@ -183,6 +183,18 @@ const Client = () => {
                         <Input />
                     </Form.Item>
                     <Form.Item
+                        name="area"
+                        label="Area"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input the Area!",
+                            },
+                        ]}>
+                        <Input />
+                    </Form.Item>
+                    
+                    <Form.Item
                         name="total_panels"
                         label="Total Panels"
                         rules={[

@@ -5,7 +5,7 @@ import {
     getAllWorkers,
     getById,
     getByName,
-    getByBaseLocation,
+    getByArea,
 } from "../features/workers/workersSlice";
 import {
     getAllBookings,
@@ -113,114 +113,119 @@ const SearchPage = () => {
         if (selectedOption === "Workers") {
             if (selectedField === "ID") {
                 dispatch(getById(searchQuery)).then((action) => {
-                    if (action.payload) {
-                        setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                            }))
-                        );
+                    if (Array.isArray(action.payload)) {
+                        setTableData(action.payload);
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Name") {
                 dispatch(getByName(searchQuery)).then((action) => {
-                    if (action.payload) {
-                        setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                            }))
-                        );
+                    if (Array.isArray(action.payload)) {
+                        setTableData(action.payload);
+                    } else {
+                        setTableData([]);
                     }
                 });
-            } else if (selectedField === "Base Location") {
-                dispatch(getByBaseLocation(searchQuery)).then((action) => {
-                    if (action.payload) {
-                        setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                            }))
-                        );
+            } else if (selectedField === "Area") {
+                dispatch(getByArea(searchQuery)).then((action) => {
+                    if (Array.isArray(action.payload)) {
+                        setTableData(action.payload);
+                    } else {
+                        setTableData([]);
                     }
                 });
             }
         } else if (selectedOption === "Clients") {
             if (selectedField === "ID") {
                 dispatch(getClientById(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Name") {
                 dispatch(getClientByName(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Contact") {
                 dispatch(getClientByContact(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Address") {
                 dispatch(getClientByAddress(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Total Panels") {
                 dispatch(getClientByTotalPanels(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Charges per Clean") {
                 dispatch(getClientByCharges(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Subscription Plan") {
                 dispatch(getBySubscriptionPlan(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
                                 key: item.id,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             }
@@ -236,11 +241,13 @@ const SearchPage = () => {
                                 worker_name: action.payload.worker.name,
                             },
                         ]);
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Client ID") {
                 dispatch(getBookingByClientId(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
@@ -249,11 +256,13 @@ const SearchPage = () => {
                                 worker_name: item.worker.name,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Worker ID") {
                 dispatch(getBookingByWorkerId(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
@@ -262,11 +271,13 @@ const SearchPage = () => {
                                 worker_name: item.worker.name,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Client Name") {
                 dispatch(getBookingByClientName(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
@@ -275,11 +286,13 @@ const SearchPage = () => {
                                 worker_name: item.worker.name,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Worker Name") {
                 dispatch(getBookingByWorkerName(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
@@ -288,11 +301,13 @@ const SearchPage = () => {
                                 worker_name: item.worker.name,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Status") {
                 dispatch(getByStatus(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
@@ -301,11 +316,13 @@ const SearchPage = () => {
                                 worker_name: item.worker.name,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Slot") {
                 dispatch(getByTimeSlot(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
@@ -314,11 +331,13 @@ const SearchPage = () => {
                                 worker_name: item.worker.name,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             } else if (selectedField === "Reoccurrence") {
                 dispatch(getByRecurrence(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    if (Array.isArray(action.payload)) {
                         setTableData(
                             action.payload.map((item) => ({
                                 ...item,
@@ -327,6 +346,8 @@ const SearchPage = () => {
                                 worker_name: item.worker.name,
                             }))
                         );
+                    } else {
+                        setTableData([]);
                     }
                 });
             }
@@ -343,6 +364,23 @@ const SearchPage = () => {
         }
     };
 
+    const dayNames = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+    ];
+    const timeSlots = [
+        "09:00-11:00",
+        "11:00-13:00",
+        "13:00-15:00",
+        "15:00-17:00",
+        "17:00-19:00",
+    ];
+
     const columns =
         selectedOption === "Clients"
             ? [
@@ -354,6 +392,11 @@ const SearchPage = () => {
                       key: "contact_details",
                   },
                   { title: "Address", dataIndex: "address", key: "address" },
+                  {
+                      title: "Area",
+                      dataIndex: "area",
+                      key: "area",
+                  },
                   {
                       title: "Total Panels",
                       dataIndex: "total_panels",
@@ -453,6 +496,7 @@ const SearchPage = () => {
                   { label: "Name", value: "name" },
                   { label: "Contact", value: "contact_details" },
                   { label: "Address", value: "address" },
+                  { label: "Area", value: "area" },
                   { label: "Total Panels", value: "total_panels" },
                   { label: "Charges per Clean", value: "charge_per_clean" },
                   { label: "Subscription Plan", value: "subscription_plan" },
@@ -641,6 +685,7 @@ const SearchPage = () => {
                                     <Option value="Name">Name</Option>
                                     <Option value="Contact">Contact</Option>
                                     <Option value="Address">Address</Option>
+                                    <Option value="Area">Area</Option>
                                     <Option value="Total Panels">
                                         Total Panels
                                     </Option>
@@ -656,12 +701,10 @@ const SearchPage = () => {
                                 <>
                                     <Option value="ID">ID</Option>
                                     <Option value="Name">Name</Option>
-                                    <Option value="Base Location">
-                                        Base Location
-                                    </Option>
-                                    <Option value="Availability">
+                                    <Option value="Area">Area</Option>
+                                    {/* <Option value="Availability">
                                         Availability
-                                    </Option>
+                                    </Option> */}
                                 </>
                             )}
                             {selectedOption === "Bookings" && (
@@ -711,17 +754,31 @@ const SearchPage = () => {
                 footer={null}>
                 <div className="availability-grid">
                     {availabilityData.length > 0 ? (
-                        availabilityData.map((week, weekIndex) => (
-                            <div key={weekIndex} className="week-row">
-                                {week.map((slot, slotIndex) => (
-                                    <div
-                                        key={slotIndex}
-                                        className={`time-slot ${
-                                            slot ? "available" : "unavailable"
-                                        }`}>
-                                        {slot ? "Available" : "Unavailable"}
-                                    </div>
-                                ))}
+                        availabilityData.map((dayAvailability, dayIndex) => (
+                            <div key={dayIndex} className="day-row">
+                                <h6>{dayNames[dayIndex]}</h6>
+                                {dayAvailability.map(
+                                    (isAvailable, slotIndex) => (
+                                        <div
+                                            key={slotIndex}
+                                            className={`time-slot ${
+                                                isAvailable
+                                                    ? "available"
+                                                    : "unavailable"
+                                            }`}
+                                            style={{
+                                                color: isAvailable
+                                                    ? "green"
+                                                    : "red",
+                                            }}>
+                                            {timeSlots[slotIndex]} (
+                                            {isAvailable
+                                                ? "Available"
+                                                : "Unavailable"}
+                                            )
+                                        </div>
+                                    )
+                                )}
                             </div>
                         ))
                     ) : (
