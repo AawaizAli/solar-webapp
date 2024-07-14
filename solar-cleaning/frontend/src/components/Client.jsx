@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteClient, createClient } from "../features/clients/clientsSlice";
+import {
+    deleteClient,
+    createClient,
+    getAllClients,
+} from "../features/clients/clientsSlice";
 
 import { Modal, Form, Input, Button } from "antd";
 import AddressForm from "../components/AddressForm";
@@ -15,7 +19,7 @@ import "../../public/css/style.css";
 import professionalImg from "../../public/professional-img.png";
 
 const Client = () => {
-    const [clientId, setClientId] = useState("");
+    const [clientId, setClientId] = useState(""); // Add this state at the top
     const dispatch = useDispatch();
     const authState = useSelector((state) => state.auth);
     const actualIsAuthenticated = authState?.isAuthenticated ?? false;
@@ -26,6 +30,7 @@ const Client = () => {
     const [longitude, setLongitude] = useState(null);
 
     const showCreateModal = () => {
+        setClientId(""); // Clear clientId for create mode
         setIsCreateModalVisible(true);
     };
 
@@ -33,22 +38,60 @@ const Client = () => {
         setIsCreateModalVisible(false);
     };
 
+    const handleEditClient = () => {
+        const id = prompt("Enter Client ID to edit:");
+        if (id) {
+            dispatch(getAllClients()).then((action) => {
+                const client = action.payload.find(
+                    (client) => client.id === parseInt(id)
+                );
+                if (client) {
+                    form.setFieldsValue({
+                        ...client,
+                        subscription_start: client.subscription_start
+                            ? client.subscription_start.split("T")[0]
+                            : null,
+                        subscription_plan: client.subscription_plan,
+                    });
+                    setLatitude(client.latitude);
+                    setLongitude(client.longitude);
+                    setClientId(id); // Set clientId for editing mode
+                    setIsCreateModalVisible(true);
+                } else {
+                    alert("Client not found!");
+                }
+            });
+        }
+    };
+
     const handleCreateClient = (values) => {
         const { subscription_start, subscription_plan } = values;
         const subscription_end = new Date(subscription_start);
-        subscription_end.setMonth(subscription_end.getMonth() + parseInt(subscription_plan));
+        subscription_end.setMonth(
+            subscription_end.getMonth() + parseInt(subscription_plan)
+        );
 
         const clientData = {
             ...values,
             latitude,
             longitude,
-            subscription_end: subscription_end.toISOString().split('T')[0],
+            subscription_end: subscription_end.toISOString().split("T")[0],
         };
 
-        dispatch(createClient(clientData)).then(() => {
-            setIsCreateModalVisible(false);
-            form.resetFields();
-        });
+        if (clientId) {
+            dispatch(
+                updateClient({ id: clientId, updatedData: clientData })
+            ).then(() => {
+                setIsCreateModalVisible(false);
+                form.resetFields();
+                setClientId(""); // Clear clientId after update
+            });
+        } else {
+            dispatch(createClient(clientData)).then(() => {
+                setIsCreateModalVisible(false);
+                form.resetFields();
+            });
+        }
     };
 
     const handleAddressChange = (address, lat, lon) => {
@@ -98,8 +141,8 @@ const Client = () => {
             {/* responsive style */}
             <link href="css/responsive.css" rel="stylesheet" />
             <Modal
-                title="Create Client"
-                visible={isCreateModalVisible}
+                title={clientId ? "Update Client" : "Create Client"}
+                open={isCreateModalVisible}
                 onCancel={handleCreateModalCancel}
                 footer={null}>
                 <Form
@@ -137,7 +180,7 @@ const Client = () => {
                                 message: "Please input the address!",
                             },
                         ]}>
-                        <AddressForm onAddressChange={handleAddressChange} />
+                        <Input />
                     </Form.Item>
                     <Form.Item
                         name="total_panels"
@@ -179,14 +222,15 @@ const Client = () => {
                         rules={[
                             {
                                 required: true,
-                                message: "Please input the subscription start date!",
+                                message:
+                                    "Please input the subscription start date!",
                             },
                         ]}>
                         <Input type="date" />
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
-                            Create Client
+                            {clientId ? "Update Client" : "Create Client"}
                         </Button>
                     </Form.Item>
                 </Form>
@@ -326,7 +370,9 @@ const Client = () => {
                                     Add Client
                                 </a>
                                 <br />
-                                <a href="">Update Client</a>
+                                <a href="#" onClick={handleEditClient}>
+                                    Update Client
+                                </a>
                                 <br />
                                 <a
                                     className="delete-button"
