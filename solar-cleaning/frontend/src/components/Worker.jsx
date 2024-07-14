@@ -153,12 +153,12 @@ const Worker = () => {
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            name="base_location"
-                            label="Base Location"
+                            name="area"
+                            label="Area"
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please input the base location!",
+                                    message: "Please input the Area!",
                                 },
                             ]}>
                             <Input />
