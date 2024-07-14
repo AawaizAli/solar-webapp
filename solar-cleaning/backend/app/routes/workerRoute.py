@@ -13,7 +13,7 @@ worker_bp = Blueprint('worker_bp', __name__, url_prefix='/api/workers')
 def create_worker():
     data = request.get_json()
     if not all(key in data for key in ['name', 'area']):
-        return jsonify({'error': 'Bad Request', 'message': 'Name and base_location are required'}), 400
+        return jsonify({'error': 'Bad Request', 'message': 'Name and area are required'}), 400
 
     latitude, longitude = get_coordinates(data['area'])
     if latitude is None or longitude is None:
