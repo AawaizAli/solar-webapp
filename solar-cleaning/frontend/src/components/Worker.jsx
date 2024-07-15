@@ -28,6 +28,8 @@ const Worker = () => {
 
     const initialAvailability = Array(7).fill(Array(5).fill(false));
     const [availability, setAvailability] = useState(initialAvailability);
+    const [latitude, setLatitude] = useState(null);
+    const [longitude, setLongitude] = useState(null);
 
     const showModal = () => {
         setWorkerId(""); // Clear workerId for create mode
@@ -46,6 +48,8 @@ const Worker = () => {
                 const workerData = {
                     ...values,
                     availability: availability,
+                    latitude: latitude, // Include latitude
+                    longitude: longitude,
                 };
                 if (workerId) {
                     dispatch(
@@ -100,8 +104,10 @@ const Worker = () => {
         }
     };
 
-    const handleAddressChange = (formattedAddress) => {
+    const handleAddressChange = (formattedAddress,lat,lon) => {
         form.setFieldsValue({ area: formattedAddress });
+        setLatitude(lat);
+        setLongitude(lon);
     };
 
     return (

@@ -19,7 +19,7 @@ def add_client():
 
     subscription_start = datetime.strptime(data['subscription_start'], '%Y-%m-%d').date()
     subscription_plan = int(data['subscription_plan']) if 'subscription_plan' in data else 0
-    latitude,longitude = get_coordinates(data['area'])
+    # latitude,longitude = get_coordinates(data['area'])
 
     # Calculate subscription_end date
     subscription_end = subscription_start + relativedelta(months=subscription_plan)
@@ -28,8 +28,8 @@ def add_client():
         name=data['name'],
         contact_details=data['contact_details'],
         address=data['address'],
-        latitude=latitude,
-        longitude=longitude,
+        latitude=data['latitude'],
+        longitude=data['longitude'],
         total_panels=data['total_panels'],
         charge_per_clean=data['charge_per_clean'],  # Updated field
         subscription_plan=subscription_plan,
@@ -87,11 +87,14 @@ def update_client(client_id):
     client.area = data.get('area', client.area)  # Add area field update
 
     # Get coordinates from address if address is updated
-    if 'area' in data:
-        coordinates = get_coordinates(data['area'])
-        if not coordinates:
-            return jsonify({'error': 'Bad Request', 'message': 'Invalid area'}), 400
-        client.latitude, client.longitude = coordinates
+    # if 'area' in data:
+    #     coordinates = get_coordinates(data['area'])
+    #     if not coordinates:
+    #         return jsonify({'error': 'Bad Request', 'message': 'Invalid area'}), 400
+    #     client.latitude, client.longitude = coordinates
+
+    client.latitude=data.get('latitude',client.latitude)
+    client.longitude=data.get('longitude',client.longitude)
 
     client.total_panels = data.get('total_panels', client.total_panels)
     client.charge_per_clean = data.get('charge_per_clean', client.charge_per_clean)  # Updated field

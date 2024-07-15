@@ -100,8 +100,10 @@ const Client = () => {
         setLongitude(lon);
     };
 
-    const handleAreaChange = (area) => {
+    const handleAreaChange = (area,lat,lon) => {
         form.setFieldsValue({ area });
+        setLatitude(lat);
+        setLongitude(lon);
     };
 
     const handleDeleteClient = () => {
