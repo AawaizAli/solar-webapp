@@ -65,6 +65,8 @@ const Booking = () => {
             ...values,
             client_id: parseInt(values.client_id, 10),
             worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
+            time_slot: parseInt(values.time_slot, 10),
+
             // Convert time_slot to an integer
         };
         console.log("Formatted Values:", formattedValues);
