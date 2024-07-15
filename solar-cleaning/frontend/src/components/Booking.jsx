@@ -266,11 +266,7 @@ const Booking = () => {
                                     className="collapse navbar-collapse"
                                     id="navbarSupportedContent">
                                     <ul className="navbar-nav">
-                                        <li className="nav-item">
-                                            <a className="nav-link" href="/">
-                                                Home
-                                            </a>
-                                        </li>
+                                    
                                         {actualIsAuthenticated ? (
                                             <>
                                                 <li className="nav-item">

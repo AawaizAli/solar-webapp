@@ -6,8 +6,8 @@ import {
     updateWorker,
 } from "../features/workers/workersSlice";
 import { Modal, Form, Input, Checkbox, Button } from "antd";
-
 import { useDispatch, useSelector } from "react-redux";
+import AddressForm from "./AddressForm";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
@@ -100,6 +100,10 @@ const Worker = () => {
         }
     };
 
+    const handleAddressChange = (formattedAddress) => {
+        form.setFieldsValue({ area: formattedAddress });
+    };
+
     return (
         <>
             {/* Basic */}
@@ -161,7 +165,9 @@ const Worker = () => {
                                     message: "Please input the Area!",
                                 },
                             ]}>
-                            <Input />
+                            <AddressForm
+                                onAddressChange={handleAddressChange}
+                            />
                         </Form.Item>
                         <Form.Item label="Availability">
                             {[
@@ -254,11 +260,7 @@ const Worker = () => {
                                     className="collapse navbar-collapse"
                                     id="navbarSupportedContent">
                                     <ul className="navbar-nav">
-                                        <li className="nav-item">
-                                            <a className="nav-link" href="/">
-                                                Home
-                                            </a>
-                                        </li>
+                                       
                                         {actualIsAuthenticated ? (
                                             <>
                                                 <li className="nav-item">
