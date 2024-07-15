@@ -151,60 +151,68 @@ def get_booking_by_id(booking_id):
 @booking_bp.route('/update-booking/<int:booking_id>', methods=['PUT'])
 @jwt_required()
 def update_booking(booking_id):
-    booking = Booking.query.get_or_404(booking_id)
     data = request.get_json()
-    print(f"Received update data: {data}")
+    if not all(key in data for key in ['client_id', 'worker_id', 'date', 'time_slot', 'status']):
+        return jsonify({'error': 'Bad Request', 'message': 'Missing required fields'}), 400
 
-    # Existing booking details
-    old_worker_id = booking.worker_id
-    old_day_index = get_day_index(booking.date.strftime('%Y-%m-%d'))
-    old_slot_index, old_time_slot_str = get_slot_index(booking.time_slot)
+    booking = Booking.query.get_or_404(booking_id)
 
-    # Update fields if provided
-    if 'client_id' in data:
-        client = Client.query.get(data['client_id'])
-        if not client:
-            return jsonify({'error': 'Not Found', 'message': 'Client not found'}), 404
-        booking.client_id = client.id
-
-    if 'worker_id' in data:
-        worker = Worker.query.get(data['worker_id'])
-        if not worker:
-            return jsonify({'error': 'Not Found', 'message': 'Worker not found'}), 404
-        booking.worker_id = worker.id
-    else:
-        worker = Worker.query.get(old_worker_id)
-
-    if 'date' in data:
-        new_day_index = get_day_index(data['date'])
-        booking.date = datetime.strptime(data['date'], '%Y-%m-%d').date()
-    else:
-        new_day_index = old_day_index
-
-    if 'time_slot' in data:
+    # # Handle time_slot based on its type
+    if isinstance(data['time_slot'], int):
         new_slot_index, new_time_slot_str = get_slot_index(data['time_slot'])
-        if new_slot_index == -1:
-            return jsonify({'error': 'Bad Request', 'message': 'Invalid time slot'}), 400
-        booking.time_slot = new_time_slot_str
     else:
-        new_slot_index = old_slot_index
+        new_slot_index, new_time_slot_str = get_slot_index(data['time_slot'])
+    print(f"Converted slot_index: {new_slot_index}, time_slot_str: {new_time_slot_str}")
+    print(data['time_slot'])
+    # Update client_id if it has changed
+    if booking.client_id != data['client_id']:
+        booking.client_id = data['client_id']
 
-    if 'status' in data:
+    # Update worker_id if it has changed and handle availability
+    if booking.worker_id != data['worker_id']:
+        # Mark old availability as true
+        old_day_index = get_day_index(booking.date.strftime('%Y-%m-%d'))
+        old_slot_index, _ = get_slot_index(booking.time_slot)
+        old_worker = Worker.query.get(booking.worker_id)
+        if old_worker:
+            old_worker.availability[old_day_index][old_slot_index] = True
+
+        # Mark new availability as false
+        new_day_index = get_day_index(data['date'])
+        new_worker = Worker.query.get(data['worker_id'])
+        if new_worker:
+            new_worker.availability[new_day_index][new_slot_index] = False
+
+        booking.worker_id = data['worker_id']
+
+    # Update date if it has changed
+    if booking.date != datetime.strptime(data['date'], '%Y-%m-%d').date():
+        booking.date = datetime.strptime(data['date'], '%Y-%m-%d').date()
+
+    # Update time_slot if it has changed
+    if booking.time_slot != new_time_slot_str:
+        # Mark old availability as true
+        old_day_index = get_day_index(booking.date.strftime('%Y-%m-%d'))
+        old_slot_index, _ = get_slot_index(booking.time_slot)
+        old_worker = Worker.query.get(booking.worker_id)
+        if old_worker:
+            old_worker.availability[old_day_index][old_slot_index] = True
+
+        # Mark new availability as false
+        new_day_index = get_day_index(data['date'])
+        new_worker = Worker.query.get(data['worker_id'])
+        if new_worker:
+            new_worker.availability[new_day_index][new_slot_index] = False
+
+        booking.time_slot = new_time_slot_str
+
+    # Update status if it has changed
+    if booking.status != data['status']:
         booking.status = data['status']
 
-    if 'recurrence' in data:
-        booking.recurrence = data['recurrence']
-
-    # Check for worker availability if date, time_slot, or worker_id changes
-    if 'date' in data or 'time_slot' in data or 'worker_id' in data:
-        if not worker.availability[new_day_index][new_slot_index]:
-            return jsonify({'error': 'Conflict', 'message': 'Worker not available for the selected time slot'}), 409
-        worker.availability[new_day_index][new_slot_index] = False
-        if old_worker_id != booking.worker_id:
-            old_worker = Worker.query.get(old_worker_id)
-            old_worker.availability[old_day_index][old_slot_index] = True
-        else:
-            worker.availability[old_day_index][old_slot_index] = True
+    # Update recurrence if it has changed
+    if booking.recurrence != data.get('recurrence'):
+        booking.recurrence = data.get('recurrence')
 
     db.session.commit()
     return jsonify(booking.to_dict()), 200
