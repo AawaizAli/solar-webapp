@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Input } from 'antd';
 
 const AddressForm = ({ onAddressChange }) => {
     const [address, setAddress] = useState('');
@@ -35,11 +36,10 @@ const AddressForm = ({ onAddressChange }) => {
 
     return (
         <div>
-            <input
+            <Input
                 type="text"
                 value={address}
                 onChange={handleInputChange}
-                placeholder="Enter address"
                 style={{ width: '100%', marginTop: '10px' }}
             />
             <div style={{ position: 'relative' }}>
@@ -54,7 +54,10 @@ const AddressForm = ({ onAddressChange }) => {
                             border: '1px solid #ccc',
                             zIndex: '1000',
                             maxHeight: '200px',
-                            overflowY: 'auto'
+                            overflowY: 'auto',
+                            listStyleType: 'none',
+                            padding: '0',
+                            margin: '0',
                         }}>
                         {suggestions.map((suggestion) => (
                             <li

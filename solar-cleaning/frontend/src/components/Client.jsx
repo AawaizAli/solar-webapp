@@ -4,8 +4,8 @@ import {
     deleteClient,
     createClient,
     getAllClients,
+    updateClient,
 } from "../features/clients/clientsSlice";
-
 import { Modal, Form, Input, Button } from "antd";
 import AddressForm from "../components/AddressForm";
 
@@ -100,6 +100,10 @@ const Client = () => {
         setLongitude(lon);
     };
 
+    const handleAreaChange = (area) => {
+        form.setFieldsValue({ area });
+    };
+
     const handleDeleteClient = () => {
         const id = prompt("Enter Client ID to delete:");
         if (id) {
@@ -191,9 +195,8 @@ const Client = () => {
                                 message: "Please input the Area!",
                             },
                         ]}>
-                        <Input />
+                        <AddressForm onAddressChange={handleAreaChange} />
                     </Form.Item>
-                    
                     <Form.Item
                         name="total_panels"
                         label="Total Panels"
