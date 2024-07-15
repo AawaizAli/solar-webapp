@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-
 import { Modal, Form, Input, Select, Button } from "antd";
+import { deleteBooking, createBooking, getAllBookings, updateBooking } from "../features/bookings/bookingsSlice";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
@@ -12,23 +12,16 @@ import "../../public/css/style.css";
 
 import professionalImg from "../../public/professional-img.png";
 
-import {
-    deleteBooking,
-    createBooking,
-    getAllBookings,
-    updateBooking,
-} from "../features/bookings/bookingsSlice";
-
 const Booking = () => {
     const [bookingId, setBookingId] = useState("");
+    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [form] = Form.useForm();
     const dispatch = useDispatch();
+
     const authState = useSelector((state) => state.auth);
     const actualIsAuthenticated = authState?.isAuthenticated ?? false;
     const actualUser = authState?.user ?? { username: "Guest" };
-    const [isEditMode, setIsEditMode] = useState(false);
-
-    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
-    const [form] = Form.useForm();
 
     const showCreateModal = () => {
         setBookingId("");
@@ -38,6 +31,7 @@ const Booking = () => {
 
     const handleCreateModalCancel = () => {
         setIsCreateModalVisible(false);
+        form.resetFields();
     };
 
     const handleEditBooking = () => {
@@ -71,12 +65,11 @@ const Booking = () => {
             ...values,
             client_id: parseInt(values.client_id, 10),
             worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
-            time_slot: parseInt(values.time_slot, 10), // Convert time_slot to an integer
+            // Convert time_slot to an integer
         };
+        console.log("Formatted Values:", formattedValues);
         if (isEditMode) {
-            dispatch(
-                updateBooking({ id: bookingId, updatedData: formattedValues })
-            )
+            dispatch(updateBooking({ id: bookingId, updatedData: formattedValues }))
                 .then(() => {
                     setIsCreateModalVisible(false);
                     form.resetFields();
@@ -106,39 +99,27 @@ const Booking = () => {
 
     return (
         <>
-            {/* Basic */}
             <meta charSet="utf-8" />
             <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-            {/* Mobile Metas */}
-            <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1, shrink-to-fit=no"
-            />
-            {/* Site Metas */}
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
             <meta name="keywords" content="" />
             <meta name="description" content="" />
             <meta name="author" content="" />
             <title>SolarPod</title>
-            {/* slider stylesheet */}
             <link
                 rel="stylesheet"
                 type="text/css"
                 href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
             />
-            {/* bootstrap core css */}
             <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
-            {/* font awesome style */}
             <link
                 rel="stylesheet"
                 type="text/css"
                 href="css/font-awesome.min.css"
             />
-            {/* Custom styles for this template */}
             <link href="css/style.css" rel="stylesheet" />
-            {/* responsive style */}
             <link href="css/responsive.css" rel="stylesheet" />
             <div className="hero_area">
-                {/* header section strats */}
                 <Modal
                     title={isEditMode ? "Update Booking" : "Create Booking"}
                     open={isCreateModalVisible}

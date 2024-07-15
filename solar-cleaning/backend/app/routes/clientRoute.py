@@ -28,14 +28,14 @@ def add_client():
         name=data['name'],
         contact_details=data['contact_details'],
         address=data['address'],
-        area=data['area'],
         latitude=latitude,
         longitude=longitude,
         total_panels=data['total_panels'],
         charge_per_clean=data['charge_per_clean'],  # Updated field
         subscription_plan=subscription_plan,
         subscription_start=subscription_start,
-        subscription_end=subscription_end
+        subscription_end=subscription_end,
+        area=data['area']
     )
     db.session.add(new_client)
     db.session.commit()

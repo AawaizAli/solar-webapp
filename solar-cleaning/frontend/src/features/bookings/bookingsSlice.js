@@ -207,11 +207,11 @@ export const createBooking = createAsyncThunk(
 
 // Async thunk for updating a booking
 export const updateBooking = createAsyncThunk(
-    "bookings/updateBooking",
+    "bookings/update-booking",
     async ({ id, updatedData }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.put(
-                `/api/bookings/${id}`,
+                `/api/bookings/update-booking/${id}`,
                 updatedData
             );
             return response.data;

@@ -177,11 +177,11 @@ export const createClient = createAsyncThunk(
 
 // Async thunk for updating a client
 export const updateClient = createAsyncThunk(
-    "clients/updateClient",
+    "clients/update-client",
     async ({ id, updatedData }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.put(
-                `/api/clients/${id}`,
+                `/api/clients/update-client/${id}`,
                 updatedData
             );
             return response.data;

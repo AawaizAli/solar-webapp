@@ -4,6 +4,7 @@ import {
     deleteClient,
     createClient,
     getAllClients,
+    updateClient,
 } from "../features/clients/clientsSlice";
 
 import { Modal, Form, Input, Button } from "antd";
