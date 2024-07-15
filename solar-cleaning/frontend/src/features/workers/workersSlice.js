@@ -65,12 +65,10 @@ export const getById = createAsyncThunk(
             if (state.workers.workers.length === 0) {
                 await dispatch(getAllWorkers());
             }
-            const worker = state.workers.workers.find(
-                (worker) => worker.id === id
-            );
+            const worker = state.workers.workers.find((worker) => worker.id === parseInt(id, 10));
             return worker ? [worker] : [];
         } catch (error) {
-            return rejectWithValue(error.response.data.message);
+            return rejectWithValue(error.response ? error.response.data.message : error.message);
         }
     }
 );
