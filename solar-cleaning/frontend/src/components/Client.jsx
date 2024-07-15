@@ -28,6 +28,7 @@ const Client = () => {
     const [form] = Form.useForm();
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
+    const [initialArea, setInitialArea] = useState("");
 
     const showCreateModal = () => {
         setClientId(""); // Clear clientId for create mode
@@ -53,6 +54,7 @@ const Client = () => {
                             : null,
                         subscription_plan: client.subscription_plan,
                     });
+                    setInitialArea(client.area);
                     setLatitude(client.latitude);
                     setLongitude(client.longitude);
                     setClientId(id); // Set clientId for editing mode
@@ -92,12 +94,6 @@ const Client = () => {
                 form.resetFields();
             });
         }
-    };
-
-    const handleAddressChange = (address, lat, lon) => {
-        form.setFieldsValue({ address });
-        setLatitude(lat);
-        setLongitude(lon);
     };
 
     const handleAreaChange = (area,lat,lon) => {
@@ -197,7 +193,7 @@ const Client = () => {
                                 message: "Please input the Area!",
                             },
                         ]}>
-                        <AddressForm onAddressChange={handleAreaChange} />
+                        <AddressForm initialAddress={initialArea}  onAddressChange={handleAreaChange} />
                     </Form.Item>
                     <Form.Item
                         name="total_panels"

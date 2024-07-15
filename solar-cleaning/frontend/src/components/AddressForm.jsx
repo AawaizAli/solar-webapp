@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Input } from 'antd';
 
-const AddressForm = ({ onAddressChange }) => {
-    const [address, setAddress] = useState('');
+const AddressForm = ({ initialAddress,onAddressChange }) => {
+    const [address, setAddress] = useState(initialAddress);
     const [suggestions, setSuggestions] = useState([]);
 
     const handleInputChange = async (e) => {

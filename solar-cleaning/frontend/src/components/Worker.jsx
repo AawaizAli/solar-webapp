@@ -30,6 +30,7 @@ const Worker = () => {
     const [availability, setAvailability] = useState(initialAvailability);
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
+    const [initialArea, setInitialArea] = useState("");
 
     const showModal = () => {
         setWorkerId(""); // Clear workerId for create mode
@@ -95,7 +96,8 @@ const Worker = () => {
                         ...worker,
                     });
                     setAvailability(worker.availability);
-                    setWorkerId(id); // Set workerId for editing mode
+                    setWorkerId(id);
+                    setInitialArea(worker.area); // Set workerId for editing mode
                     setIsModalVisible(true);
                 } else {
                     alert("Worker not found!");
@@ -171,7 +173,7 @@ const Worker = () => {
                                     message: "Please input the Area!",
                                 },
                             ]}>
-                            <AddressForm
+                            <AddressForm initialAddress={initialArea} 
                                 onAddressChange={handleAddressChange}
                             />
                         </Form.Item>
