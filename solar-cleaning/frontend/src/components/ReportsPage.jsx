@@ -6,6 +6,7 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "../../public/css/responsive.css";
 import "../../public/css/style.css";
+import "./ReportsPage.css"
 import Spreadsheet from "react-spreadsheet";
 
 const { TabPane } = Tabs;
@@ -290,7 +291,7 @@ const ReportsPage = () => {
             </div>
 
             {/* Reports Section */}
-            <Tabs defaultActiveKey="schedule" onChange={handleTabChange}>
+            <Tabs className="centered-tabs" defaultActiveKey="schedule" onChange={handleTabChange}>
                 <TabPane tab="Schedule" key="schedule">
                     {renderSpreadsheet()}
                 </TabPane>
