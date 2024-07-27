@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Input } from 'antd';
+import React, { useState } from "react";
+import { Table, Button, Modal, Form, Input, Tabs } from "antd";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
@@ -8,12 +8,146 @@ import "../../public/css/responsive.css";
 import "../../public/css/style.css";
 import Spreadsheet from "react-spreadsheet";
 
+const { TabPane } = Tabs;
+
 const ReportsPage = () => {
-    
-    const data = [
-        [{ value: "Vanilla" }, { value: "Chocolate" }],
-        [{ value: "Strawberry" }, { value: "Cookies" }],
-      ];
+    const [activeTab, setActiveTab] = useState("schedule");
+
+    const scheduleData = [
+        [
+            { value: "2024-07-07" },
+            { value: "Monday" },
+            { value: "John Doe" },
+            { value: "Worker A" },
+            { value: "123 Street" },
+            { value: "Area 1" },
+            { value: "1234567890" },
+            { value: "12V" },
+            { value: "20" },
+            { value: "100" },
+        ],
+        [
+            { value: "2024-07-08" },
+            { value: "Tuesday" },
+            { value: "Jane Smith" },
+            { value: "Worker B" },
+            { value: "456 Avenue" },
+            { value: "Area 2" },
+            { value: "0987654321" },
+            { value: "24V" },
+            { value: "30" },
+            { value: "150" },
+        ],
+    ];
+
+    const salaryData = [
+        [
+            { value: "2024-07-07" },
+            { value: "Monday" },
+            { value: "500" },
+            { value: "100" },
+            { value: "Worker A" },
+        ],
+        [
+            { value: "2024-07-08" },
+            { value: "Tuesday" },
+            { value: "600" },
+            { value: "150" },
+            { value: "Worker B" },
+        ],
+    ];
+
+    const expensesData = [
+        [{ value: "2024-07-07" }, { value: "Tools" }, { value: "200" }],
+        [{ value: "2024-07-08" }, { value: "Transport" }, { value: "150" }],
+    ];
+
+    const dailyAccountData = [
+        [
+            { value: "2024-07-07" },
+            { value: "Monday" },
+            { value: "1000" },
+            { value: "200" },
+            { value: "400" },
+            { value: "400" },
+        ],
+        [
+            { value: "2024-07-08" },
+            { value: "Tuesday" },
+            { value: "1200" },
+            { value: "250" },
+            { value: "500" },
+            { value: "450" },
+        ],
+    ];
+
+    const scheduleColumns = [
+        "Date",
+        "Day",
+        "Client Name",
+        "Worker Name",
+        "Address",
+        "Area",
+        "Client Contact",
+        "Panel Voltage",
+        "Total Panels",
+        "Charges per Clean",
+    ];
+    const salaryColumns = [
+        "Date",
+        "Day",
+        "Advance",
+        "Incentive",
+        "Worker Name",
+    ];
+    const expensesColumns = ["Date", "Description", "Amount"];
+    const dailyAccountColumns = [
+        "Date",
+        "Day",
+        "Total Earnings",
+        "Petrol Expense",
+        "Total Daily Wage",
+        "TJ Earnings per Day",
+    ];
+
+    const handleTabChange = (key) => {
+        setActiveTab(key);
+    };
+
+    const renderSpreadsheet = () => {
+        switch (activeTab) {
+            case "schedule":
+                return (
+                    <Spreadsheet
+                        data={scheduleData}
+                        columnLabels={scheduleColumns}
+                    />
+                );
+            case "salary":
+                return (
+                    <Spreadsheet
+                        data={salaryData}
+                        columnLabels={salaryColumns}
+                    />
+                );
+            case "expenses":
+                return (
+                    <Spreadsheet
+                        data={expensesData}
+                        columnLabels={expensesColumns}
+                    />
+                );
+            case "dailyAccount":
+                return (
+                    <Spreadsheet
+                        data={dailyAccountData}
+                        columnLabels={dailyAccountColumns}
+                    />
+                );
+            default:
+                return null;
+        }
+    };
 
     return (
         <>
@@ -100,32 +234,44 @@ const ReportsPage = () => {
                                             </a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/bookings">
+                                            <a
+                                                className="nav-link"
+                                                href="/bookings">
                                                 Bookings
                                             </a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/workers">
+                                            <a
+                                                className="nav-link"
+                                                href="/workers">
                                                 Workers
                                             </a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/clients">
+                                            <a
+                                                className="nav-link"
+                                                href="/clients">
                                                 Clients
                                             </a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/search">
+                                            <a
+                                                className="nav-link"
+                                                href="/search">
                                                 Search
                                             </a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/reports">
+                                            <a
+                                                className="nav-link"
+                                                href="/reports">
                                                 Reports
                                             </a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/logout">
+                                            <a
+                                                className="nav-link"
+                                                href="/logout">
                                                 Logout
                                             </a>
                                         </li>
@@ -143,7 +289,22 @@ const ReportsPage = () => {
                 {/* end header section */}
             </div>
 
-            <Spreadsheet data={data} />
+            {/* Reports Section */}
+            <Tabs defaultActiveKey="schedule" onChange={handleTabChange}>
+                <TabPane tab="Schedule" key="schedule">
+                    {renderSpreadsheet()}
+                </TabPane>
+                <TabPane tab="Salary" key="salary">
+                    {renderSpreadsheet()}
+                </TabPane>
+                <TabPane tab="Expenses" key="expenses">
+                    {renderSpreadsheet()}
+                </TabPane>
+                <TabPane tab="Daily Account" key="dailyAccount">
+                    {renderSpreadsheet()}
+                </TabPane>
+            </Tabs>
+            {/* Reports Section end */}
 
             {/* info section */}
             <section className="info_section">
