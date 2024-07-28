@@ -42,12 +42,23 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
         while current_date <= subscription_end_date:
             print(f"Checking availability for date: {current_date} and time_slot: {time_slot}")
             day_index = get_day_index(current_date.strftime('%Y-%m-%d'))
-            slot_index,time_slot_str = get_slot_index(time_slot)
-            print(f"Day index: {day_index}, Slot index: {slot_index}, Time slot string: {time_slot}")
+            slot_index, time_slot_str = get_slot_index(time_slot)
+            print(f"Day index: {day_index}, Slot index: {slot_index}, Time slot string: {time_slot_str}")
 
             worker = Worker.query.get(worker_id)  # Fetch fresh instance
             print(f"Worker availability before booking: {worker.availability}")
-            if worker and worker.availability[day_index][slot_index]:
+            
+            # Check if a booking already exists
+            existing_booking = Booking.query.filter_by(
+                client_id=client_id,
+                worker_id=worker_id,
+                date=current_date,
+                time_slot=time_slot_str
+            ).first()
+            
+            if existing_booking:
+                print(f"Booking already exists for date: {current_date} and time_slot: {time_slot_str}")
+            elif worker and worker.availability[day_index][slot_index]:
                 new_booking = Booking(
                     client_id=client_id,
                     worker_id=worker_id,
@@ -66,7 +77,7 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
 
             current_date += timedelta(days=interval)
 
-# Existing route
+
 @booking_bp.route('/create-booking', methods=['POST'])
 @jwt_required()
 def create_booking():
@@ -108,6 +119,17 @@ def create_booking():
 
         if not closest_worker:
             return jsonify({'error': 'Conflict', 'message': 'No available workers found for the selected time slot'}), 409
+
+    # Check if a booking already exists
+    existing_booking = Booking.query.filter_by(
+        client_id=client.id,
+        worker_id=closest_worker.id,
+        date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
+        time_slot=time_slot_str
+    ).first()
+
+    if existing_booking:
+        return jsonify({'error': 'Conflict', 'message': 'Booking already exists for the selected time slot'}), 409
 
     new_booking = Booking(
         client_id=client.id,
