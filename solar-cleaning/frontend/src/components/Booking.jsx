@@ -305,9 +305,6 @@ const Booking = () => {
                                 <Select.Option value="monthly">
                                     Monthly
                                 </Select.Option>
-                                <Select.Option value="bimonthly">
-                                    Bimonthly
-                                </Select.Option>
                             </Select>
                         </Form.Item>
                         <Form.Item>
