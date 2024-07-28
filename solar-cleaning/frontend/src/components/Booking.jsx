@@ -90,14 +90,17 @@ const Booking = () => {
             time_slot: timeSlot, // Convert time_slot to an integer
         };
     
-        dispatch(createBooking(formattedValues))
-            .then(() => {
-                setIsCreateModalVisible(false);
-                form.resetFields();
-            })
-            .catch((error) => {
-                console.error("Error creating booking:", error);
-            });
+        try {
+            await dispatch(createBooking(formattedValues)).unwrap();
+            setIsCreateModalVisible(false);
+            form.resetFields();
+        } catch (error) {
+            if (error.response && error.response.status === 409) {
+                alert("Worker is busy. Please select another time slot.");
+            } else {
+                alert("Worker is busy. Please select another time slot.");
+            }
+        }
     };
     
     const handleEditBooking = async (values) => {
