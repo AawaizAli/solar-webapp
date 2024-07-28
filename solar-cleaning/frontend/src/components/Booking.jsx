@@ -46,11 +46,6 @@ const Booking = () => {
             (worker) => worker.id === parseInt(workerId)
         );
     
-        if (!worker) {
-            alert("Worker not found!");
-            return false;
-        }
-    
         const isAvailable = worker.availability[day][timeSlot];
     
         if (!isAvailable) {
