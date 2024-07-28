@@ -7,6 +7,7 @@ import Booking from './components/Booking';
 import Worker from './components/Worker';
 import Client from './components/Client';
 import SearchPage from './components/SearchPage';
+import ReportsPage from './components/ReportsPage';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/workers" element={<Worker />} />
         <Route path="/clients" element={<Client />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/reports" element={<ReportsPage/>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/logout" element={<LogoutPage />} />
 

@@ -1,0 +1,4 @@
+.centered-tabs .ant-tabs-nav {
+    display: flex;
+    justify-content: center;
+}
