@@ -17,15 +17,15 @@ def get_day_index(date_str):
 
 def get_slot_index(time_slot):
     slots = {
-        0: "09:00-11:00",
-        1: "11:00-13:00",
-        2: "13:00-15:00",
-        3: "15:00-17:00",
-        4: "17:00-19:00"
+        "09:00-11:00": 0,
+        "11:00-13:00": 1,
+        "13:00-15:00": 2,
+        "15:00-17:00": 3,
+        "17:00-19:00": 4
     }
     
     print(f"Received time_slot: {time_slot}, Type: {type(time_slot)}")
-    return int(time_slot), slots.get(time_slot, None)
+    return slots.get(time_slot)
 
 def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, recurrence, subscription_end_date):
     current_date = datetime.strptime(start_date, '%Y-%m-%d').date()
@@ -42,8 +42,8 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
         while current_date <= subscription_end_date:
             print(f"Checking availability for date: {current_date} and time_slot: {time_slot}")
             day_index = get_day_index(current_date.strftime('%Y-%m-%d'))
-            slot_index, time_slot_str = get_slot_index(time_slot)
-            print(f"Day index: {day_index}, Slot index: {slot_index}, Time slot string: {time_slot_str}")
+            slot_index = get_slot_index(time_slot)
+            print(f"Day index: {day_index}, Slot index: {slot_index}")
 
             worker = Worker.query.get(worker_id)  # Fetch fresh instance
             print(f"Worker availability before booking: {worker.availability}")
@@ -53,17 +53,17 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
                 client_id=client_id,
                 worker_id=worker_id,
                 date=current_date,
-                time_slot=time_slot_str
+                time_slot=time_slot
             ).first()
             
             if existing_booking:
-                print(f"Booking already exists for date: {current_date} and time_slot: {time_slot_str}")
+                print(f"Booking already exists for date: {current_date} and time_slot: {time_slot}")
             elif worker and worker.availability[day_index][slot_index]:
                 new_booking = Booking(
                     client_id=client_id,
                     worker_id=worker_id,
                     date=current_date,
-                    time_slot=time_slot_str,
+                    time_slot=time_slot,
                     status=status,
                     recurrence=recurrence
                 )
@@ -98,10 +98,9 @@ def create_booking():
     closest_worker = None
     min_distance = float('inf')
     day_index = get_day_index(data['date'])
-    slot_index = (data['time_slot']) 
-    slot_index, time_slot_str = get_slot_index(data['time_slot'])
-    print(f"Converted slot_index: {slot_index}, time_slot_str: {time_slot_str}")
-    if time_slot_str is None:
+    slot_index = get_slot_index(data['time_slot'])
+    print(f"Converted slot_index: {slot_index}")
+    if slot_index is None:
         return jsonify({'error': 'Bad Request', 'message': 'Invalid time slot'}), 400
 
     if 'worker_id' in data:
@@ -125,7 +124,7 @@ def create_booking():
         client_id=client.id,
         worker_id=closest_worker.id,
         date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
-        time_slot=time_slot_str
+        time_slot=data['time_slot']
     ).first()
 
     if existing_booking:
@@ -135,7 +134,7 @@ def create_booking():
         client_id=client.id,
         worker_id=closest_worker.id,
         date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
-        time_slot=time_slot_str,
+        time_slot=data['time_slot'],
         status=data['status'],
         recurrence=data.get('recurrence')
     )
@@ -151,11 +150,9 @@ def create_booking():
     if 'recurrence' in data:
         subscription_end_date = client.subscription_end
         print(f"Subscription end date: {subscription_end_date}, Type: {type(subscription_end_date)}")
-        add_recurring_bookings(client.id, closest_worker.id, data['date'], slot_index, data['status'], data['recurrence'], subscription_end_date)
+        add_recurring_bookings(client.id, closest_worker.id, data['date'], data['time_slot'], data['status'], data['recurrence'], subscription_end_date)
 
     return jsonify(new_booking.to_dict()), 201
-
-
 
 
 @booking_bp.route('/get-all-bookings', methods=['GET'])
@@ -179,12 +176,8 @@ def update_booking(booking_id):
 
     booking = Booking.query.get_or_404(booking_id)
 
-    # # Handle time_slot based on its type
-    if isinstance(data['time_slot'], int):
-        new_slot_index, new_time_slot_str = get_slot_index(data['time_slot'])
-    else:
-        new_slot_index, new_time_slot_str = get_slot_index(data['time_slot'])
-    print(f"Converted slot_index: {new_slot_index}, time_slot_str: {new_time_slot_str}")
+    new_slot_index = get_slot_index(data['time_slot'])
+    print(f"Converted slot_index: {new_slot_index}")
     print(data['time_slot'])
     # Update client_id if it has changed
     if booking.client_id != data['client_id']:
@@ -194,7 +187,7 @@ def update_booking(booking_id):
     if booking.worker_id != data['worker_id']:
         # Mark old availability as true
         old_day_index = get_day_index(booking.date.strftime('%Y-%m-%d'))
-        old_slot_index, _ = get_slot_index(booking.time_slot)
+        old_slot_index = get_slot_index(booking.time_slot)
         old_worker = Worker.query.get(booking.worker_id)
         if old_worker:
             old_worker.availability[old_day_index][old_slot_index] = True
@@ -212,10 +205,10 @@ def update_booking(booking_id):
         booking.date = datetime.strptime(data['date'], '%Y-%m-%d').date()
 
     # Update time_slot if it has changed
-    if booking.time_slot != new_time_slot_str:
+    if booking.time_slot != data['time_slot']:
         # Mark old availability as true
         old_day_index = get_day_index(booking.date.strftime('%Y-%m-%d'))
-        old_slot_index, _ = get_slot_index(booking.time_slot)
+        old_slot_index = get_slot_index(booking.time_slot)
         old_worker = Worker.query.get(booking.worker_id)
         if old_worker:
             old_worker.availability[old_day_index][old_slot_index] = True
@@ -226,7 +219,7 @@ def update_booking(booking_id):
         if new_worker:
             new_worker.availability[new_day_index][new_slot_index] = False
 
-        booking.time_slot = new_time_slot_str
+        booking.time_slot = data['time_slot']
 
     # Update status if it has changed
     if booking.status != data['status']:
@@ -238,6 +231,7 @@ def update_booking(booking_id):
 
     db.session.commit()
     return jsonify(booking.to_dict()), 200
+
 
 
 
