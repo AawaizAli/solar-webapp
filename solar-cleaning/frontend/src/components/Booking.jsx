@@ -45,20 +45,30 @@ const Booking = () => {
         const worker = workers.find(
             (worker) => worker.id === parseInt(workerId)
         );
-    
+
         const isAvailable = worker.availability[day][timeSlot];
-    
+
         if (!isAvailable) {
             AntdModal.warning({
                 title: "Worker Unavailable",
-                content: `Worker is not available on ${["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][day]} at ${timeSlots[timeSlot]}.`,
+                content: `Worker is not available on ${
+                    [
+                        "Sunday",
+                        "Monday",
+                        "Tuesday",
+                        "Wednesday",
+                        "Thursday",
+                        "Friday",
+                        "Saturday",
+                    ][day]
+                } at ${timeSlots[timeSlot]}.`,
             });
             return false;
         }
-    
+
         return true;
     };
-    
+
     const handleCreateBooking = async (values) => {
         const day = new Date(values.date).getDay(); // Assuming values.date is a valid date string
         const timeSlot = parseInt(
@@ -67,66 +77,65 @@ const Booking = () => {
             ),
             10
         );
-    
+
         const isAvailable = await checkWorkerAvailability(
             values.worker_id,
             day,
             timeSlot
         );
-    
+
         if (!isAvailable) {
             return;
         }
-    
+
         const formattedValues = {
             ...values,
             client_id: parseInt(values.client_id, 10),
             worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
             time_slot: timeSlot, // Convert time_slot to an integer
         };
-    
+
         try {
             await dispatch(createBooking(formattedValues)).unwrap();
             setIsCreateModalVisible(false);
             form.resetFields();
         } catch (error) {
-            if (error.response && error.response.status === 409) {
-                alert("Worker is busy. Please select another time slot.");
-            } else {
-                alert("Worker is busy. Please select another time slot.");
-            }
+            alert("Worker is busy. Please select another time slot.");
         }
     };
-    
+
     const handleEditBooking = async (values) => {
+
+        const id = prompt("Enter Booking ID to edit:");
         const day = new Date(values.date).getDay(); // Assuming values.date is a valid date string
+
+        console.log(values);
+
         const timeSlot = parseInt(
             Object.keys(timeSlots).find(
                 (key) => timeSlots[key] === values.time_slot
             ),
             10
         );
-    
+
         const isAvailable = await checkWorkerAvailability(
             values.worker_id,
             day,
             timeSlot
         );
-    
+
         if (!isAvailable) {
             return;
         }
-    
+
         const formattedValues = {
             ...values,
             client_id: parseInt(values.client_id, 10),
             worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
             time_slot: timeSlot, // Convert time_slot to an integer
         };
-    
-        dispatch(
-            updateBooking({ id: bookingId, updatedData: formattedValues })
-        )
+
+        dispatch(updateBooking({ id: bookingId, updatedData: formattedValues }))
             .then(() => {
                 setIsCreateModalVisible(false);
                 form.resetFields();
@@ -185,7 +194,9 @@ const Booking = () => {
                     footer={null}>
                     <Form
                         form={form}
-                        onFinish={isEditMode ? handleEditBooking : handleCreateBooking}
+                        onFinish={
+                            isEditMode ? handleEditBooking : handleCreateBooking
+                        }
                         layout="vertical">
                         <Form.Item
                             name="client_id"

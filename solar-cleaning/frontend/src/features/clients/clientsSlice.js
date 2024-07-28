@@ -7,35 +7,6 @@ const initialState = {
     error: null,
 };
 
-const dummyRes = [
-    {
-        address: "Gulshan e Maymar, Karachi, Pakistan",
-        charge_per_clean: 500.0,
-        contact_details: "1234567890",
-        id: 1,
-        latitude: 25.020894,
-        longitude: 67.13228131174323,
-        name: "Client One",
-        subscription_end: "2024-12-31",
-        subscription_plan: "monthly",
-        subscription_start: "2024-01-01",
-        total_panels: 20,
-    },
-    {
-        address: "DHA, Lawhore, Pakistan",
-        charge_per_clean: 999999999,
-        contact_details: "031313131313",
-        id: 3,
-        latitude: 24.8684802,
-        longitude: 67.05872422961852,
-        name: "iznaaaurrr waqaurrrr",
-        subscription_end: "2024-12-31",
-        subscription_plan: "bimonthly",
-        subscription_start: "2024-01-01",
-        total_panels: 25,
-    },
-];
-
 // Create an Axios instance with the base URL
 const axiosInstance = axios.create({
     baseURL: "http://127.0.0.1:5000",

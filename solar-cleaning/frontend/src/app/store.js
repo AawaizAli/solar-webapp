@@ -3,6 +3,7 @@ import authReducer from "../features/auth/authSlice";
 import bookingsReducer from "../features/bookings/bookingsSlice";
 import clientsReducer from "../features/clients/clientsSlice";
 import workersReducer from "../features/workers/workersSlice";
+import reportsReducer from "../features/reports/reportsSlice";
 
 const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
         bookings: bookingsReducer,
         clients: clientsReducer,
         workers: workersReducer,
+        reports: reportsReducer,
     },
 });
 

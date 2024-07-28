@@ -16,12 +16,12 @@ const ReportsPage = () => {
             [
                 { value: "2024-07-07" }, { value: "Monday" }, { value: "John Doe" },
                 { value: "Worker A" }, { value: "123 Street" }, { value: "Area 1" },
-                { value: "1234567890" }, { value: "20" }, { value: "100" }
+                { value: "1234567890" }, { value: "20" }, { value: "100" }, { value: "Completed" }
             ],
             [
                 { value: "2024-07-08" }, { value: "Tuesday" }, { value: "Jane Smith" },
                 { value: "Worker B" }, { value: "456 Avenue" }, { value: "Area 2" },
-                { value: "0987654321" }, { value: "30" }, { value: "150" }
+                { value: "0987654321" }, { value: "30" }, { value: "150" }, { value: "Scheduled" }
             ]
         ],
         salary: [
@@ -82,7 +82,7 @@ const ReportsPage = () => {
     };
 
     const columns = {
-        schedule: ["Date", "Day", "Client Name", "Worker Name", "Address", "Area", "Client Contact", "Total Panels", "Charges per Clean"],
+        schedule: ["Date", "Day", "Client Name", "Worker Name", "Address", "Area", "Client Contact", "Total Panels", "Charges per Clean", "Status"],
         salary: ["Date", "Day", "Advance", "Incentive", "Worker Name"],
         expenses: ["Date", "Description", "Amount"],
         dailyAccount: ["Date", "Day", "Total Earnings", "Petrol Expense", "Total Daily Wage", "TJ Earnings per Day"]
