@@ -7,7 +7,6 @@ import {
     getAllBookings,
     updateBooking,
 } from "../features/bookings/bookingsSlice";
-
 import { getAllWorkers } from "../features/workers/workersSlice";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -46,83 +45,25 @@ const Booking = () => {
         const worker = workers.find(
             (worker) => worker.id === parseInt(workerId)
         );
-
+    
         if (!worker) {
             alert("Worker not found!");
             return false;
         }
-
+    
         const isAvailable = worker.availability[day][timeSlot];
-
+    
         if (!isAvailable) {
-            alert(
-                `Worker is not available on ${dayNames[day]} at ${timeSlots[timeSlot]}.`
-            );
+            AntdModal.warning({
+                title: "Worker Unavailable",
+                content: `Worker is not available on ${["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][day]} at ${timeSlots[timeSlot]}.`,
+            });
             return false;
         }
-
+    
         return true;
     };
-
-    const timeSlots = {
-        0: "09:00-11:00",
-        1: "11:00-13:00",
-        2: "13:00-15:00",
-        3: "15:00-17:00",
-        4: "17:00-19:00",
-    };
-
-    const handleEditBooking = async (values) => {
-        const day = new Date(values.date).getDay(); // Assuming values.date is a valid date string
-        const timeSlot = parseInt(
-            Object.keys(timeSlots).find(
-                (key) => timeSlots[key] === values.time_slot
-            ),
-            10
-        );
-
-        const isAvailable = await checkWorkerAvailability(
-            values.worker_id,
-            day,
-            timeSlot
-        );
-
-        if (!isAvailable) {
-            return;
-        }
-
-        const formattedValues = {
-            ...values,
-            client_id: parseInt(values.client_id, 10),
-            worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
-            time_slot: timeSlot, // Convert time_slot to an integer
-        };
-
-        console.log("Formatted Values:", formattedValues);
-        if (isEditMode) {
-            dispatch(
-                updateBooking({ id: bookingId, updatedData: formattedValues })
-            )
-                .then(() => {
-                    setIsCreateModalVisible(false);
-                    form.resetFields();
-                    setIsEditMode(false);
-                })
-                .catch((error) => {
-                    console.error("Error updating booking:", error);
-                });
-        } else {
-            dispatch(createBooking(formattedValues))
-                .then(() => {
-                    setIsCreateModalVisible(false);
-                    form.resetFields();
-                })
-                .catch((error) => {
-                    console.error("Error creating booking:", error);
-                });
-        }
-    };
-
+    
     const handleCreateBooking = async (values) => {
         const day = new Date(values.date).getDay(); // Assuming values.date is a valid date string
         const timeSlot = parseInt(
@@ -131,47 +72,79 @@ const Booking = () => {
             ),
             10
         );
-
+    
         const isAvailable = await checkWorkerAvailability(
             values.worker_id,
             day,
             timeSlot
         );
-
+    
         if (!isAvailable) {
             return;
         }
-
+    
         const formattedValues = {
             ...values,
             client_id: parseInt(values.client_id, 10),
             worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
             time_slot: timeSlot, // Convert time_slot to an integer
         };
-
-        console.log("Formatted Values:", formattedValues);
-        if (isEditMode) {
-            dispatch(
-                updateBooking({ id: bookingId, updatedData: formattedValues })
-            )
-                .then(() => {
-                    setIsCreateModalVisible(false);
-                    form.resetFields();
-                    setIsEditMode(false);
-                })
-                .catch((error) => {
-                    console.error("Error updating booking:", error);
-                });
-        } else {
-            dispatch(createBooking(formattedValues))
-                .then(() => {
-                    setIsCreateModalVisible(false);
-                    form.resetFields();
-                })
-                .catch((error) => {
-                    console.error("Error creating booking:", error);
-                });
+    
+        dispatch(createBooking(formattedValues))
+            .then(() => {
+                setIsCreateModalVisible(false);
+                form.resetFields();
+            })
+            .catch((error) => {
+                console.error("Error creating booking:", error);
+            });
+    };
+    
+    const handleEditBooking = async (values) => {
+        const day = new Date(values.date).getDay(); // Assuming values.date is a valid date string
+        const timeSlot = parseInt(
+            Object.keys(timeSlots).find(
+                (key) => timeSlots[key] === values.time_slot
+            ),
+            10
+        );
+    
+        const isAvailable = await checkWorkerAvailability(
+            values.worker_id,
+            day,
+            timeSlot
+        );
+    
+        if (!isAvailable) {
+            return;
         }
+    
+        const formattedValues = {
+            ...values,
+            client_id: parseInt(values.client_id, 10),
+            worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
+            time_slot: timeSlot, // Convert time_slot to an integer
+        };
+    
+        dispatch(
+            updateBooking({ id: bookingId, updatedData: formattedValues })
+        )
+            .then(() => {
+                setIsCreateModalVisible(false);
+                form.resetFields();
+                setIsEditMode(false);
+            })
+            .catch((error) => {
+                console.error("Error updating booking:", error);
+            });
+    };
+
+    const timeSlots = {
+        0: "09:00-11:00",
+        1: "11:00-13:00",
+        2: "13:00-15:00",
+        3: "15:00-17:00",
+        4: "17:00-19:00",
     };
 
     const handleDeleteBooking = () => {
@@ -214,7 +187,7 @@ const Booking = () => {
                     footer={null}>
                     <Form
                         form={form}
-                        onFinish={handleCreateBooking}
+                        onFinish={isEditMode ? handleEditBooking : handleCreateBooking}
                         layout="vertical">
                         <Form.Item
                             name="client_id"
