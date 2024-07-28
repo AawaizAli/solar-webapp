@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Modal, Form, Input, Select, Button } from "antd";
+import { Modal as Modal, Form, Input, Select, Button } from "antd";
 import {
     deleteBooking,
     createBooking,
@@ -41,6 +41,8 @@ const Booking = () => {
     };
 
     const checkWorkerAvailability = async (workerId, day, timeSlot) => {
+        if (!workerId) return true; // If workerId is not provided, skip the check
+
         const { payload: workers } = await dispatch(getAllWorkers());
         const worker = workers.find(
             (worker) => worker.id === parseInt(workerId)
@@ -67,6 +69,17 @@ const Booking = () => {
         }
 
         return true;
+    };
+
+    const fetchBookingDetails = async (id) => {
+        try {
+            const { payload: bookings } = await dispatch(getAllBookings());
+            const booking = bookings.find((booking) => booking.id === parseInt(id));
+            return booking || null;
+        } catch (error) {
+            console.error("Error fetching booking details:", error);
+            return null;
+        }
     };
 
     const handleCreateBooking = async (values) => {
@@ -104,13 +117,35 @@ const Booking = () => {
         }
     };
 
-    const handleEditBooking = async (values) => {
-
+    const handleEditBooking = async () => {
         const id = prompt("Enter Booking ID to edit:");
+        if (!id) return;
+
+        const bookingDetails = await fetchBookingDetails(id);
+        if (!bookingDetails) {
+            alert("Booking not found!");
+            return;
+        }
+
+        const values = {
+            ...bookingDetails,
+            client_id: bookingDetails.client_id.toString(),
+            worker_id: bookingDetails.worker_id
+                ? bookingDetails.worker_id.toString()
+                : "",
+            time_slot: Object.keys(timeSlots).find(
+                (key) => timeSlots[key] === bookingDetails.time_slot
+            ),
+        };
+
+        form.setFieldsValue(values);
+        setBookingId(id);
+        setIsEditMode(true);
+        setIsCreateModalVisible(true);
+    };
+
+    const handleUpdateBooking = async (values) => {
         const day = new Date(values.date).getDay(); // Assuming values.date is a valid date string
-
-        console.log(values);
-
         const timeSlot = parseInt(
             Object.keys(timeSlots).find(
                 (key) => timeSlots[key] === values.time_slot
@@ -135,15 +170,14 @@ const Booking = () => {
             time_slot: timeSlot, // Convert time_slot to an integer
         };
 
-        dispatch(updateBooking({ id: bookingId, updatedData: formattedValues }))
-            .then(() => {
-                setIsCreateModalVisible(false);
-                form.resetFields();
-                setIsEditMode(false);
-            })
-            .catch((error) => {
-                console.error("Error updating booking:", error);
-            });
+        try {
+            await dispatch(updateBooking({ id: bookingId, updatedData: formattedValues })).unwrap();
+            setIsCreateModalVisible(false);
+            form.resetFields();
+            setIsEditMode(false);
+        } catch (error) {
+            console.error("Error updating booking:", error);
+        }
     };
 
     const timeSlots = {
@@ -195,7 +229,7 @@ const Booking = () => {
                     <Form
                         form={form}
                         onFinish={
-                            isEditMode ? handleEditBooking : handleCreateBooking
+                            isEditMode ? handleUpdateBooking : handleCreateBooking
                         }
                         layout="vertical">
                         <Form.Item
@@ -270,9 +304,6 @@ const Booking = () => {
                                 </Select.Option>
                                 <Select.Option value="monthly">
                                     Monthly
-                                </Select.Option>
-                                <Select.Option value="bimonthly">
-                                    Bimonthly
                                 </Select.Option>
                             </Select>
                         </Form.Item>
