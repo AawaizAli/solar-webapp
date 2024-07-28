@@ -41,15 +41,23 @@ const Booking = () => {
     };
 
     const checkWorkerAvailability = async (workerId, day, timeSlot) => {
+        if (!workerId) {
+            return true; // If no workerId is provided, skip the availability check
+        }
+
         const { payload: workers } = await dispatch(getAllWorkers());
         const worker = workers.find(
             (worker) => worker.id === parseInt(workerId)
         );
 
+        if (!worker) {
+            return false;
+        }
+
         const isAvailable = worker.availability[day][timeSlot];
 
         if (!isAvailable) {
-            AntdModal.warning({
+            Modal.warning({
                 title: "Worker Unavailable",
                 content: `Worker is not available on ${
                     [
@@ -105,12 +113,8 @@ const Booking = () => {
     };
 
     const handleEditBooking = async (values) => {
-
         const id = prompt("Enter Booking ID to edit:");
         const day = new Date(values.date).getDay(); // Assuming values.date is a valid date string
-
-        console.log(values);
-
         const timeSlot = parseInt(
             Object.keys(timeSlots).find(
                 (key) => timeSlots[key] === values.time_slot

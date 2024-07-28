@@ -5,4 +5,9 @@
 
 .ant-tabs-content-holder {
     margin: 10px auto;
+    max-width: 90vw;
+}
+
+.body {
+    width: 100vw;
 }
