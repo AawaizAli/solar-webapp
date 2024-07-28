@@ -10,7 +10,7 @@ from app.models.salaryModel import Salary
 
 report_bp = Blueprint('report_bp', __name__, url_prefix='/api/reports')
 
-@report_bp.route('/', methods=['GET'])
+@report_bp.route('/get-all-reports', methods=['GET'])
 def get_reports():
     # Existing report data
     bookings = Booking.query.all()

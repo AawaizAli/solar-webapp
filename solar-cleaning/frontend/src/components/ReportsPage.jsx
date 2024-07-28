@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Tabs, Button } from 'antd';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
@@ -6,55 +7,88 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "../../public/css/responsive.css";
 import "../../public/css/style.css";
-import "./ReportsPage.css"
+import "./ReportsPage.css";
 import Spreadsheet from "react-spreadsheet";
+import { getAllReports } from "../features/reports/reportsSlice";
 
 const ReportsPage = () => {
+    const dispatch = useDispatch();
+    const { schedule, salary, expenses, dailyAccount, loading, error } = useSelector((state) => state.reports);
+
     const [activeTab, setActiveTab] = useState("schedule");
-    const [data, setData] = useState({
-        schedule: [
-            [
-                { value: "2024-07-07" }, { value: "Monday" }, { value: "John Doe" },
-                { value: "Worker A" }, { value: "123 Street" }, { value: "Area 1" },
-                { value: "1234567890" }, { value: "20" }, { value: "100" }, { value: "Completed" }
-            ],
-            [
-                { value: "2024-07-08" }, { value: "Tuesday" }, { value: "Jane Smith" },
-                { value: "Worker B" }, { value: "456 Avenue" }, { value: "Area 2" },
-                { value: "0987654321" }, { value: "30" }, { value: "150" }, { value: "Scheduled" }
-            ]
-        ],
-        salary: [
-            [
-                { value: "2024-07-07" }, { value: "Monday" }, { value: "500" },
-                { value: "100" }, { value: "Worker A" }
-            ],
-            [
-                { value: "2024-07-08" }, { value: "Tuesday" }, { value: "600" },
-                { value: "150" }, { value: "Worker B" }
-            ]
-        ],
-        expenses: [
-            [
-                { value: "2024-07-07" }, { value: "Tools" }, { value: "200" }
-            ],
-            [
-                { value: "2024-07-08" }, { value: "Transport" }, { value: "150" }
-            ]
-        ],
-        dailyAccount: [
-            [
-                { value: "2024-07-07" }, { value: "Monday" }, { value: "1000" },
-                { value: "200" }, { value: "400" }, { value: "400" }
-            ],
-            [
-                { value: "2024-07-08" }, { value: "Tuesday" }, { value: "1200" },
-                { value: "250" }, { value: "500" }, { value: "450" }
-            ]
-        ]
-    });
-    const [originalData, setOriginalData] = useState(data);
+    const [data, setData] = useState({ schedule: [], salary: [], expenses: [], dailyAccount: [] });
+    const [originalData, setOriginalData] = useState({ schedule: [], salary: [], expenses: [], dailyAccount: [] });
     const [isChanged, setIsChanged] = useState(false);
+
+    useEffect(() => {
+        dispatch(getAllReports()).then((action) => {
+            const payload = action.payload;
+            if (payload) {
+                const { bookings, salaries, expenses, daily_accounts } = payload;
+                console.log('Fetched bookings:', bookings);
+                console.log('Fetched salaries:', salaries);
+                console.log('Fetched expenses:', expenses);
+                console.log('Fetched daily_accounts:', daily_accounts);
+
+                const formattedSchedules = bookings.map(booking => [
+                    { value: booking.date },
+                    { value: booking.day },
+                    { value: booking.client.name },
+                    { value: booking.worker.name },
+                    { value: booking.client.address },
+                    { value: booking.client.area },
+                    { value: booking.client.contact_details },
+                    { value: booking.client.total_panels },
+                    { value: booking.client.charge_per_clean },
+                    { value: booking.status }
+                ]);
+                console.log('Formatted schedules:', formattedSchedules);
+
+                const formattedSalaries = Object.entries(salaries).flatMap(([workerName, salaryDetails]) =>
+                    salaryDetails.length > 0
+                        ? salaryDetails.map(salary => [
+                            { value: salary.date },
+                            { value: salary.day },
+                            { value: salary.advance },
+                            { value: salary.incentive },
+                            { value: workerName }
+                        ])
+                        : [[{ value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: workerName }]]
+                );
+                console.log('Formatted salaries:', formattedSalaries);
+
+                const formattedExpenses = expenses.map(expense => [
+                    { value: expense.date },
+                    { value: expense.description },
+                    { value: expense.amount }
+                ]);
+                console.log('Formatted expenses:', formattedExpenses);
+
+                const formattedDailyAccounts = daily_accounts.map(account => [
+                    { value: account.date },
+                    { value: account.day },
+                    { value: account.total_earnings },
+                    { value: account.petrol_expense },
+                    { value: account.total_daily_wage },
+                    { value: account.tj_earnings_per_day }
+                ]);
+                console.log('Formatted daily accounts:', formattedDailyAccounts);
+
+                setData({
+                    schedule: formattedSchedules,
+                    salary: formattedSalaries,
+                    expenses: formattedExpenses,
+                    dailyAccount: formattedDailyAccounts
+                });
+                setOriginalData({
+                    schedule: formattedSchedules,
+                    salary: formattedSalaries,
+                    expenses: formattedExpenses,
+                    dailyAccount: formattedDailyAccounts
+                });
+            }
+        });
+    }, [dispatch]);
 
     const handleDataChange = (newData) => {
         setData((prevData) => ({
@@ -93,7 +127,7 @@ const ReportsPage = () => {
             data={data[activeTab]}
             columnLabels={columns[activeTab]}
             onChange={handleDataChange}
-            style={{margin: '20px'}}
+            style={{ margin: '20px' }}
         />
     );
 
@@ -109,12 +143,7 @@ const ReportsPage = () => {
             {/* Basic */}
             <meta charSet="utf-8" />
             <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-            {/* Mobile Metas */}
-            <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1, shrink-to-fit=no"
-            />
-            {/* Site Metas */}
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
             <meta name="keywords" content="" />
             <meta name="description" content="" />
             <meta name="author" content="" />
@@ -144,21 +173,12 @@ const ReportsPage = () => {
                         <div className="container-fluid">
                             <div className="contact_nav">
                                 <a href="">
-                                    <i
-                                        className="header-icon fa fa-phone"
-                                        aria-hidden="true"
-                                    />
+                                    <i className="header-icon fa fa-phone" aria-hidden="true" />
                                     <span> Call : +92 3302061260</span>
                                 </a>
                                 <a href="">
-                                    <i
-                                        className="fa fa-envelope"
-                                        aria-hidden="true"
-                                    />
-                                    <span>
-                                        {"  "}
-                                        Email : tjsolarinfo@gmail.com{" "}
-                                    </span>
+                                    <i className="fa fa-envelope" aria-hidden="true" />
+                                    <span> Email : tjsolarinfo@gmail.com </span>
                                 </a>
                             </div>
                         </div>
@@ -179,49 +199,31 @@ const ReportsPage = () => {
                                     aria-label="Toggle navigation">
                                     <span className=""> </span>
                                 </button>
-                                <div
-                                    className="collapse navbar-collapse"
-                                    id="navbarSupportedContent">
+                                <div className="collapse navbar-collapse" id="navbarSupportedContent">
                                     <ul className="navbar-nav">
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/">
-                                                Home
-                                            </a>
+                                            <a className="nav-link" href="/">Home</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/bookings">
-                                                Bookings
-                                            </a>
+                                            <a className="nav-link" href="/bookings">Bookings</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/workers">
-                                                Workers
-                                            </a>
+                                            <a className="nav-link" href="/workers">Workers</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/clients">
-                                                Clients
-                                            </a>
+                                            <a className="nav-link" href="/clients">Clients</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/search">
-                                                Search
-                                            </a>
+                                            <a className="nav-link" href="/search">Search</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/reports">
-                                                Reports
-                                            </a>
+                                            <a className="nav-link" href="/reports">Reports</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/logout">
-                                                Logout
-                                            </a>
+                                            <a className="nav-link" href="/logout">Logout</a>
                                         </li>
                                         <li className="nav-item">
-                                            <span className="nav-link">
-                                                Welcome, Guest
-                                            </span>
+                                            <span className="nav-link">Welcome, Guest</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -239,7 +241,7 @@ const ReportsPage = () => {
                 items={items}
                 onChange={handleTabChange}
             />
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', marginBottom: '20px'}}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', marginBottom: '20px' }}>
                 <Button type="primary" onClick={handleSave} disabled={!isChanged} style={{ marginRight: '10px' }}>
                     Save
                 </Button>
@@ -247,7 +249,6 @@ const ReportsPage = () => {
                     Cancel
                 </Button>
             </div>
-            {/* Reports Section end */}
 
             {/* info section */}
             <section className="info_section">
@@ -261,14 +262,10 @@ const ReportsPage = () => {
                                         <a href="">
                                             <div className="item">
                                                 <div className="img-box">
-                                                    <i
-                                                        className="fa fa-map-marker"
-                                                        aria-hidden="true"
-                                                    />
+                                                    <i className="fa fa-map-marker" aria-hidden="true" />
                                                 </div>
                                                 <p>
-                                                    A56, X.1, Gulshan e Maymar,
-                                                    Karachi, Pakistan
+                                                    A56, X.1, Gulshan e Maymar, Karachi, Pakistan
                                                 </p>
                                             </div>
                                         </a>
@@ -277,10 +274,7 @@ const ReportsPage = () => {
                                         <a href="">
                                             <div className="item">
                                                 <div className="img-box">
-                                                    <i
-                                                        className="fa fa-phone"
-                                                        aria-hidden="true"
-                                                    />
+                                                    <i className="fa fa-phone" aria-hidden="true" />
                                                 </div>
                                                 <p>03153738555</p>
                                             </div>
@@ -290,10 +284,7 @@ const ReportsPage = () => {
                                         <a href="">
                                             <div className="item">
                                                 <div className="img-box">
-                                                    <i
-                                                        className="fa fa-envelope"
-                                                        aria-hidden="true"
-                                                    />
+                                                    <i className="fa fa-envelope" aria-hidden="true" />
                                                 </div>
                                                 <p>tjsolarinfo@gmail.com</p>
                                             </div>
@@ -304,39 +295,17 @@ const ReportsPage = () => {
                         </div>
                     </div>
                 </div>
-                <div className="social-box">
-                    <h4>Follow Us</h4>
-                    <div className="box">
-                        <a href="https://www.facebook.com/tjsolarcleaningservices">
-                            <i className="fa fa-facebook" aria-hidden="true" />
-                        </a>
-                        <a href="">
-                            <i className="fa fa-twitter" aria-hidden="true" />
-                        </a>
-                        <a href="">
-                            <i className="fa fa-youtube" aria-hidden="true" />
-                        </a>
-                        <a href="https://www.instagram.com/tjsolars/">
-                            <i className="fa fa-instagram" aria-hidden="true" />
-                        </a>
-                    </div>
-                </div>
             </section>
-            {/* end info_section */}
+            {/* end info section */}
             {/* footer section */}
             <footer className="footer_section">
                 <div className="container">
                     <p>
                         © <span id="displayDateYear" /> All Rights Reserved By
-                        <a href="https://www.behance.net/aawaizali">
-                            TJ Solars
-                        </a>
+                        <a href="https://www.behance.net/aawaizali">TJ Solars</a>
                     </p>
                 </div>
             </footer>
-            {/* footer section */}
-            {/* Google Map */}
-            {/* End Google Map */}
         </>
     );
 };

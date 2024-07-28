@@ -29,25 +29,40 @@ axiosInstance.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-const clientsSlice = createSlice({
-    name: "clients",
+export const getAllReports = createAsyncThunk(
+    "reports/getAllReports",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.get("/api/reports/get-all-reports");
+            console.log(response.data)
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+const reportsSlice = createSlice({
+    name: "reports",
     initialState,
-    reducers: {
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(getAllSchedules.pending, (state) => {
+            .addCase(getAllReports.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(getAllSchedules.fulfilled, (state, action) => {
-                state.clients = action.payload;
+            .addCase(getAllReports.fulfilled, (state, action) => {
+                state.schedule = action.payload.schedules;
+                state.salary = action.payload.salaries;
+                state.expenses = action.payload.expenses;
+                state.dailyAccount = action.payload.daily_accounts;
                 state.loading = false;
             })
-            .addCase(getAllSchedules.rejected, (state, action) => {
+            .addCase(getAllReports.rejected, (state, action) => {
                 state.error = action.payload;
                 state.loading = false;
-            })
+            });
     },
 });
 
