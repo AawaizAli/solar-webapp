@@ -41,6 +41,9 @@ import "../../public/css/style.css";
 const { Search } = Input;
 const { Option } = Select;
 
+import Footer from "./Footer";
+import Header from "./Header";
+
 const SearchPage = () => {
     const authState = useSelector((state) => state.auth);
     const actualIsAuthenticated = authState?.isAuthenticated ?? false;
@@ -537,116 +540,7 @@ const SearchPage = () => {
     return (
         <>
             <div className="hero_area">
-                <header className="header_section">
-                    <div className="header_top">
-                        <div className="container-fluid">
-                            <div className="contact_nav">
-                                <a href="">
-                                    <i
-                                        className="header-icon fa fa-phone"
-                                        aria-hidden="true"
-                                    />
-                                    <span>Call : +92 3302061260</span>
-                                </a>
-                                <a href="">
-                                    <i
-                                        className="fa fa-envelope"
-                                        aria-hidden="true"
-                                    />
-                                    <span> Email : tjsolarinfo@gmail.com </span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="header_bottom">
-                        <div className="container-fluid">
-                            <nav className="navbar navbar-expand-lg custom_nav-container">
-                                <a className="navbar-brand" href="/">
-                                    <span> TJ Solars </span>
-                                </a>
-                                <button
-                                    className="navbar-toggler"
-                                    type="button"
-                                    data-toggle="collapse"
-                                    data-target="#navbarSupportedContent"
-                                    aria-controls="navbarSupportedContent"
-                                    aria-expanded="false"
-                                    aria-label="Toggle navigation">
-                                    <span className=""> </span>
-                                </button>
-                                <div
-                                    className="collapse navbar-collapse"
-                                    id="navbarSupportedContent">
-                                    <ul className="navbar-nav">
-                                        
-                                        {actualIsAuthenticated ? (
-                                            <>
-                                                <li className="nav-item">
-                                                <Link
-                                                        className="nav-link"
-                                                        to="/bookings">
-                                                        Bookings
-                                                    </Link>
-                                                </li>
-                                                <li className="nav-item">
-                                                <Link
-                                                        className="nav-link"
-                                                        to="/workers">
-                                                        Workers
-                                                    </Link>
-                                                </li>
-                                                <li className="nav-item">
-                                                <Link
-                                                        className="nav-link"
-                                                        to="/clients">
-                                                        Clients
-                                                    </Link>
-                                                </li>
-                                                <li className="nav-item">
-                                                <Link
-                                                        className="nav-link"
-                                                        to="/search">
-                                                        Search
-                                                    </Link>
-                                                </li>
-                                                <li className="nav-item">
-                                                <Link
-                                                        className="nav-link"
-                                                        to="/reports">
-                                                        Reports
-                                                    </Link>
-                                                </li>
-                                                <li className="nav-item">
-                                                    <Link
-                                                        className="nav-link"
-                                                        to="/logout">
-                                                        Logout
-                                                    </Link>
-                                                </li>
-                                            </>
-                                        ) : (
-                                            <li className="nav-item">
-                                                <Link
-                                                        className="nav-link"
-                                                        to="/login">
-                                                        Login
-                                                    </Link>
-                                            </li>
-                                        )}
-                                        {actualIsAuthenticated && (
-                                            <li className="nav-item">
-                                                <span className="nav-link">
-                                                    Welcome,{" "}
-                                                    {actualUser.username}
-                                                </span>
-                                            </li>
-                                        )}
-                                    </ul>
-                                </div>
-                            </nav>
-                        </div>
-                    </div>
-                </header>
+                <Header></Header>
             </div>
             <div className="container mt-4">
                 <div className="row mb-3">
@@ -800,88 +694,7 @@ const SearchPage = () => {
                 </div>
             </Modal>
 
-            <section className="info_section">
-                <div className="container">
-                    <h4>Get In Touch</h4>
-                    <div className="row">
-                        <div className="col-lg-10 mx-auto">
-                            <div className="info_items">
-                                <div className="row">
-                                    <div className="col-md-4">
-                                        <a href="">
-                                            <div className="item">
-                                                <div className="img-box">
-                                                    <i
-                                                        className="fa fa-map-marker"
-                                                        aria-hidden="true"
-                                                    />
-                                                </div>
-                                                <p>
-                                                    A56, X.1, Gulshan e Maymar,
-                                                    Karachi, Pakistan
-                                                </p>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div className="col-md-4">
-                                        <a href="">
-                                            <div className="item">
-                                                <div className="img-box">
-                                                    <i
-                                                        className="fa fa-phone"
-                                                        aria-hidden="true"
-                                                    />
-                                                </div>
-                                                <p>+92 3302061260</p>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div className="col-md-4">
-                                        <a href="">
-                                            <div className="item">
-                                                <div className="img-box">
-                                                    <i
-                                                        className="fa fa-envelope"
-                                                        aria-hidden="true"
-                                                    />
-                                                </div>
-                                                <p>tjsolarinfo@gmail.com</p>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="social-box">
-                    <h4>Follow Us</h4>
-                    <div className="box">
-                        <a href="https://www.facebook.com/tjsolarcleaningservices">
-                            <i className="fa fa-facebook" aria-hidden="true" />
-                        </a>
-                        <a href="">
-                            <i className="fa fa-twitter" aria-hidden="true" />
-                        </a>
-                        <a href="">
-                            <i className="fa fa-youtube" aria-hidden="true" />
-                        </a>
-                        <a href="https://www.instagram.com/tjsolars/">
-                            <i className="fa fa-instagram" aria-hidden="true" />
-                        </a>
-                    </div>
-                </div>
-            </section>
-            <footer className="footer_section">
-                <div className="container">
-                    <p>
-                        © <span id="displayDateYear" /> All Rights Reserved By{" "}
-                        <a href="https://www.behance.net/aawaizali">
-                            TJ Solars
-                        </a>
-                    </p>
-                </div>
-            </footer>
+            <Footer></Footer>
         </>
     );
 };

@@ -18,6 +18,9 @@ import "../../public/css/responsive.css";
 import "../../public/css/style.css";
 import professionalImg from "../../public/professional-img.png";
 
+import Header from "./Header";
+import Footer from "./Footer";
+
 const Worker = () => {
     const [workerId, setWorkerId] = useState("");
     const dispatch = useDispatch();

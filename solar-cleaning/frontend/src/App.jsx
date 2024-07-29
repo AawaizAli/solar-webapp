@@ -21,7 +21,6 @@ const App = () => {
         <Route path="/reports" element={<ReportsPage/>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/logout" element={<LogoutPage />} />
-
       </Routes>
     </Router>
   );
