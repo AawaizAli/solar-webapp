@@ -13,10 +13,14 @@ import Spreadsheet from "react-spreadsheet";
 import { getAllReports } from "../features/reports/reportsSlice";
 
 const ReportsPage = () => {
+    const authState = useSelector((state) => state.auth);
+    const actualIsAuthenticated = authState?.isAuthenticated ?? false;
+    console.log(authState?.isAuthenticated);
+    const actualUser = authState?.user;
+
     const dispatch = useDispatch();
-    const dataTest =
-        useSelector((state) => state);
-        console.log(dataTest , "dataTestdataTestdataTest")
+    const dataTest = useSelector((state) => state);
+    console.log(dataTest, "dataTestdataTestdataTest");
     const [activeTab, setActiveTab] = useState("schedule");
     const [data, setData] = useState({
         schedule: [],
@@ -48,7 +52,7 @@ const ReportsPage = () => {
                     const dayOfWeek = dateObj.toLocaleDateString("en-US", {
                         weekday: "long",
                     });
-                    
+
                     return [
                         { value: booking.date },
                         { value: dayOfWeek },
@@ -177,7 +181,6 @@ const ReportsPage = () => {
             data={data[activeTab]}
             columnLabels={columns[activeTab]}
             onChange={handleDataChange}
-            style={{ margin: "20px" }}
         />
     );
 
@@ -266,60 +269,69 @@ const ReportsPage = () => {
                                     className="collapse navbar-collapse"
                                     id="navbarSupportedContent">
                                     <ul className="navbar-nav">
-                                        <li className="nav-item">
-                                        <Link
-                                                        className="nav-link"
-                                                        to="/">
-                                                        Home
-                                                    </Link>
-                                        </li>
-                                        <li className="nav-item">
-                                        <Link
+                                        {actualIsAuthenticated ? (
+                                            <>
+                                                <li className="nav-item">
+                                                    <Link
                                                         className="nav-link"
                                                         to="/bookings">
                                                         Bookings
                                                     </Link>
-                                        </li>
-                                        <li className="nav-item">
-                                        <Link
+                                                </li>
+                                                <li className="nav-item">
+                                                    <Link
                                                         className="nav-link"
                                                         to="/workers">
                                                         Workers
                                                     </Link>
-                                        </li>
-                                        <li className="nav-item">
-                                        <Link
+                                                </li>
+                                                <li className="nav-item">
+                                                    <Link
                                                         className="nav-link"
                                                         to="/clients">
                                                         Clients
                                                     </Link>
-                                        </li>
-                                        <li className="nav-item">
-                                        <Link
+                                                </li>
+                                                <li className="nav-item">
+                                                    <Link
                                                         className="nav-link"
                                                         to="/search">
                                                         Search
                                                     </Link>
-                                        </li>
-                                        <li className="nav-item">
-                                        <Link
+                                                </li>
+                                                <li className="nav-item">
+                                                    <Link
                                                         className="nav-link"
                                                         to="/reports">
                                                         Reports
                                                     </Link>
-                                        </li>
-                                        <li className="nav-item">
-                                        <Link
+                                                </li>
+
+                                                <li className="nav-item">
+                                                    <Link
                                                         className="nav-link"
                                                         to="/logout">
                                                         Logout
                                                     </Link>
-                                        </li>
-                                        <li className="nav-item">
-                                            <span className="nav-link">
-                                                Welcome, Guest
-                                            </span>
-                                        </li>
+                                                </li>
+                                            </>
+                                        ) : (
+                                            <li className="nav-item">
+                                                <Link
+                                                    className="nav-link"
+                                                    to="/login">
+                                                    Login
+                                                </Link>
+                                            </li>
+                                        )}
+                                        {actualIsAuthenticated && (
+                                            <li className="nav-item">
+                                                <span className="nav-link">
+                                                    Welcome,{" "}
+                                                    {actualUser.username}
+                                                </span>
+                                            </li>
+                                        )}
                                     </ul>
                                 </div>
                             </nav>

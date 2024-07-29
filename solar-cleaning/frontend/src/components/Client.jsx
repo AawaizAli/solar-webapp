@@ -25,6 +25,8 @@ const Client = () => {
     const authState = useSelector((state) => state.auth);
     const actualIsAuthenticated = authState?.isAuthenticated ?? false;
     const actualUser = authState?.user ?? { username: "Guest" };
+
+    
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
     const [form] = Form.useForm();
     const [latitude, setLatitude] = useState(null);
