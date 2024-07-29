@@ -9,11 +9,12 @@ from datetime import datetime, timedelta
 from ..utils import haversine, get_coordinates
 
 booking_bp = Blueprint('booking_bp', __name__, url_prefix='/api/bookings')
-from datetime import datetime, timedelta
+
 
 def get_day_index(date_str):
     date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
     return date_obj.weekday()  # Monday is 0 and Sunday is 6
+
 
 def get_slot_index(time_slot):
     slots = {
@@ -23,9 +24,10 @@ def get_slot_index(time_slot):
         "15:00-17:00": 3,
         "17:00-19:00": 4
     }
-    
+
     print(f"Received time_slot: {time_slot}, Type: {type(time_slot)}")
     return slots.get(time_slot)
+
 
 def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, recurrence, subscription_end_date):
     current_date = datetime.strptime(start_date, '%Y-%m-%d').date()
@@ -40,14 +42,15 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
         interval = recurrence_days[recurrence]
         print(f"Starting recurring booking with interval: {interval} days")
         while current_date <= subscription_end_date:
-            print(f"Checking availability for date: {current_date} and time_slot: {time_slot}")
+            print(
+                f"Checking availability for date: {current_date} and time_slot: {time_slot}")
             day_index = get_day_index(current_date.strftime('%Y-%m-%d'))
             slot_index = get_slot_index(time_slot)
             print(f"Day index: {day_index}, Slot index: {slot_index}")
 
             worker = Worker.query.get(worker_id)  # Fetch fresh instance
             print(f"Worker availability before booking: {worker.availability}")
-            
+
             # Check if a booking already exists
             existing_booking = Booking.query.filter_by(
                 client_id=client_id,
@@ -55,9 +58,10 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
                 date=current_date,
                 time_slot=time_slot
             ).first()
-            
+
             if existing_booking:
-                print(f"Booking already exists for date: {current_date} and time_slot: {time_slot}")
+                print(
+                    f"Booking already exists for date: {current_date} and time_slot: {time_slot}")
             elif worker and worker.availability[day_index][slot_index]:
                 new_booking = Booking(
                     client_id=client_id,
@@ -70,10 +74,13 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
                 worker.availability[day_index][slot_index] = False
                 db.session.add(new_booking)
                 db.session.commit()  # Commit after each addition
-                print(f"Booking added for date: {current_date} and time_slot: {time_slot}")
-                print(f"Worker availability after booking: {worker.availability}")
+                print(
+                    f"Booking added for date: {current_date} and time_slot: {time_slot}")
+                print(
+                    f"Worker availability after booking: {worker.availability}")
             else:
-                print(f"Worker not available on date: {current_date} and time_slot: {time_slot}")
+                print(
+                    f"Worker not available on date: {current_date} and time_slot: {time_slot}")
 
             current_date += timedelta(days=interval)
 
@@ -103,7 +110,7 @@ def create_booking():
     if slot_index is None:
         return jsonify({'error': 'Bad Request', 'message': 'Invalid time slot'}), 400
 
-    if 'worker_id' in data:
+    if 'worker_id' in data and data['worker_id'] is not None:
         closest_worker = Worker.query.filter_by(id=data['worker_id']).first()
         if not closest_worker or not closest_worker.availability[day_index][slot_index]:
             return jsonify({'error': 'Conflict', 'message': 'Specified worker not available for the selected time slot'}), 409
@@ -111,7 +118,8 @@ def create_booking():
         for worker in workers:
             if worker.availability[day_index][slot_index]:
                 worker_lat, worker_lon = worker.latitude, worker.longitude
-                distance = haversine(client_lat, client_lon, worker_lat, worker_lon)
+                distance = haversine(client_lat, client_lon,
+                                     worker_lat, worker_lon)
                 if distance < min_distance:
                     min_distance = distance
                     closest_worker = worker
@@ -149,8 +157,10 @@ def create_booking():
 
     if 'recurrence' in data:
         subscription_end_date = client.subscription_end
-        print(f"Subscription end date: {subscription_end_date}, Type: {type(subscription_end_date)}")
-        add_recurring_bookings(client.id, closest_worker.id, data['date'], data['time_slot'], data['status'], data['recurrence'], subscription_end_date)
+        print(
+            f"Subscription end date: {subscription_end_date}, Type: {type(subscription_end_date)}")
+        add_recurring_bookings(client.id, closest_worker.id,
+                               data['date'], data['time_slot'], data['status'], data['recurrence'], subscription_end_date)
 
     return jsonify(new_booking.to_dict()), 201
 
@@ -161,11 +171,13 @@ def get_all_bookings():
     bookings = Booking.query.all()
     return jsonify([booking.to_dict() for booking in bookings]), 200
 
+
 @booking_bp.route('/get-booking-by-id/<int:booking_id>', methods=['GET'])
 @jwt_required()
 def get_booking_by_id(booking_id):
     booking = Booking.query.get_or_404(booking_id)
     return jsonify(booking.to_dict()), 200
+
 
 @booking_bp.route('/update-booking/<int:booking_id>', methods=['PUT'])
 @jwt_required()
@@ -233,9 +245,6 @@ def update_booking(booking_id):
     return jsonify(booking.to_dict()), 200
 
 
-
-
-
 @booking_bp.route('/delete-booking/<int:booking_id>', methods=['DELETE'])
 @jwt_required()
 def delete_booking(booking_id):
@@ -243,22 +252,12 @@ def delete_booking(booking_id):
     # Mark availability as true
     worker = Worker.query.get(booking.worker_id)
     day_index = get_day_index(booking.date.strftime('%Y-%m-%d'))
-    
-    def get_slot_index_from_string(time_slot):
-        slots = {
-            "09:00-11:00": 0,
-            "11:00-13:00": 1,
-            "13:00-15:00": 2,
-            "15:00-17:00": 3,
-            "17:00-19:00": 4
-        }
-        return slots.get(time_slot, None)
-    
-    slot_index = get_slot_index_from_string(booking.time_slot)
-    
+
+    slot_index = get_slot_index(booking.time_slot)
+
     if slot_index is None:
         return jsonify({'error': 'Internal Server Error', 'message': 'Invalid time slot'}), 500
-    
+
     worker.availability[day_index][slot_index] = True
 
     db.session.delete(booking)

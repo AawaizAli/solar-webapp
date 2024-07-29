@@ -13,6 +13,7 @@ import professionalImg from "../../public/professional-img.png";
 const HomePage = () => {
     const authState = useSelector((state) => state.auth);
     const actualIsAuthenticated = authState?.isAuthenticated ?? false;
+    console.log(authState?.isAuthenticated)
     const actualUser = authState?.user ?? { username: "Guest" };
 
     return (
@@ -94,32 +95,39 @@ const HomePage = () => {
                                         {actualIsAuthenticated ? (
                                             <>
                                                 <li className="nav-item">
-                                                    <a
-                                                        href="/bookings"
-                                                        className="nav-link">
+                                                <Link
+                                                        className="nav-link"
+                                                        to="/bookings">
                                                         Bookings
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                <Link
                                                         className="nav-link"
-                                                        href="/workers">
+                                                        to="/workers">
                                                         Workers
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                <Link
                                                         className="nav-link"
-                                                        href="/clients">
+                                                        to="/clients">
                                                         Clients
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                <Link
                                                         className="nav-link"
-                                                        href="/search">
+                                                        to="/search">
                                                         Search
-                                                    </a>
+                                                    </Link>
+                                                </li>
+                                                <li className="nav-item">
+                                                <Link
+                                                        className="nav-link"
+                                                        to="/reports">
+                                                        Reports
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
                                                     <Link

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Modal as Modal, Form, Input, Select, Button } from "antd";
 import {
@@ -24,7 +25,6 @@ const Booking = () => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [form] = Form.useForm();
     const dispatch = useDispatch();
-
     const authState = useSelector((state) => state.auth);
     const actualIsAuthenticated = authState?.isAuthenticated ?? false;
     const actualUser = authState?.user ?? { username: "Guest" };
@@ -84,12 +84,10 @@ const Booking = () => {
 
     const handleCreateBooking = async (values) => {
         const day = new Date(values.date).getDay(); // Assuming values.date is a valid date string
-        const timeSlot = parseInt(
-            Object.keys(timeSlots).find(
-                (key) => timeSlots[key] === values.time_slot
-            ),
-            10
+        const timeSlot = Object.keys(timeSlots).find(
+            (key) => timeSlots[key] === values.time_slot
         );
+        console.log(`Day: ${day}, Time Slot: ${timeSlot}`);
 
         const isAvailable = await checkWorkerAvailability(
             values.worker_id,
@@ -105,8 +103,9 @@ const Booking = () => {
             ...values,
             client_id: parseInt(values.client_id, 10),
             worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
-            time_slot: timeSlot, // Convert time_slot to an integer
+            time_slot: values.time_slot, // Send time_slot string directly
         };
+        console.log("Formatted Values:", formattedValues);
 
         try {
             await dispatch(createBooking(formattedValues)).unwrap();
@@ -133,9 +132,7 @@ const Booking = () => {
             worker_id: bookingDetails.worker_id
                 ? bookingDetails.worker_id.toString()
                 : "",
-            time_slot: Object.keys(timeSlots).find(
-                (key) => timeSlots[key] === bookingDetails.time_slot
-            ),
+            time_slot: bookingDetails.time_slot, // Keep the time slot string as is
         };
 
         form.setFieldsValue(values);
@@ -146,12 +143,10 @@ const Booking = () => {
 
     const handleUpdateBooking = async (values) => {
         const day = new Date(values.date).getDay(); // Assuming values.date is a valid date string
-        const timeSlot = parseInt(
-            Object.keys(timeSlots).find(
-                (key) => timeSlots[key] === values.time_slot
-            ),
-            10
+        const timeSlot = Object.keys(timeSlots).find(
+            (key) => timeSlots[key] === values.time_slot
         );
+        console.log(`Day: ${day}, Time Slot: ${timeSlot}`);
 
         const isAvailable = await checkWorkerAvailability(
             values.worker_id,
@@ -167,7 +162,7 @@ const Booking = () => {
             ...values,
             client_id: parseInt(values.client_id, 10),
             worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
-            time_slot: timeSlot, // Convert time_slot to an integer
+            time_slot: values.time_slot, // Send time_slot string directly
         };
 
         try {
@@ -361,48 +356,55 @@ const Booking = () => {
                                         {actualIsAuthenticated ? (
                                             <>
                                                 <li className="nav-item">
-                                                    <a
-                                                        href="/bookings"
-                                                        className="nav-link">
+                                                <Link
+                                                        className="nav-link"
+                                                        to="/bookings">
                                                         Bookings
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                <Link
                                                         className="nav-link"
-                                                        href="/workers">
+                                                        to="/workers">
                                                         Workers
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                    <Link
                                                         className="nav-link"
-                                                        href="/clients">
+                                                        to="/clients">
                                                         Clients
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                    <Link
                                                         className="nav-link"
-                                                        href="">
+                                                        to="/search">
                                                         Search
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                <Link
                                                         className="nav-link"
-                                                        href="">
+                                                        to="/reports">
+                                                        Reports
+                                                    </Link>
+                                                </li>
+                                                <li className="nav-item">
+                                                <Link
+                                                        className="nav-link"
+                                                        to="/logout">
                                                         Logout
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                             </>
                                         ) : (
                                             <li className="nav-item">
-                                                <a
-                                                    className="nav-link"
-                                                    href="/login">
-                                                    Login
-                                                </a>
+                                                <Link
+                                                        className="nav-link"
+                                                        to="/login">
+                                                        Login
+                                                    </Link>
                                             </li>
                                         )}
                                         {actualIsAuthenticated && (

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
     deleteWorker,
     createWorker,
@@ -272,48 +273,55 @@ const Worker = () => {
                                         {actualIsAuthenticated ? (
                                             <>
                                                 <li className="nav-item">
-                                                    <a
-                                                        href="/bookings"
-                                                        className="nav-link">
+                                                <Link
+                                                        className="nav-link"
+                                                        to="/bookings">
                                                         Bookings
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                <Link
                                                         className="nav-link"
-                                                        href="/workers">
+                                                        to="/workers">
                                                         Workers
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                <Link
                                                         className="nav-link"
-                                                        href="/clients">
+                                                        to="/clients">
                                                         Clients
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                <Link
                                                         className="nav-link"
-                                                        href="">
+                                                        to="/search">
                                                         Search
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                <Link
                                                         className="nav-link"
-                                                        href="">
+                                                        to="/reports">
+                                                        Reports
+                                                    </Link>
+                                                </li>
+                                                <li className="nav-item">
+                                                <Link
+                                                        className="nav-link"
+                                                        to="/logout">
                                                         Logout
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                             </>
                                         ) : (
                                             <li className="nav-item">
-                                                <a
-                                                    className="nav-link"
-                                                    href="/login">
-                                                    Login
-                                                </a>
+                                                <Link
+                                                        className="nav-link"
+                                                        to="/login">
+                                                        Login
+                                                    </Link>
                                             </li>
                                         )}
                                         {actualIsAuthenticated && (

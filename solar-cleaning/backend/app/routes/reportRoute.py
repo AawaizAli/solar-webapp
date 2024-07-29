@@ -1,5 +1,6 @@
 # app/routes/report.py
 from flask import Blueprint, jsonify
+from flask_jwt_extended import jwt_required
 from app.models.bookingModel import Booking
 from app.models.clientModel import Client
 from app.models.workerModel import Worker
@@ -11,6 +12,7 @@ from app.models.salaryModel import Salary
 report_bp = Blueprint('report_bp', __name__, url_prefix='/api/reports')
 
 @report_bp.route('/get-all-reports', methods=['GET'])
+@jwt_required()
 def get_reports():
     # Existing report data
     bookings = Booking.query.all()

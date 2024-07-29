@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Tabs, Button } from "antd";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -13,9 +14,9 @@ import { getAllReports } from "../features/reports/reportsSlice";
 
 const ReportsPage = () => {
     const dispatch = useDispatch();
-    const { schedule, salary, expenses, dailyAccount, loading, error } =
-        useSelector((state) => state.reports);
-
+    const dataTest =
+        useSelector((state) => state);
+        console.log(dataTest , "dataTestdataTestdataTest")
     const [activeTab, setActiveTab] = useState("schedule");
     const [data, setData] = useState({
         schedule: [],
@@ -266,51 +267,53 @@ const ReportsPage = () => {
                                     id="navbarSupportedContent">
                                     <ul className="navbar-nav">
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/">
-                                                Home
-                                            </a>
+                                        <Link
+                                                        className="nav-link"
+                                                        to="/">
+                                                        Home
+                                                    </Link>
                                         </li>
                                         <li className="nav-item">
-                                            <a
-                                                className="nav-link"
-                                                href="/bookings">
-                                                Bookings
-                                            </a>
+                                        <Link
+                                                        className="nav-link"
+                                                        to="/bookings">
+                                                        Bookings
+                                                    </Link>
                                         </li>
                                         <li className="nav-item">
-                                            <a
-                                                className="nav-link"
-                                                href="/workers">
-                                                Workers
-                                            </a>
+                                        <Link
+                                                        className="nav-link"
+                                                        to="/workers">
+                                                        Workers
+                                                    </Link>
                                         </li>
                                         <li className="nav-item">
-                                            <a
-                                                className="nav-link"
-                                                href="/clients">
-                                                Clients
-                                            </a>
+                                        <Link
+                                                        className="nav-link"
+                                                        to="/clients">
+                                                        Clients
+                                                    </Link>
                                         </li>
                                         <li className="nav-item">
-                                            <a
-                                                className="nav-link"
-                                                href="/search">
-                                                Search
-                                            </a>
+                                        <Link
+                                                        className="nav-link"
+                                                        to="/search">
+                                                        Search
+                                                    </Link>
                                         </li>
                                         <li className="nav-item">
-                                            <a
-                                                className="nav-link"
-                                                href="/reports">
-                                                Reports
-                                            </a>
+                                        <Link
+                                                        className="nav-link"
+                                                        to="/reports">
+                                                        Reports
+                                                    </Link>
                                         </li>
                                         <li className="nav-item">
-                                            <a
-                                                className="nav-link"
-                                                href="/logout">
-                                                Logout
-                                            </a>
+                                        <Link
+                                                        className="nav-link"
+                                                        to="/logout">
+                                                        Logout
+                                                    </Link>
                                         </li>
                                         <li className="nav-item">
                                             <span className="nav-link">

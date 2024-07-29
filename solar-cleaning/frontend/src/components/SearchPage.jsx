@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Table, Input, Button, Modal, Select } from "antd";
+import { Link } from "react-router-dom";
 import {
     getAllWorkers,
     getById,
@@ -53,12 +54,12 @@ const SearchPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
 
     const dispatch = useDispatch();
-    const clients = useSelector((state) => state.clients.clients);
-    const workers = useSelector((state) => state.workers.workers);
-    const bookings = useSelector((state) => state.bookings.bookings);
-    const loadingClients = useSelector((state) => state.clients.loading);
-    const loadingWorkers = useSelector((state) => state.workers.loading);
-    const loadingBookings = useSelector((state) => state.bookings.loading);
+    const clients = useSelector((state) => state?.clients?.clients);
+    const workers = useSelector((state) => state?.workers?.workers);
+    const bookings = useSelector((state) => state?.bookings?.bookings);
+    const loadingClients = useSelector((state) => state?.clients?.loading);
+    const loadingWorkers = useSelector((state) => state?.workers?.loading);
+    const loadingBookings = useSelector((state) => state?.bookings?.loading);
 
     const handleMenuClick = (option) => {
         setSelectedOption(option);
@@ -581,32 +582,39 @@ const SearchPage = () => {
                                         {actualIsAuthenticated ? (
                                             <>
                                                 <li className="nav-item">
-                                                    <a
-                                                        href="/bookings"
-                                                        className="nav-link">
+                                                <Link
+                                                        className="nav-link"
+                                                        to="/bookings">
                                                         Bookings
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                <Link
                                                         className="nav-link"
-                                                        href="/workers">
+                                                        to="/workers">
                                                         Workers
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                <Link
                                                         className="nav-link"
-                                                        href="/clients">
+                                                        to="/clients">
                                                         Clients
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a
+                                                <Link
                                                         className="nav-link"
-                                                        href="/search">
+                                                        to="/search">
                                                         Search
-                                                    </a>
+                                                    </Link>
+                                                </li>
+                                                <li className="nav-item">
+                                                <Link
+                                                        className="nav-link"
+                                                        to="/reports">
+                                                        Reports
+                                                    </Link>
                                                 </li>
                                                 <li className="nav-item">
                                                     <Link
@@ -618,11 +626,11 @@ const SearchPage = () => {
                                             </>
                                         ) : (
                                             <li className="nav-item">
-                                                <a
-                                                    className="nav-link"
-                                                    href="/login">
-                                                    Login
-                                                </a>
+                                                <Link
+                                                        className="nav-link"
+                                                        to="/login">
+                                                        Login
+                                                    </Link>
                                             </li>
                                         )}
                                         {actualIsAuthenticated && (
