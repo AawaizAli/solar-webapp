@@ -484,7 +484,7 @@ const SearchPage = () => {
                   { title: "Slot", dataIndex: "time_slot", key: "time_slot" },
                   { title: "Status", dataIndex: "status", key: "status" },
                   {
-                      title: "Reoccurrence",
+                      title: "Recurrence",
                       dataIndex: "recurrence",
                       key: "recurrence",
                   },
@@ -533,7 +533,7 @@ const SearchPage = () => {
                   { label: "Date", value: "date" },
                   { label: "Slot", value: "time_slot" },
                   { label: "Status", value: "status" },
-                  { label: "Reoccurrence", value: "recurrence" },
+                  { label: "Recurrence", value: "recurrence" },
               ]
             : [];
 
