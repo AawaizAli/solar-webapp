@@ -41,7 +41,6 @@ const Footer = () => {
                                         </a>
                                     </div>
                                     <div className="col-md-4">
-                                        <a href="">
                                             <div className="item">
                                                 <div className="img-box">
                                                     <i
@@ -51,7 +50,6 @@ const Footer = () => {
                                                 </div>
                                                 <p>tjsolarinfo@gmail.com</p>
                                             </div>
-                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -63,12 +61,6 @@ const Footer = () => {
                     <div className="box">
                         <a href="https://www.facebook.com/tjsolarcleaningservices">
                             <i className="fa fa-facebook" aria-hidden="true" />
-                        </a>
-                        <a href="">
-                            <i className="fa fa-twitter" aria-hidden="true" />
-                        </a>
-                        <a href="">
-                            <i className="fa fa-youtube" aria-hidden="true" />
                         </a>
                         <a href="https://www.instagram.com/tjsolars/">
                             <i className="fa fa-instagram" aria-hidden="true" />

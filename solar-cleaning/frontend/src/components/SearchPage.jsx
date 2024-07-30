@@ -348,7 +348,7 @@ const SearchPage = () => {
                         setTableData([]);
                     }
                 });
-            } else if (selectedField === "Reoccurrence") {
+            } else if (selectedField === "Recurrence") {
                 dispatch(getByRecurrence(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
@@ -368,8 +368,18 @@ const SearchPage = () => {
     };
 
     const handleShowAvailability = (workerId) => {
+        console.log("workers:", workers); // Log the workers array
+        console.log("workerId:", workerId); // Log the workerId being passed
+    
+        if (!workers) {
+            console.error("Workers data is not available yet.");
+            return;
+        }
+    
         const selectedWorker = workers.find((worker) => worker.id === workerId);
+    
         if (selectedWorker) {
+            console.log("Selected Worker:", selectedWorker); // Log the selected worker
             setAvailabilityData(selectedWorker.availability);
             setModalVisible(true);
         } else {
@@ -630,8 +640,8 @@ const SearchPage = () => {
                                     <Option value="Date">Date</Option>
                                     <Option value="Slot">Slot</Option>
                                     <Option value="Status">Status</Option>
-                                    <Option value="Reoccurrence">
-                                        Reoccurrence
+                                    <Option value="Recurrence">
+                                        Recurrence
                                     </Option>
                                 </>
                             )}

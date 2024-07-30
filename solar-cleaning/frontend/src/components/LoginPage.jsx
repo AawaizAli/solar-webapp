@@ -1,10 +1,12 @@
 import React from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../features/auth/authSlice';
 import { Navigate } from 'react-router-dom';
 import './LoginPage.css';
+import Header from './Header';
+import Footer from './Footer';
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -23,55 +25,7 @@ const LoginPage = () => {
   return (
     <>
       {/* Header and Navbar */}
-      <header className="header_section">
-        <div className="header_top">
-          <div className="container-fluid">
-            <div className="contact_nav">
-              <a href="">
-                <i className="header-icon fa fa-phone" aria-hidden="true" />
-                <span>Call : +92 3302061260</span>
-              </a>
-              <a href="">
-                <i className="header-icon fa fa-envelope" aria-hidden="true" />
-                <span>Email : tjsolarinfo@gmail.com </span>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="header_bottom">
-          <div className="container-fluid">
-            <nav className="navbar navbar-expand-lg custom_nav-container">
-              <a className="navbar-brand" href="/">
-                <span> TJ Solars </span>
-              </a>
-              <button
-                className="navbar-toggler"
-                type="button"
-                data-toggle="collapse"
-                data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span className=""> </span>
-              </button>
-              <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul className="navbar-nav">
-                  <li className="nav-item">
-                    <a className="nav-link" href="/">
-                      Home
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="/login">
-                      Login
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Login Form */}
       <div className="login-container">
@@ -105,6 +59,9 @@ const LoginPage = () => {
           {error && <p style={{ color: 'red' }}>{error}</p>}
         </Form>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </>
   );
 };
