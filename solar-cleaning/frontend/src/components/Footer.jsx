@@ -41,15 +41,18 @@ const Footer = () => {
                                         </a>
                                     </div>
                                     <div className="col-md-4">
+                                    <a href="">
                                             <div className="item">
                                                 <div className="img-box">
+                                                   
                                                     <i
                                                         className="fa fa-envelope"
                                                         aria-hidden="true"
                                                     />
                                                 </div>
                                                 <p>tjsolarinfo@gmail.com</p>
-                                            </div>
+                                                </div>
+                                                </a>
                                     </div>
                                 </div>
                             </div>
