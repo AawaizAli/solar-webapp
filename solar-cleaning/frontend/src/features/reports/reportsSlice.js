@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const initialState = {
-    schedule: [],
+    bookings: [],
     salary: [],
     expenses: [],
     dailyAccount: [],
@@ -34,7 +34,31 @@ export const getAllReports = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.get("/api/reports/get-all-reports");
-            console.log(response.data)
+            console.log(response.data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const updateReportData = createAsyncThunk(
+    "reports/updateReportData",
+    async (reportData, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post("/api/reports/update-report", reportData);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const deleteReportData = createAsyncThunk(
+    "reports/deleteReportData",
+    async (reportData, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.delete("/api/reports/delete-report", { data: reportData });
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -53,13 +77,35 @@ const reportsSlice = createSlice({
                 state.error = null;
             })
             .addCase(getAllReports.fulfilled, (state, action) => {
-                state.schedule = action.payload.schedules;
-                state.salary = action.payload.salaries;
-                state.expenses = action.payload.expenses;
-                state.dailyAccount = action.payload.daily_accounts;
+                state.bookings = action?.payload?.bookings;
+                state.salary = action?.payload?.salaries;
+                state.expenses = action?.payload?.expenses;
+                state.dailyAccount = action?.payload?.daily_accounts;
                 state.loading = false;
             })
             .addCase(getAllReports.rejected, (state, action) => {
+                state.error = action.payload;
+                state.loading = false;
+            })
+            .addCase(updateReportData.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateReportData.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(updateReportData.rejected, (state, action) => {
+                state.error = action.payload;
+                state.loading = false;
+            })
+            .addCase(deleteReportData.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(deleteReportData.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(deleteReportData.rejected, (state, action) => {
                 state.error = action.payload;
                 state.loading = false;
             });

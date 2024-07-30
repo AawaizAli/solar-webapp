@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Tabs, Button } from "antd";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -10,10 +9,10 @@ import "../../public/css/responsive.css";
 import "../../public/css/style.css";
 import "./ReportsPage.css";
 import Spreadsheet from "react-spreadsheet";
-import { getAllReports } from "../features/reports/reportsSlice";
+import { getAllReports, updateReportData, deleteReportData } from "../features/reports/reportsSlice";
 
-import Header from "./Header"
-import Footer from "./Footer"
+import Header from "./Header";
+import Footer from "./Footer";
 
 const ReportsPage = () => {
     const authState = useSelector((state) => state.auth);
@@ -24,15 +23,15 @@ const ReportsPage = () => {
     const dispatch = useDispatch();
     const dataTest = useSelector((state) => state);
     console.log(dataTest, "dataTestdataTestdataTest");
-    const [activeTab, setActiveTab] = useState("schedule");
+    const [activeTab, setActiveTab] = useState("bookings");
     const [data, setData] = useState({
-        schedule: [],
-        salary: [],
-        expenses: [],
-        dailyAccount: [],
+        bookings: [[]], // Start with an empty row
+        salary: [[]], // Start with an empty row
+        expenses: [[]], // Start with an empty row
+        dailyAccount: [[]], // Start with an empty row
     });
     const [originalData, setOriginalData] = useState({
-        schedule: [],
+        bookings: [],
         salary: [],
         expenses: [],
         dailyAccount: [],
@@ -43,14 +42,13 @@ const ReportsPage = () => {
         dispatch(getAllReports()).then((action) => {
             const payload = action.payload;
             if (payload) {
-                const { bookings, salaries, expenses, daily_accounts } =
-                    payload;
+                const { bookings, salaries, expenses, daily_accounts } = payload;
                 console.log("Fetched bookings:", bookings);
                 console.log("Fetched salaries:", salaries);
                 console.log("Fetched expenses:", expenses);
                 console.log("Fetched daily_accounts:", daily_accounts);
 
-                const formattedSchedules = bookings.map((booking) => {
+                const formattedBookings = bookings.map((booking) => {
                     const dateObj = new Date(booking.date);
                     const dayOfWeek = dateObj.toLocaleDateString("en-US", {
                         weekday: "long",
@@ -69,7 +67,7 @@ const ReportsPage = () => {
                         { value: booking.status },
                     ];
                 });
-                console.log("Formatted schedules:", formattedSchedules);
+                console.log("Formatted bookings:", formattedBookings);
 
                 const formattedSalaries = Object.entries(salaries).flatMap(
                     ([workerName, salaryDetails]) =>
@@ -108,19 +106,16 @@ const ReportsPage = () => {
                     { value: account.total_daily_wage },
                     { value: account.tj_earnings_per_day },
                 ]);
-                console.log(
-                    "Formatted daily accounts:",
-                    formattedDailyAccounts
-                );
+                console.log("Formatted daily accounts:", formattedDailyAccounts);
 
                 setData({
-                    schedule: formattedSchedules,
-                    salary: formattedSalaries,
-                    expenses: formattedExpenses,
-                    dailyAccount: formattedDailyAccounts,
+                    bookings: [[]].concat(formattedBookings), // Add empty row
+                    salary: [[]].concat(formattedSalaries), // Add empty row
+                    expenses: [[]].concat(formattedExpenses), // Add empty row
+                    dailyAccount: [[]].concat(formattedDailyAccounts), // Add empty row
                 });
                 setOriginalData({
-                    schedule: formattedSchedules,
+                    bookings: formattedBookings,
                     salary: formattedSalaries,
                     expenses: formattedExpenses,
                     dailyAccount: formattedDailyAccounts,
@@ -145,7 +140,8 @@ const ReportsPage = () => {
 
     const handleSave = () => {
         // Save data to the backend
-        console.log("Data saved:", data[activeTab]);
+        const newData = data[activeTab].filter((row) => row.some((cell) => cell.value !== ""));
+        dispatch(updateReportData({ type: activeTab, items: newData }));
         setIsChanged(false);
     };
 
@@ -155,7 +151,7 @@ const ReportsPage = () => {
     };
 
     const columns = {
-        schedule: [
+        bookings: [
             "Date",
             "Day",
             "Client Name",
@@ -188,7 +184,7 @@ const ReportsPage = () => {
     );
 
     const items = [
-        { label: "Schedule", key: "schedule", children: renderSpreadsheet() },
+        { label: "Bookings", key: "bookings", children: renderSpreadsheet() },
         { label: "Salary", key: "salary", children: renderSpreadsheet() },
         { label: "Expenses", key: "expenses", children: renderSpreadsheet() },
         {
@@ -200,7 +196,6 @@ const ReportsPage = () => {
 
     return (
         <>
-            {/* Basic */}
             <meta charSet="utf-8" />
             <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
             <meta
@@ -211,33 +206,25 @@ const ReportsPage = () => {
             <meta name="description" content="" />
             <meta name="author" content="" />
             <title>SolarPod</title>
-            {/* slider stylesheet */}
             <link
                 rel="stylesheet"
                 type="text/css"
                 href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
             />
-            {/* bootstrap core css */}
             <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
-            {/* font awesome style */}
             <link
                 rel="stylesheet"
                 type="text/css"
                 href="css/font-awesome.min.css"
             />
-            {/* Custom styles for this template */}
             <link href="css/style.css" rel="stylesheet" />
-            {/* responsive style */}
             <link href="css/responsive.css" rel="stylesheet" />
             <div className="hero_area">
-                {/* header section strats */}
-                <Header></Header>
-                {/* end header section */}
+                <Header />
             </div>
 
-            {/* Reports Section */}
             <Tabs
-                defaultActiveKey="schedule"
+                defaultActiveKey="bookings"
                 centered
                 items={items}
                 onChange={handleTabChange}
@@ -248,12 +235,14 @@ const ReportsPage = () => {
                     justifyContent: "center",
                     marginTop: "20px",
                     marginBottom: "20px",
-                }}>
+                }}
+            >
                 <Button
                     type="primary"
                     onClick={handleSave}
                     disabled={!isChanged}
-                    style={{ marginRight: "10px" }}>
+                    style={{ marginRight: "10px" }}
+                >
                     Save
                 </Button>
                 <Button onClick={handleCancel} disabled={!isChanged}>
@@ -261,8 +250,7 @@ const ReportsPage = () => {
                 </Button>
             </div>
 
-            {/* info section */}
-            <Footer></Footer>
+            <Footer />
         </>
     );
 };
