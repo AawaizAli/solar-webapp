@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../../public/css/font-awesome/css/font-awesome.min.css";
+import "font-awesome/css/font-awesome.min.css";
 import "../../public/css/responsive.css";
 import "../../public/css/style.css";
 import sliderImg from "../../public/slider-img.png";
