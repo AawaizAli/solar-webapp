@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-
+import axios from '../../api/axios.js';
+const baseURL = process.env.NODE_ENV === 'production' ? 'https://hash1khn.pythonanywhere.com' : 'https://hash1khn.pythonanywhere.com';
 const initialState = {
     workers: [],
     loading: false,
@@ -9,7 +9,7 @@ const initialState = {
 
 // Create an Axios instance with the base URL
 const axiosInstance = axios.create({
-    baseURL: "http://127.0.0.1:5000",
+    baseURL:baseURL,
     headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
