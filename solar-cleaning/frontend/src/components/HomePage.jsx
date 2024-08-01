@@ -96,7 +96,7 @@ const HomePage = () => {
                 <div className="container">
                     <div className="feature_container">
                         <Link
-                            href="/clients"
+                            to="/clients"
                             className="box"
                             style={{
                                 textDecoration: "none",
@@ -116,8 +116,7 @@ const HomePage = () => {
                             </div>
                             <h5 className="name">Clients</h5>
                         </Link>
-                        <Link
-                            href="/bookings"
+                        <Link to="/bookings"
                             className="box"
                             style={{
                                 textDecoration: "none",
@@ -141,7 +140,7 @@ const HomePage = () => {
                             <h5 className="name">Bookings</h5>
                         </Link>
                         <Link
-                            href="/workers"
+                            to="/workers"
                             className="box"
                             style={{
                                 textDecoration: "none",
