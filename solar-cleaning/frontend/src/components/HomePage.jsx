@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "font-awesome/css/font-awesome.min.css";
-import "owl.carousel/dist/assets/owl.carousel.css";
-import "owl.carousel/dist/assets/owl.theme.default.css";
+import "../../public/css/font-awesome/css/font-awesome.min.css";
 import "../../public/css/responsive.css";
 import "../../public/css/style.css";
 import sliderImg from "../../public/slider-img.png";
@@ -97,7 +95,7 @@ const HomePage = () => {
             <section className="feature_section">
                 <div className="container">
                     <div className="feature_container">
-                        <a
+                        <Link
                             href="/clients"
                             className="box"
                             style={{
@@ -117,8 +115,8 @@ const HomePage = () => {
                                 </svg>
                             </div>
                             <h5 className="name">Clients</h5>
-                        </a>
-                        <a
+                        </Link>
+                        <Link
                             href="/bookings"
                             className="box"
                             style={{
@@ -141,8 +139,8 @@ const HomePage = () => {
                                 </svg>
                             </div>
                             <h5 className="name">Bookings</h5>
-                        </a>
-                        <a
+                        </Link>
+                        <Link
                             href="/workers"
                             className="box"
                             style={{
@@ -162,7 +160,7 @@ const HomePage = () => {
                                 </svg>
                             </div>
                             <h5 className="name">Workers</h5>
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -194,7 +192,9 @@ const HomePage = () => {
                                     Trust us to keep your solar investment clean
                                     and productive.
                                 </p>
-                                <a href="/bookings">Book Now</a>
+                                <Link className="nav-link" to="/bookings">
+                        Bookings
+                      </Link>
                             </div>
                         </div>
                     </div>
