@@ -4,6 +4,7 @@ from ..models.workerModel import Worker
 from .. import db
 from ..utils import get_coordinates 
 from flask_jwt_extended import jwt_required
+import json
  # Import the geocoding function
 
 worker_bp = Blueprint('worker_bp', __name__, url_prefix='/api/workers')
@@ -78,3 +79,48 @@ def get_worker_by_name(name):
     if worker is None:
         return jsonify({'error': 'Worker not found'}), 404
     return jsonify(worker.to_dict()), 200
+
+@worker_bp.route('/<int:worker_id>/availability', methods=['GET'])
+@jwt_required()
+def get_worker_availability(worker_id):
+    worker = Worker.query.get_or_404(worker_id)
+    
+    # Assuming the availability is stored as a JSON string in the database
+    availability = worker.availability
+    if isinstance(availability, str):
+        availability = json.loads(availability)
+
+    dayNames = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+    ]
+
+    timeSlots = [
+        "09:00-11:00",
+        "11:00-13:00",
+        "13:00-15:00",
+        "15:00-17:00",
+        "17:00-19:00"
+    ]
+
+    formatted_availability = []
+
+    for day_name, day_slots in zip(dayNames, availability):
+        formatted_day = {
+            'day': day_name,
+            'slots': [
+                {
+                    'time': timeSlots[i],
+                    'available': slot
+                }
+                for i, slot in enumerate(day_slots)
+            ]
+        }
+        formatted_availability.append(formatted_day)
+
+    return jsonify(formatted_availability), 200

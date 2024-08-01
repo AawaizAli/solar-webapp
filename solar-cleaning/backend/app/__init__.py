@@ -19,7 +19,7 @@ def create_app():
 
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=7)
 
-    CORS(app, resources={r"/*": {"origins": "https://solarpanel-two.vercel.app/"}})
+    CORS(app, resources={r"/*": {"origins": "*"}})
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
