@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '../../api/axios.js';
-const baseURL = process.env.NODE_ENV === 'production' ? 'http://hash1khn.pythonanywhere.com' : 'http://hash1khn.pythonanywhere.com';
+const baseURL = process.env.NODE_ENV === 'production' ? 'https://hash1khn.pythonanywhere.com' : 'https://hash1khn.pythonanywhere.com';
 
 const initialState = {
   user: null,
