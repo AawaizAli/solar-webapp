@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import "../../public/css/bootstrap.css";
-import "../../public/css/font-awesome.min.css";
-import "../../public/css/responsive.css";
-import "../../public/css/style.css";
 import sliderImg from "../../public/slider-img.png";
 import professionalImg from "../../public/professional-img.png";
 
@@ -31,25 +27,20 @@ const HomePage = () => {
             <meta name="keywords" content="" />
             <meta name="description" content="" />
             <meta name="author" content="" />
-            <title>SolarPod</title>
-            {/* slider stylesheet */}
+            <title>TJ Solars</title>
             <link
-                rel="stylesheet"
-                type="text/css"
-                href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
-            />
-            {/* bootstrap core css */}
-            <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
-            {/* font awesome style */}
-            <link
-                rel="stylesheet"
-                type="text/css"
-                href="css/font-awesome.min.css"
-            />
-            {/* Custom styles for this template */}
-            <link href="css/style.css" rel="stylesheet" />
-            {/* responsive style */}
-            <link href="css/responsive.css" rel="stylesheet" />
+            rel="stylesheet"
+            type="text/css"
+            href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
+        />
+
+        {/* Internal Stylesheets from Public Folder */}
+        <link rel="stylesheet" href="/css/bootstrap.css" />
+        <link rel="stylesheet" href="/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/responsive.css" />
+
+
             <div className="hero_area">
                 <Header></Header>
                 {/* slider section */}

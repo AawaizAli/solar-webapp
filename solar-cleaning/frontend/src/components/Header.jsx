@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { Navbar, Nav } from 'react-bootstrap';
 
 const Header = () => {
   const authState = useSelector((state) => state.auth);
@@ -25,76 +26,32 @@ const Header = () => {
       </div>
       <div className="header_bottom">
         <div className="container-fluid">
-          <nav className="navbar navbar-expand-lg custom_nav-container">
-            <a className="navbar-brand" href="/">
-              <span> TJ Solars </span>
-            </a>
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-toggle="collapse"
-              data-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span className=""> </span>
-            </button>
-            <div
-              className="collapse navbar-collapse"
-              id="navbarSupportedContent"
-            >
-              <ul className="navbar-nav">
-                {actualIsAuthenticated ? (
-                  <>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/bookings">
-                        Bookings
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/workers">
-                        Workers
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/clients">
-                        Clients
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/search">
-                        Search
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/reports">
-                        Reports
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/logout">
-                        Logout
-                      </Link>
-                    </li>
-                  </>
-                ) : (
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/login">
-                      Login
-                    </Link>
-                  </li>
-                )}
-                {actualIsAuthenticated && (
-                  <li className="nav-item">
-                    <span className="nav-link">
-                      Welcome, {actualUser.username}
-                    </span>
-                  </li>
-                )}
-              </ul>
-            </div>
-          </nav>
+          <Navbar expand="lg" className="custom_nav-container">
+            <Navbar.Brand href="/">TJ Solars</Navbar.Brand>
+
+            {actualIsAuthenticated ? (
+              <>
+                <Navbar.Toggle aria-controls="navbarSupportedContent" />
+                <Navbar.Collapse id="navbarSupportedContent">
+                  <Nav className="ml-auto">
+                    <Link className="nav-link" to="/bookings">Bookings</Link>
+                    <Link className="nav-link" to="/workers">Workers</Link>
+                    <Link className="nav-link" to="/clients">Clients</Link>
+                    <Link className="nav-link" to="/search">Search</Link>
+                    <Link className="nav-link" to="/reports">Reports</Link>
+                    <Link className="nav-link" to="/logout">Logout</Link>
+                    <Nav.Item>
+                      <Nav.Link disabled>Welcome, {actualUser.username}</Nav.Link>
+                    </Nav.Item>
+                  </Nav>
+                </Navbar.Collapse>
+              </>
+            ) : (
+              <Nav className="ml-auto">
+                <Link className="nav-link" to="/login">Login</Link>
+              </Nav>
+            )}
+          </Navbar>
         </div>
       </div>
     </header>
