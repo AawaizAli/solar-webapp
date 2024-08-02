@@ -8,6 +8,7 @@ import Worker from './components/Worker';
 import Client from './components/Client';
 import SearchPage from './components/SearchPage';
 import ReportsPage from './components/ReportsPage';
+import Reports2 from './components/Reports2';
 
 const App = () => {
   return (
@@ -18,7 +19,7 @@ const App = () => {
         <Route path="/workers" element={<Worker />} />
         <Route path="/clients" element={<Client />} />
         <Route path="/search" element={<SearchPage />} />
-        <Route path="/reports" element={<ReportsPage/>} />
+        <Route path="/reports" element={<Reports2/>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/logout" element={<LogoutPage />} />
       </Routes>

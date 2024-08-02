@@ -11,12 +11,15 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.5",
+    "@tanstack/react-table": "^8.19.3",
+    "@webdatarocks/react-webdatarocks": "^1.4.15",
     "antd": "^5.18.3",
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "font-awesome": "^4.7.0",
     "jquery": "^3.7.1",
     "owl.carousel": "^2.3.4",
+    "papaparse": "^5.4.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",
     "react-dom": "^18.3.1",
@@ -27,7 +30,8 @@
     "react-spreadsheet": "^0.9.5",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^3.1.0",
-    "scheduler": "^0.23.2"
+    "scheduler": "^0.23.2",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
