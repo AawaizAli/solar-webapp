@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Navbar, Nav } from 'react-bootstrap';
 
+import "./Header.css"
+
 const Header = () => {
   const authState = useSelector((state) => state.auth);
   const actualIsAuthenticated = authState?.isAuthenticated ?? false;
@@ -40,9 +42,7 @@ const Header = () => {
                     <Link className="nav-link" to="/search">Search</Link>
                     <Link className="nav-link" to="/reports">Reports</Link>
                     <Link className="nav-link" to="/logout">Logout</Link>
-                    <Nav.Item>
-                      <Nav.Link disabled>Welcome, {actualUser.username}</Nav.Link>
-                    </Nav.Item>
+                    <span className="nav-link">Welcome, {actualUser.username}</span>
                   </Nav>
                 </Navbar.Collapse>
               </>

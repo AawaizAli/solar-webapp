@@ -234,17 +234,18 @@ const Worker = () => {
               <div className="detail-box center-detail-box">
                 <h2>manage your workers</h2>
 
-                <a href="#" onClick={showModal}>
+                <a className="orange-button" href="#" onClick={showModal}>
                   Add Worker
                 </a>
 
                 <br />
-                <a href="#" onClick={handleEditWorker}>
+                <a className="orange-button" href="#" onClick={handleEditWorker}>
                   Update Worker
                 </a>
                 <br />
                 <a
-                  className="delete-button"
+                
+                  className="delete-button orange-button"
                   href="#"
                   onClick={handleDeleteWorker}
                 >

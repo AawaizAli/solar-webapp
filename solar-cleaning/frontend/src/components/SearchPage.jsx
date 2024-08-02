@@ -368,24 +368,30 @@ const SearchPage = () => {
     };
 
     const handleShowAvailability = (workerId) => {
-        console.log("workers:", workers); // Log the workers array
-        console.log("workerId:", workerId); // Log the workerId being passed
-    
-        if (!workers) {
-            console.error("Workers data is not available yet.");
+        dispatch(getAllWorkers()).then((data) => {
+          const myWorkers = data.payload;
+          console.log(myWorkers); 
+      
+          if (!myWorkers || myWorkers.length === 0) {
+            console.error("rida ashfaq qureshi");
             return;
-        }
-    
-        const selectedWorker = workers.find((worker) => worker.id === workerId);
-    
-        if (selectedWorker) {
-            console.log("Selected Worker:", selectedWorker); // Log the selected worker
+          }
+      
+          const selectedWorker = myWorkers.find((worker) => worker.id === workerId);
+      
+          if (selectedWorker) {
+            console.log("Selected Worker:", selectedWorker); 
             setAvailabilityData(selectedWorker.availability);
             setModalVisible(true);
-        } else {
-            console.error("Worker not found");
-        }
-    };
+          } else {
+            console.error("no worker");
+          }
+        }).catch((error) => {
+          console.error("Error fetching workers data:", error);
+        });
+      
+        console.log("workerId:", workerId);
+      };      
 
     const dayNames = [
         "Monday",
@@ -549,6 +555,7 @@ const SearchPage = () => {
 
     return (
         <>
+            {console.log(workers)}
             <div className="hero_area">
                 <Header></Header>
             </div>
