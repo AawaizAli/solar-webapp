@@ -77,9 +77,9 @@ const Footer = () => {
                 <div className="container">
                     <p>
                         © <span id="displayDateYear" /> All Rights Reserved By
-                        <a href="https://www.behance.net/aawaizali">
+                        <a href="https://www.linkedin.com/in/hashirahmedkhan/">
                             {" "}
-                            TJ Solars{" "}
+                            Hashir Khan {" "}
                         </a>
                     </p>
                 </div>
