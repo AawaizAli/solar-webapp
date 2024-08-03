@@ -9,6 +9,8 @@ import "../../public/css/style.css";
 import "./ReportsPage.css";
 
 import * as WebDataRocksReact from "@webdatarocks/react-webdatarocks";
+import * as XLSX from "xlsx";
+import Papa from "papaparse";
 
 import Header from "./Header";
 import Footer from "./Footer";
@@ -32,10 +34,75 @@ const Reports2 = () => {
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            console.log("File uploaded:", file);
-
-
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                if (file.name.endsWith(".xlsx") || file.name.endsWith(".xls")) {
+                    const workbook = XLSX.read(data, { type: "array" });
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    const report = transformToReport(json);
+                    pivotRef.current.webdatarocks.setReport(report);
+                } else if (file.name.endsWith(".csv")) {
+                    Papa.parse(file, {
+                        complete: (result) => {
+                            const json = result.data;
+                            const report = transformToReport(json);
+                            pivotRef.current.webdatarocks.setReport(report);
+                        },
+                    });
+                }
+            };
+            reader.readAsArrayBuffer(file);
         }
+    };
+
+    const transformToReport = (data) => {
+        // Assume the first row contains headers and subsequent rows contain data
+        if (data.length === 0) return null;
+
+        const headers = data[0];
+        const rows = data.slice(1);
+
+        // Convert headers and rows to WebDataRocks report structure
+        const columnLabels = headers.map((header) => ({
+            uniqueName: header,
+        }));
+
+        const jsonData = rows.map((row) => {
+            const rowData = {};
+            row.forEach((cell, index) => {
+                rowData[headers[index]] = cell;
+            });
+            return rowData;
+        });
+
+        return {
+            dataSource: {
+                dataSourceType: "json",
+                data: jsonData,
+            },
+            slice: {
+                rows: [], // Define rows if necessary
+                columns: columnLabels,
+                measures: [], // Define measures if necessary
+            },
+            formats: [
+                {
+                    name: "",
+                    thousandsSeparator: " ",
+                    decimalSeparator: ".",
+                    decimalPlaces: 2,
+                    maxSymbols: 20,
+                    currencySymbol: "",
+                    currencySymbolAlign: "left",
+                    nullValue: " ",
+                    infinityValue: "Infinity",
+                    divideByZeroValue: "Infinity",
+                }
+            ],
+        };
     };
 
     const handleClear = () => {
@@ -60,7 +127,6 @@ const Reports2 = () => {
                 columnLabels.forEach((col) => {
                     dummyData[col.uniqueName] = "N/A"; 
                 });
-
 
                 pivotRef.current.webdatarocks.setReport({
                     dataSource: {
@@ -112,13 +178,6 @@ const Reports2 = () => {
                     ref={pivotRef}
                     toolbar={true}
                     width="100%"
-                    //   report={{
-                    //     dataSource: {
-                    //       dataSourceType: "json",
-                    //       data: [],
-                    //     },
-                    //     slice: {},
-                    //   }}
                     report="https://cdn.webdatarocks.com/reports/report.json"
                     beforetoolbarcreated={(toolbar) => {
                         const tabs = toolbar.getTabs();
