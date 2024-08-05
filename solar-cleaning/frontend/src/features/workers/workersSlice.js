@@ -136,6 +136,7 @@ export const updateWorker = createAsyncThunk(
                 `/api/workers/update-worker/${id}`,
                 updatedData
             );
+            console.log(response.data)
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data.message);
