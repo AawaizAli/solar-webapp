@@ -68,7 +68,7 @@ def update_worker(worker_id):
 @jwt_required()
 def delete_worker(worker_id):
     worker = Worker.query.get_or_404(worker_id)
-    db.session.delete(worker)
+    db.session.delete(worker)   
     db.session.commit()
     return jsonify({'message': 'Worker deleted successfully'}), 200
     
