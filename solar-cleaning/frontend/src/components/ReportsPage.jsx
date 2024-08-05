@@ -147,6 +147,20 @@ const ReportsPage = () => {
         }));
     };
 
+    const handleAddRow = () => {
+        setData((prevData) => ({
+            ...prevData,
+            [activeTab]: [...prevData[activeTab], new Array(prevData[activeTab][0].length).fill({ value: "" })],
+        }));
+    };
+
+    const handleAddColumn = () => {
+        setData((prevData) => ({
+            ...prevData,
+            [activeTab]: prevData[activeTab].map((row) => [...row, { value: "" }]),
+        }));
+    };
+
     const columns = {
         bookings: [
             "Date",
@@ -252,9 +266,22 @@ const ReportsPage = () => {
                 <Button
                     type="primary"
                     onClick={handleClearTable}
-                    danger
+                    style={{ marginRight: "10px" }}
                 >
                     Clear Table
+                </Button>
+                <Button
+                    type="primary"
+                    onClick={handleAddRow}
+                    style={{ marginRight: "10px" }}
+                >
+                    Add Row
+                </Button>
+                <Button
+                    type="primary"
+                    onClick={handleAddColumn}
+                >
+                    Add Column
                 </Button>
                 <input
                     type="file"
