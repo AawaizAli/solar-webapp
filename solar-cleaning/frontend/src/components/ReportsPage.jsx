@@ -263,13 +263,7 @@ const ReportsPage = () => {
                 >
                     Upload Excel
                 </Button>
-                <Button
-                    type="primary"
-                    onClick={handleClearTable}
-                    style={{ marginRight: "10px" }}
-                >
-                    Clear Table
-                </Button>
+                
                 <Button
                     type="primary"
                     onClick={handleAddRow}
@@ -280,8 +274,17 @@ const ReportsPage = () => {
                 <Button
                     type="primary"
                     onClick={handleAddColumn}
+                    style={{ marginRight: "10px" }}
                 >
                     Add Column
+                </Button>
+                <Button
+                    type="default"
+                    onClick={handleClearTable}
+                    style={{ marginRight: "10px" }}
+                    danger
+                >
+                    Clear Table
                 </Button>
                 <input
                     type="file"
