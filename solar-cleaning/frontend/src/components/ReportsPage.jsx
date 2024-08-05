@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Tabs, Button } from "antd";
+import * as XLSX from "xlsx";
+import Papa from "papaparse";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
@@ -9,44 +11,25 @@ import "../../public/css/responsive.css";
 import "../../public/css/style.css";
 import "./ReportsPage.css";
 import Spreadsheet from "react-spreadsheet";
-import { getAllReports, updateReportData, deleteReportData } from "../features/reports/reportsSlice";
-
+import { getAllReports } from "../features/reports/reportsSlice";
 import Header from "./Header";
 import Footer from "./Footer";
 
 const ReportsPage = () => {
-    const authState = useSelector((state) => state.auth);
-    const actualIsAuthenticated = authState?.isAuthenticated ?? false;
-    console.log(authState?.isAuthenticated);
-    const actualUser = authState?.user;
-
     const dispatch = useDispatch();
-    const dataTest = useSelector((state) => state);
-    console.log(dataTest, "dataTestdataTestdataTest");
     const [activeTab, setActiveTab] = useState("bookings");
     const [data, setData] = useState({
-        bookings: [[]], // Start with an empty row
-        salary: [[]], // Start with an empty row
-        expenses: [[]], // Start with an empty row
-        dailyAccount: [[]], // Start with an empty row
+        bookings: [[]],
+        salary: [[]],
+        expenses: [[]],
+        dailyAccount: [[]],
     });
-    const [originalData, setOriginalData] = useState({
-        bookings: [],
-        salary: [],
-        expenses: [],
-        dailyAccount: [],
-    });
-    const [isChanged, setIsChanged] = useState(false);
 
     useEffect(() => {
         dispatch(getAllReports()).then((action) => {
             const payload = action.payload;
             if (payload) {
                 const { bookings, salaries, expenses, daily_accounts } = payload;
-                console.log("Fetched bookings:", bookings);
-                console.log("Fetched salaries:", salaries);
-                console.log("Fetched expenses:", expenses);
-                console.log("Fetched daily_accounts:", daily_accounts);
 
                 const formattedBookings = bookings.map((booking) => {
                     const dateObj = new Date(booking.date);
@@ -67,7 +50,6 @@ const ReportsPage = () => {
                         { value: booking.status },
                     ];
                 });
-                console.log("Formatted bookings:", formattedBookings);
 
                 const formattedSalaries = Object.entries(salaries).flatMap(
                     ([workerName, salaryDetails]) =>
@@ -89,14 +71,12 @@ const ReportsPage = () => {
                                   ],
                               ]
                 );
-                console.log("Formatted salaries:", formattedSalaries);
 
                 const formattedExpenses = expenses.map((expense) => [
                     { value: expense.date },
                     { value: expense.description },
                     { value: expense.amount },
                 ]);
-                console.log("Formatted expenses:", formattedExpenses);
 
                 const formattedDailyAccounts = daily_accounts.map((account) => [
                     { value: account.date },
@@ -106,19 +86,12 @@ const ReportsPage = () => {
                     { value: account.total_daily_wage },
                     { value: account.tj_earnings_per_day },
                 ]);
-                console.log("Formatted daily accounts:", formattedDailyAccounts);
 
                 setData({
-                    bookings: [[]].concat(formattedBookings), // Add empty row
-                    salary: [[]].concat(formattedSalaries), // Add empty row
-                    expenses: [[]].concat(formattedExpenses), // Add empty row
-                    dailyAccount: [[]].concat(formattedDailyAccounts), // Add empty row
-                });
-                setOriginalData({
-                    bookings: formattedBookings,
-                    salary: formattedSalaries,
-                    expenses: formattedExpenses,
-                    dailyAccount: formattedDailyAccounts,
+                    bookings: [[]].concat(formattedBookings),
+                    salary: [[]].concat(formattedSalaries),
+                    expenses: [[]].concat(formattedExpenses),
+                    dailyAccount: [[]].concat(formattedDailyAccounts),
                 });
             }
         });
@@ -129,25 +102,49 @@ const ReportsPage = () => {
             ...prevData,
             [activeTab]: newData,
         }));
-        setIsChanged(true);
     };
 
     const handleTabChange = (key) => {
         setActiveTab(key);
-        setIsChanged(false);
-        setOriginalData(data);
     };
 
-    const handleSave = () => {
-        // Save data to the backend
-        const newData = data[activeTab].filter((row) => row.some((cell) => cell.value !== ""));
-        dispatch(updateReportData({ type: activeTab, items: newData }));
-        setIsChanged(false);
+    const handleDownloadExcel = () => {
+        if (data[activeTab] && data[activeTab].length > 1) {
+            const jsonData = data[activeTab].map((row) => row.map((cell) => cell.value));
+            const ws = XLSX.utils.aoa_to_sheet(jsonData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+            XLSX.writeFile(wb, `${activeTab}.xlsx`);
+        } else {
+            alert("No data available to download.");
+        }
     };
 
-    const handleCancel = () => {
-        setData(originalData);
-        setIsChanged(false);
+    const handleUploadExcel = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: "array" });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                const formattedData = json.map((row) => row.map((cell) => ({ value: cell })));
+                setData((prevData) => ({
+                    ...prevData,
+                    [activeTab]: formattedData,
+                }));
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    };
+
+    const handleClearTable = () => {
+        setData((prevData) => ({
+            ...prevData,
+            [activeTab]: [[]],
+        }));
     };
 
     const columns = {
@@ -205,7 +202,7 @@ const ReportsPage = () => {
             <meta name="keywords" content="" />
             <meta name="description" content="" />
             <meta name="author" content="" />
-            <title>SolarPod</title>
+            <title>Reports Page</title>
             <link
                 rel="stylesheet"
                 type="text/css"
@@ -229,6 +226,7 @@ const ReportsPage = () => {
                 items={items}
                 onChange={handleTabChange}
             />
+
             <div
                 style={{
                     display: "flex",
@@ -239,15 +237,32 @@ const ReportsPage = () => {
             >
                 <Button
                     type="primary"
-                    onClick={handleSave}
-                    disabled={!isChanged}
+                    onClick={handleDownloadExcel}
                     style={{ marginRight: "10px" }}
                 >
-                    Save
+                    Download Excel
                 </Button>
-                <Button onClick={handleCancel} disabled={!isChanged}>
-                    Cancel
+                <Button
+                    type="primary"
+                    onClick={() => document.getElementById("upload-excel").click()}
+                    style={{ marginRight: "10px" }}
+                >
+                    Upload Excel
                 </Button>
+                <Button
+                    type="primary"
+                    onClick={handleClearTable}
+                    danger
+                >
+                    Clear Table
+                </Button>
+                <input
+                    type="file"
+                    id="upload-excel"
+                    style={{ display: "none" }}
+                    onChange={handleUploadExcel}
+                    accept=".xlsx, .xls"
+                />
             </div>
 
             <Footer />

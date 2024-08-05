@@ -54,9 +54,7 @@ def update_worker(worker_id):
         worker.name = data['name']
     if 'area' in data:
         worker.area = data['area']
-        # latitude, longitude = get_coordinates(data['area'])
-        # if latitude is None or longitude is None:
-        #     return jsonify({'error': 'Invalid base area'}), 400
+
         worker.latitude = data['latitude']
         worker.longitude = data['longitude']
     if 'availability' in data:
@@ -68,7 +66,7 @@ def update_worker(worker_id):
 @jwt_required()
 def delete_worker(worker_id):
     worker = Worker.query.get_or_404(worker_id)
-    db.session.delete(worker)
+    db.session.delete(worker)   
     db.session.commit()
     return jsonify({'message': 'Worker deleted successfully'}), 200
     
