@@ -54,11 +54,11 @@ def update_worker(worker_id):
         worker.name = data['name']
     if 'area' in data:
         worker.area = data['area']
-        # latitude, longitude = get_coordinates(data['area'])
+        latitude, longitude = get_coordinates(data['area'])
         # if latitude is None or longitude is None:
         #     return jsonify({'error': 'Invalid base area'}), 400
-        worker.latitude = data['latitude']
-        worker.longitude = data['longitude']
+        worker.latitude = latitude
+        worker.longitude = longitude  
     if 'availability' in data:
         worker.availability = data['availability']
     db.session.commit()
