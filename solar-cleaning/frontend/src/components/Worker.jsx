@@ -53,6 +53,8 @@ const Worker = () => {
         const workerData = {
           ...values,
           availability: availability,
+          latitude: latitude, // Include latitude
+          longitude: longitude,
         };
         if (workerId) {
           dispatch(updateWorker({ id: workerId, updatedData: workerData }));
