@@ -18,11 +18,12 @@ const persistConfig = {
   }
   const reducers = combineReducers({
     auth: authReducer,
-    bookingsReducer: bookingsReducer,
-    clientsReducer: clientsReducer,
-    workersReducer: workersReducer,
-    reportsReducer: reportsReducer,
-  })
+    bookings: bookingsReducer,
+    clients: clientsReducer,
+    workers: workersReducer,
+    reports: reportsReducer,
+});
+
   const persistedReducer = persistReducer(persistConfig, reducers)
 
 

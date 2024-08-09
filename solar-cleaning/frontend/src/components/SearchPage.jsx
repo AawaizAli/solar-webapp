@@ -152,6 +152,7 @@ const SearchPage = () => {
                             }))
                         );
                     } else {
+                        console.log('brbrbrbrbr')
                         setTableData([]);
                     }
                 });
