@@ -186,6 +186,11 @@ def update_booking(booking_id):
 
     booking = Booking.query.get_or_404(booking_id)
 
+    # Define new_slot_index based on the time_slot provided in the request
+    new_slot_index = get_slot_index(data['time_slot'])
+    if new_slot_index is None:
+        return jsonify({'error': 'Bad Request', 'message': 'Invalid time slot'}), 400
+
     # Update client_id if it has changed
     if booking.client_id != data['client_id']:
         booking.client_id = data['client_id']
@@ -232,18 +237,18 @@ def update_booking(booking_id):
     if booking.status != data['status']:
         booking.status = data['status']
 
-    # Update recurrence and recurrence_period if they have changed
-    if booking.recurrence != data.get('recurrence') or booking.recurrence_period != data.get('recurrence_period'):
+    # Update recurrence if it has changed
+    if booking.recurrence != data.get('recurrence'):
         booking.recurrence = data.get('recurrence')
-        booking.recurrence_period = data.get('recurrence_period')
+    
+    # Update recurrence_period if it has changed
+    if 'recurrence_period' in data:
+        booking.recurrence_period = data['recurrence_period']
 
-        # Recalculate the recurring bookings
-        # You may want to delete the old recurring bookings and add new ones
-        # according to the new recurrence and recurrence_period.
-        # Implement this logic as per your application's needs.
 
     db.session.commit()
     return jsonify(booking.to_dict()), 200
+
 
 
 
