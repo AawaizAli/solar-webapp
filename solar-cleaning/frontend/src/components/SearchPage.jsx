@@ -562,10 +562,16 @@ const SearchPage = () => {
                   { title: "Slot", dataIndex: "time_slot", key: "time_slot" },
                   { title: "Status", dataIndex: "status", key: "status" },
                   {
-                      title: "Recurrence",
-                      dataIndex: "recurrence",
-                      key: "recurrence",
-                  },
+                    title: "Recurrence",
+                    dataIndex: "recurrence",
+                    key: "recurrence",
+                    render: (text) =>
+                        text === 'ten'
+                            ? "Every 10 Days"
+                            : text === 'twenty'
+                            ? "Every 20 Days"
+                            : text, 
+                },
               ]
             : [];
 
