@@ -29,20 +29,17 @@ const ReportsPage = () => {
         dispatch(getAllReports()).then((action) => {
             const payload = action.payload;
             if (payload) {
-                const { bookings, salaries, expenses, daily_accounts } =
-                    payload;
-
-                // Sort bookings by date
-                const sortedBookings = bookings.sort(
-                    (a, b) => new Date(a.date) - new Date(b.date)
-                );
-
+                const { bookings, salaries, expenses, daily_accounts } = payload;
+    
+                // Make a shallow copy of the bookings array before sorting
+                const sortedBookings = [...bookings].sort((a, b) => new Date(a.date) - new Date(b.date));
+    
                 const formattedBookings = sortedBookings.map((booking) => {
                     const dateObj = new Date(booking.date);
                     const dayOfWeek = dateObj.toLocaleDateString("en-US", {
                         weekday: "long",
                     });
-
+    
                     return [
                         { value: booking.date },
                         { value: dayOfWeek },
@@ -56,7 +53,7 @@ const ReportsPage = () => {
                         { value: booking.status },
                     ];
                 });
-
+    
                 const formattedSalaries = Object.entries(salaries).flatMap(
                     ([workerName, salaryDetails]) =>
                         salaryDetails.length > 0
@@ -77,13 +74,13 @@ const ReportsPage = () => {
                                   ],
                               ]
                 );
-
+    
                 const formattedExpenses = expenses.map((expense) => [
                     { value: expense.date },
                     { value: expense.description },
                     { value: expense.amount },
                 ]);
-
+    
                 const formattedDailyAccounts = daily_accounts.map((account) => [
                     { value: account.date },
                     { value: account.day },
@@ -92,7 +89,7 @@ const ReportsPage = () => {
                     { value: account.total_daily_wage },
                     { value: account.tj_earnings_per_day },
                 ]);
-
+    
                 setData({
                     bookings: [[]].concat(formattedBookings),
                     salary: [[]].concat(formattedSalaries),
@@ -102,6 +99,7 @@ const ReportsPage = () => {
             }
         });
     }, [dispatch]);
+    
 
     const handleDataChange = (newData) => {
         setData((prevData) => ({
