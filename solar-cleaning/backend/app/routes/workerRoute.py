@@ -61,6 +61,8 @@ def update_worker(worker_id):
         worker.longitude = longitude  
     if 'availability' in data:
         worker.availability = data['availability']
+
+    db.session.add(worker)  # Add worker to session before committing changes
     db.session.commit()
     return jsonify(worker.to_dict()), 200
 
