@@ -72,6 +72,7 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
                     recurrence=recurrence
                 )
                 worker.availability[day_index][slot_index] = False
+                db.session.add(worker)
                 db.session.add(new_booking)
                 db.session.commit()  # Commit after each addition
                 print(
@@ -150,6 +151,7 @@ def create_booking():
     print(f"Worker availability before booking: {closest_worker.availability}")
 
     closest_worker.availability[day_index][slot_index] = False
+    db.session.add(closest_worker)
     db.session.add(new_booking)
     db.session.commit()  # Ensure the availability change is committed
 
