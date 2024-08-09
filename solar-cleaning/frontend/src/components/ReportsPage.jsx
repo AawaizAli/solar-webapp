@@ -48,11 +48,11 @@ const ReportsPage = () => {
                         { value: dayOfWeek },
                         { value: booking.client.name },
                         { value: booking.worker.name },
-                        { value: booking.client.address },
-                        { value: booking.client.area },
-                        { value: booking.client.contact_details },
-                        { value: booking.client.total_panels },
-                        { value: booking.client.charge_per_clean },
+                        { value: booking.client.address }, // Client Address
+                        { value: booking.client.area }, // Client Area
+                        { value: booking.client.contact_details }, // Client Contact
+                        { value: booking.client.total_panels }, // Total Panels
+                        { value: booking.client.charge_per_clean }, // Charges per Clean
                         { value: booking.status },
                     ];
                 });
@@ -183,11 +183,11 @@ const ReportsPage = () => {
             "Day",
             "Client Name",
             "Worker Name",
-            "Address",
-            "Area",
-            "Client Contact",
-            "Total Panels",
-            "Charges per Clean",
+            "Client Address", // New column
+            "Client Area", // New column
+            "Client Contact", // New column
+            "Total Panels", // New column
+            "Charges per Clean", // New column
             "Status",
         ],
         salary: ["Date", "Day", "Advance", "Incentive", "Worker Name"],
