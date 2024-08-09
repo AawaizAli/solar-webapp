@@ -79,6 +79,8 @@ const SearchPage = () => {
                         ...client,
                         key: client.id,
                     }));
+                    // Sort by date
+                    mappedClients.sort((a, b) => new Date(a.date) - new Date(b.date));
                     setTableData(mappedClients);
                 }
             });
@@ -89,6 +91,8 @@ const SearchPage = () => {
                         ...worker,
                         key: worker.id,
                     }));
+                    // Sort by date
+                    mappedWorkers.sort((a, b) => new Date(a.date) - new Date(b.date));
                     setTableData(mappedWorkers);
                 }
             });
@@ -101,25 +105,30 @@ const SearchPage = () => {
                         client_name: booking.client.name,
                         worker_name: booking.worker.name,
                     }));
+                    // Sort by date
+                    mappedBookings.sort((a, b) => new Date(a.date) - new Date(b.date));
                     setTableData(mappedBookings);
                 }
             });
         }
     };
+    
 
     const handleSearch = () => {
-        console.log("handleSearch");
-
         if (!selectedOption || !selectedField || !searchQuery) {
             console.log("something missing");
             return;
         }
-
+    
+        const sortByDate = (data) => {
+            return data.sort((a, b) => new Date(a.date) - new Date(b.date));
+        };
+    
         if (selectedOption === "Workers") {
             if (selectedField === "ID") {
                 dispatch(getById(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
-                        setTableData(action.payload);
+                        setTableData(sortByDate(action.payload));
                     } else {
                         setTableData([]);
                     }
@@ -127,7 +136,7 @@ const SearchPage = () => {
             } else if (selectedField === "Name") {
                 dispatch(getByName(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
-                        setTableData(action.payload);
+                        setTableData(sortByDate(action.payload));
                     } else {
                         setTableData([]);
                     }
@@ -135,7 +144,7 @@ const SearchPage = () => {
             } else if (selectedField === "Area") {
                 dispatch(getWorkerByArea(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
-                        setTableData(action.payload);
+                        setTableData(sortByDate(action.payload));
                     } else {
                         setTableData([]);
                     }
@@ -146,13 +155,14 @@ const SearchPage = () => {
                 dispatch(getClientById(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                }))
+                            )
                         );
                     } else {
-                        console.log('brbrbrbrbr')
                         setTableData([]);
                     }
                 });
@@ -160,10 +170,12 @@ const SearchPage = () => {
                 dispatch(getClientByName(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -173,10 +185,12 @@ const SearchPage = () => {
                 dispatch(getClientByContact(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -186,10 +200,12 @@ const SearchPage = () => {
                 dispatch(getClientByAddress(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -198,7 +214,7 @@ const SearchPage = () => {
             } else if (selectedField === "Area") {
                 dispatch(getClientByArea(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
-                        setTableData(action.payload);
+                        setTableData(sortByDate(action.payload));
                     } else {
                         setTableData([]);
                     }
@@ -207,10 +223,12 @@ const SearchPage = () => {
                 dispatch(getClientByTotalPanels(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -220,10 +238,12 @@ const SearchPage = () => {
                 dispatch(getClientByCharges(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -233,10 +253,12 @@ const SearchPage = () => {
                 dispatch(getBySubscriptionPlan(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -247,14 +269,16 @@ const SearchPage = () => {
             if (selectedField === "Booking ID") {
                 dispatch(getBookingById(searchQuery)).then((action) => {
                     if (action.payload) {
-                        setTableData([
-                            {
-                                ...action.payload,
-                                key: action.payload.id,
-                                client_name: action.payload.client.name,
-                                worker_name: action.payload.worker.name,
-                            },
-                        ]);
+                        setTableData(
+                            sortByDate([
+                                {
+                                    ...action.payload,
+                                    key: action.payload.id,
+                                    client_name: action.payload.client.name,
+                                    worker_name: action.payload.worker.name,
+                                },
+                            ])
+                        );
                     } else {
                         setTableData([]);
                     }
@@ -263,12 +287,14 @@ const SearchPage = () => {
                 dispatch(getBookingByClientId(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                                client_name: item.client.name,
-                                worker_name: item.worker.name,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                    client_name: item.client.name,
+                                    worker_name: item.worker.name,
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -278,12 +304,14 @@ const SearchPage = () => {
                 dispatch(getBookingByWorkerId(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                                client_name: item.client.name,
-                                worker_name: item.worker.name,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                    client_name: item.client.name,
+                                    worker_name: item.worker.name,
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -293,12 +321,14 @@ const SearchPage = () => {
                 dispatch(getBookingByClientName(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                                client_name: item.client.name,
-                                worker_name: item.worker.name,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                    client_name: item.client.name,
+                                    worker_name: item.worker.name,
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -308,12 +338,14 @@ const SearchPage = () => {
                 dispatch(getBookingByWorkerName(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                                client_name: item.client.name,
-                                worker_name: item.worker.name,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                    client_name: item.client.name,
+                                    worker_name: item.worker.name,
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -323,12 +355,14 @@ const SearchPage = () => {
                 dispatch(getByStatus(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                                client_name: item.client.name,
-                                worker_name: item.worker.name,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                    client_name: item.client.name,
+                                    worker_name: item.worker.name,
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -338,12 +372,14 @@ const SearchPage = () => {
                 dispatch(getByTimeSlot(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                                client_name: item.client.name,
-                                worker_name: item.worker.name,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                    client_name: item.client.name,
+                                    worker_name: item.worker.name,
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -353,12 +389,14 @@ const SearchPage = () => {
                 dispatch(getByRecurrence(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
-                            action.payload.map((item) => ({
-                                ...item,
-                                key: item.id,
-                                client_name: item.client.name,
-                                worker_name: item.worker.name,
-                            }))
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                    client_name: item.client.name,
+                                    worker_name: item.worker.name,
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -367,7 +405,7 @@ const SearchPage = () => {
             }
         }
     };
-
+    
     const handleShowAvailability = (workerId) => {
         dispatch(getAllWorkers()).then((data) => {
           const myWorkers = data.payload;
