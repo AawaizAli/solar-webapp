@@ -303,8 +303,14 @@ const Booking = () => {
                                 <Select.Option value="weekly">
                                     Weekly
                                 </Select.Option>
+                                <Select.Option value="ten">
+                                    Every 10 Days
+                                </Select.Option>
                                 <Select.Option value="biweekly">
                                     Biweekly
+                                </Select.Option>
+                                <Select.Option value="twenty">
+                                    Every 20 Days
                                 </Select.Option>
                                 <Select.Option value="monthly">
                                     Monthly
