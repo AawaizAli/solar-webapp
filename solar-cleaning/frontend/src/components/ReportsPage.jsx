@@ -29,9 +29,15 @@ const ReportsPage = () => {
         dispatch(getAllReports()).then((action) => {
             const payload = action.payload;
             if (payload) {
-                const { bookings, salaries, expenses, daily_accounts } = payload;
+                const { bookings, salaries, expenses, daily_accounts } =
+                    payload;
 
-                const formattedBookings = bookings.map((booking) => {
+                // Sort bookings by date
+                const sortedBookings = bookings.sort(
+                    (a, b) => new Date(a.date) - new Date(b.date)
+                );
+
+                const formattedBookings = sortedBookings.map((booking) => {
                     const dateObj = new Date(booking.date);
                     const dayOfWeek = dateObj.toLocaleDateString("en-US", {
                         weekday: "long",
@@ -110,7 +116,9 @@ const ReportsPage = () => {
 
     const handleDownloadExcel = () => {
         if (data[activeTab] && data[activeTab].length > 1) {
-            const jsonData = data[activeTab].map((row) => row.map((cell) => cell.value));
+            const jsonData = data[activeTab].map((row) =>
+                row.map((cell) => cell.value)
+            );
             const ws = XLSX.utils.aoa_to_sheet(jsonData);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -130,7 +138,9 @@ const ReportsPage = () => {
                 const sheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[sheetName];
                 const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                const formattedData = json.map((row) => row.map((cell) => ({ value: cell })));
+                const formattedData = json.map((row) =>
+                    row.map((cell) => ({ value: cell }))
+                );
                 setData((prevData) => ({
                     ...prevData,
                     [activeTab]: formattedData,
@@ -150,14 +160,20 @@ const ReportsPage = () => {
     const handleAddRow = () => {
         setData((prevData) => ({
             ...prevData,
-            [activeTab]: [...prevData[activeTab], new Array(prevData[activeTab][0].length).fill({ value: "" })],
+            [activeTab]: [
+                ...prevData[activeTab],
+                new Array(prevData[activeTab][0].length).fill({ value: "" }),
+            ],
         }));
     };
 
     const handleAddColumn = () => {
         setData((prevData) => ({
             ...prevData,
-            [activeTab]: prevData[activeTab].map((row) => [...row, { value: "" }]),
+            [activeTab]: prevData[activeTab].map((row) => [
+                ...row,
+                { value: "" },
+            ]),
         }));
     };
 
@@ -247,43 +263,39 @@ const ReportsPage = () => {
                     justifyContent: "center",
                     marginTop: "20px",
                     marginBottom: "20px",
-                }}
-            >
+                }}>
                 <Button
                     type="primary"
                     onClick={handleDownloadExcel}
-                    style={{ marginRight: "10px" }}
-                >
+                    style={{ marginRight: "10px" }}>
                     Download Excel
                 </Button>
                 <Button
                     type="primary"
-                    onClick={() => document.getElementById("upload-excel").click()}
-                    style={{ marginRight: "10px" }}
-                >
+                    onClick={() =>
+                        document.getElementById("upload-excel").click()
+                    }
+                    style={{ marginRight: "10px" }}>
                     Upload Excel
                 </Button>
-                
+
                 <Button
                     type="primary"
                     onClick={handleAddRow}
-                    style={{ marginRight: "10px" }}
-                >
+                    style={{ marginRight: "10px" }}>
                     Add Row
                 </Button>
                 <Button
                     type="primary"
                     onClick={handleAddColumn}
-                    style={{ marginRight: "10px" }}
-                >
+                    style={{ marginRight: "10px" }}>
                     Add Column
                 </Button>
                 <Button
                     type="default"
                     onClick={handleClearTable}
                     style={{ marginRight: "10px" }}
-                    danger
-                >
+                    danger>
                     Clear Table
                 </Button>
                 <input
