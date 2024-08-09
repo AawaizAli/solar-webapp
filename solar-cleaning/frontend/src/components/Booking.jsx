@@ -19,8 +19,8 @@ import "../../public/css/style.css";
 
 import professionalImg from "../../public/professional-img.png";
 
-import Header from "./Header"
-import Footer from "./Footer"
+import Header from "./Header";
+import Footer from "./Footer";
 
 const Booking = () => {
     const [bookingId, setBookingId] = useState("");
@@ -317,6 +317,18 @@ const Booking = () => {
                                 </Select.Option>
                             </Select>
                         </Form.Item>
+                        <Form.Item
+                            name="subscription_plan"
+                            label="Reccurence Period (months)"
+                            rules={[
+                                {
+                                    required: true,
+                                    message:
+                                        "Please input the Reccurence period in months!",
+                                },
+                            ]}>
+                            <Input type="number" addonAfter="months" />
+                        </Form.Item>
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
                                 {isEditMode
@@ -328,7 +340,6 @@ const Booking = () => {
                 </Modal>
 
                 <Header></Header>
-
             </div>
             {/* professional section */}
             <section className="professional_section booking_padding">

@@ -225,30 +225,6 @@ const Client = () => {
                         ]}>
                         <Input type="number" addonAfter="PKR" />
                     </Form.Item>
-                    <Form.Item
-                        name="subscription_plan"
-                        label="Subscription Period (months)"
-                        rules={[
-                            {
-                                required: true,
-                                message:
-                                    "Please input the subscription period in months!",
-                            },
-                        ]}>
-                        <Input type="number" addonAfter="months" />
-                    </Form.Item>
-                    <Form.Item
-                        name="subscription_start"
-                        label="Subscription Start"
-                        rules={[
-                            {
-                                required: true,
-                                message:
-                                    "Please input the subscription start date!",
-                            },
-                        ]}>
-                        <Input type="date" />
-                    </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
                             {clientId ? "Update Client" : "Create Client"}
