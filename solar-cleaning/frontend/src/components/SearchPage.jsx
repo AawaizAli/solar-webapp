@@ -80,7 +80,9 @@ const SearchPage = () => {
                         key: client.id,
                     }));
                     // Sort by date
-                    mappedClients.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    mappedClients.sort(
+                        (a, b) => new Date(a.date) - new Date(b.date)
+                    );
                     setTableData(mappedClients);
                 }
             });
@@ -92,7 +94,9 @@ const SearchPage = () => {
                         key: worker.id,
                     }));
                     // Sort by date
-                    mappedWorkers.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    mappedWorkers.sort(
+                        (a, b) => new Date(a.date) - new Date(b.date)
+                    );
                     setTableData(mappedWorkers);
                 }
             });
@@ -104,26 +108,31 @@ const SearchPage = () => {
                         key: booking.id,
                         client_name: booking.client.name,
                         worker_name: booking.worker.name,
+                        client_address: booking.client.address,
+                        client_contact: booking.client.contact_details,
+                        total_panels: booking.client.total_panels,
+                        charges_per_clean: booking.client.charge_per_clean,
                     }));
                     // Sort by date
-                    mappedBookings.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    mappedBookings.sort(
+                        (a, b) => new Date(a.date) - new Date(b.date)
+                    );
                     setTableData(mappedBookings);
                 }
             });
         }
     };
-    
 
     const handleSearch = () => {
         if (!selectedOption || !selectedField || !searchQuery) {
             console.log("something missing");
             return;
         }
-    
+
         const sortByDate = (data) => {
             return data.sort((a, b) => new Date(a.date) - new Date(b.date));
         };
-    
+
         if (selectedOption === "Workers") {
             if (selectedField === "ID") {
                 dispatch(getById(searchQuery)).then((action) => {
@@ -405,32 +414,36 @@ const SearchPage = () => {
             }
         }
     };
-    
+
     const handleShowAvailability = (workerId) => {
-        dispatch(getAllWorkers()).then((data) => {
-          const myWorkers = data.payload;
-          console.log(myWorkers); 
-      
-          if (!myWorkers || myWorkers.length === 0) {
-            console.error("rida ashfaq qureshi");
-            return;
-          }
-      
-          const selectedWorker = myWorkers.find((worker) => worker.id === workerId);
-      
-          if (selectedWorker) {
-            console.log("Selected Worker:", selectedWorker); 
-            setAvailabilityData(selectedWorker.availability);
-            setModalVisible(true);
-          } else {
-            console.error("no worker");
-          }
-        }).catch((error) => {
-          console.error("Error fetching workers data:", error);
-        });
-      
+        dispatch(getAllWorkers())
+            .then((data) => {
+                const myWorkers = data.payload;
+                console.log(myWorkers);
+
+                if (!myWorkers || myWorkers.length === 0) {
+                    console.error("rida ashfaq qureshi");
+                    return;
+                }
+
+                const selectedWorker = myWorkers.find(
+                    (worker) => worker.id === workerId
+                );
+
+                if (selectedWorker) {
+                    console.log("Selected Worker:", selectedWorker);
+                    setAvailabilityData(selectedWorker.availability);
+                    setModalVisible(true);
+                } else {
+                    console.error("no worker");
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching workers data:", error);
+            });
+
         console.log("workerId:", workerId);
-      };      
+    };
 
     const dayNames = [
         "Monday",
@@ -516,16 +529,6 @@ const SearchPage = () => {
             ? [
                   { title: "Booking ID", dataIndex: "id", key: "id" },
                   {
-                      title: "Client ID",
-                      dataIndex: "client_id",
-                      key: "client_id",
-                  },
-                  {
-                      title: "Worker ID",
-                      dataIndex: "worker_id",
-                      key: "worker_id",
-                  },
-                  {
                       title: "Client Name",
                       dataIndex: "client_name",
                       key: "client_name",
@@ -534,6 +537,26 @@ const SearchPage = () => {
                       title: "Worker Name",
                       dataIndex: "worker_name",
                       key: "worker_name",
+                  },
+                  {
+                      title: "Client Address",
+                      dataIndex: "client_address",
+                      key: "client_address",
+                  },
+                  {
+                      title: "Client Contact",
+                      dataIndex: "client_contact",
+                      key: "client_contact",
+                  },
+                  {
+                      title: "Total Panels",
+                      dataIndex: "total_panels",
+                      key: "total_panels",
+                  },
+                  {
+                      title: "Charges per Clean",
+                      dataIndex: "charges_per_clean",
+                      key: "charges_per_clean",
                   },
                   { title: "Date", dataIndex: "date", key: "date" },
                   { title: "Slot", dataIndex: "time_slot", key: "time_slot" },

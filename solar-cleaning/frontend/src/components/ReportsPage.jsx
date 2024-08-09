@@ -29,31 +29,34 @@ const ReportsPage = () => {
         dispatch(getAllReports()).then((action) => {
             const payload = action.payload;
             if (payload) {
-                const { bookings, salaries, expenses, daily_accounts } = payload;
-    
+                const { bookings, salaries, expenses, daily_accounts } =
+                    payload;
+
                 // Make a shallow copy of the bookings array before sorting
-                const sortedBookings = [...bookings].sort((a, b) => new Date(a.date) - new Date(b.date));
-    
+                const sortedBookings = [...bookings].sort(
+                    (a, b) => new Date(a.date) - new Date(b.date)
+                );
+
                 const formattedBookings = sortedBookings.map((booking) => {
                     const dateObj = new Date(booking.date);
                     const dayOfWeek = dateObj.toLocaleDateString("en-US", {
                         weekday: "long",
                     });
-    
+
                     return [
                         { value: booking.date },
                         { value: dayOfWeek },
                         { value: booking.client.name },
                         { value: booking.worker.name },
-                        { value: booking.client.address },
-                        { value: booking.client.area },
-                        { value: booking.client.contact_details },
-                        { value: booking.client.total_panels },
-                        { value: booking.client.charge_per_clean },
+                        { value: booking.client.address }, // Client Address
+                        { value: booking.client.area }, // Client Area
+                        { value: booking.client.contact_details }, // Client Contact
+                        { value: booking.client.total_panels }, // Total Panels
+                        { value: booking.client.charge_per_clean }, // Charges per Clean
                         { value: booking.status },
                     ];
                 });
-    
+
                 const formattedSalaries = Object.entries(salaries).flatMap(
                     ([workerName, salaryDetails]) =>
                         salaryDetails.length > 0
@@ -74,13 +77,13 @@ const ReportsPage = () => {
                                   ],
                               ]
                 );
-    
+
                 const formattedExpenses = expenses.map((expense) => [
                     { value: expense.date },
                     { value: expense.description },
                     { value: expense.amount },
                 ]);
-    
+
                 const formattedDailyAccounts = daily_accounts.map((account) => [
                     { value: account.date },
                     { value: account.day },
@@ -89,7 +92,7 @@ const ReportsPage = () => {
                     { value: account.total_daily_wage },
                     { value: account.tj_earnings_per_day },
                 ]);
-    
+
                 setData({
                     bookings: [[]].concat(formattedBookings),
                     salary: [[]].concat(formattedSalaries),
@@ -99,7 +102,6 @@ const ReportsPage = () => {
             }
         });
     }, [dispatch]);
-    
 
     const handleDataChange = (newData) => {
         setData((prevData) => ({
@@ -181,11 +183,11 @@ const ReportsPage = () => {
             "Day",
             "Client Name",
             "Worker Name",
-            "Address",
-            "Area",
-            "Client Contact",
-            "Total Panels",
-            "Charges per Clean",
+            "Client Address", // New column
+            "Client Area", // New column
+            "Client Contact", // New column
+            "Total Panels", // New column
+            "Charges per Clean", // New column
             "Status",
         ],
         salary: ["Date", "Day", "Advance", "Incentive", "Worker Name"],
