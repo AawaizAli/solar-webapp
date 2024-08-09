@@ -35,7 +35,9 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
         'daily': 1,
         'weekly': 7,
         'biweekly': 14,
-        'monthly': 30
+        'monthly': 30,
+        'ten': 10,  # New option for every 10 days
+        'twenty': 20 
     }
 
     if recurrence in recurrence_days:
@@ -205,12 +207,14 @@ def update_booking(booking_id):
         old_worker = Worker.query.get(booking.worker_id)
         if old_worker:
             old_worker.availability[old_day_index][old_slot_index] = True
+            db.session.add(old_worker)
 
         # Mark new availability as false
         new_day_index = get_day_index(data['date'])
         new_worker = Worker.query.get(data['worker_id'])
         if new_worker:
             new_worker.availability[new_day_index][new_slot_index] = False
+            db.session.add(new_worker) 
 
         booking.worker_id = data['worker_id']
 
@@ -226,12 +230,14 @@ def update_booking(booking_id):
         old_worker = Worker.query.get(booking.worker_id)
         if old_worker:
             old_worker.availability[old_day_index][old_slot_index] = True
+            db.session.add(old_worker) 
 
         # Mark new availability as false
         new_day_index = get_day_index(data['date'])
         new_worker = Worker.query.get(data['worker_id'])
         if new_worker:
             new_worker.availability[new_day_index][new_slot_index] = False
+            db.session.add(new_worker)
 
         booking.time_slot = data['time_slot']
 
@@ -242,7 +248,9 @@ def update_booking(booking_id):
     # Update recurrence if it has changed
     if booking.recurrence != data.get('recurrence'):
         booking.recurrence = data.get('recurrence')
-
+      
+        # Add worker to session before committing changes
+    
     db.session.commit()
     return jsonify(booking.to_dict()), 200
 
