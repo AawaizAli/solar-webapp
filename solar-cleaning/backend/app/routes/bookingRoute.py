@@ -44,46 +44,63 @@ def add_recurring_bookings(client_id, worker_id, start_date, time_slot, status, 
     if recurrence in recurrence_days:
         interval = recurrence_days[recurrence]
         print(f"Starting recurring booking with interval: {interval} days")
-        end_date = current_date + relativedelta(months=recurrence_period)
-        while current_date <= end_date:
-            print(f"Checking availability for date: {current_date} and time_slot: {time_slot}")
-            day_index = get_day_index(current_date.strftime('%Y-%m-%d'))
-            slot_index = get_slot_index(time_slot)
-            print(f"Day index: {day_index}, Slot index: {slot_index}")
+        
+        # Manually calculate the end date based on the recurrence period (in months)
+        month_count = 0
+        while month_count < recurrence_period:
+            while True:
+                print(f"Checking availability for date: {current_date} and time_slot: {time_slot}")
+                day_index = get_day_index(current_date.strftime('%Y-%m-%d'))
+                slot_index = get_slot_index(time_slot)
+                print(f"Day index: {day_index}, Slot index: {slot_index}")
 
-            worker = Worker.query.get(worker_id)  # Fetch fresh instance
-            print(f"Worker availability before booking: {worker.availability}")
+                if day_index is None or slot_index is None:
+                    print(f"Invalid day or time slot. Skipping current date: {current_date}")
+                    current_date += timedelta(days=interval)
+                    continue
 
-            # Check if a booking already exists
-            existing_booking = Booking.query.filter_by(
-                client_id=client_id,
-                worker_id=worker_id,
-                date=current_date,
-                time_slot=time_slot
-            ).first()
+                worker = Worker.query.get(worker_id)  # Fetch fresh instance
+                print(f"Worker availability before booking: {worker.availability}")
 
-            if existing_booking:
-                print(f"Booking already exists for date: {current_date} and time_slot: {time_slot}")
-            elif worker and worker.availability[day_index][slot_index]:
-                new_booking = Booking(
+                # Check if a booking already exists
+                existing_booking = Booking.query.filter_by(
                     client_id=client_id,
                     worker_id=worker_id,
                     date=current_date,
-                    time_slot=time_slot,
-                    status=status,
-                    recurrence=recurrence,
-                    recurrence_period=recurrence_period  # Save the recurrence period
-                )
-                worker.availability[day_index][slot_index] = False
-                db.session.add(worker)
-                db.session.add(new_booking)
-                db.session.commit()  # Commit after each addition
-                print(f"Booking added for date: {current_date} and time_slot: {time_slot}")
-                print(f"Worker availability after booking: {worker.availability}")
-            else:
-                print(f"Worker not available on date: {current_date} and time_slot: {time_slot}")
+                    time_slot=time_slot
+                ).first()
 
-            current_date += timedelta(days=interval)
+                if existing_booking:
+                    print(f"Booking already exists for date: {current_date} and time_slot: {time_slot}")
+                elif worker and worker.availability[day_index][slot_index]:
+                    new_booking = Booking(
+                        client_id=client_id,
+                        worker_id=worker_id,
+                        date=current_date,
+                        time_slot=time_slot,
+                        status=status,
+                        recurrence=recurrence,
+                        recurrence_period=recurrence_period  # Save the recurrence period
+                    )
+                    worker.availability[day_index][slot_index] = False
+                    db.session.add(worker)
+                    db.session.add(new_booking)
+                    db.session.commit()  # Commit after each addition
+                    print(f"Booking added for date: {current_date} and time_slot: {time_slot}")
+                    print(f"Worker availability after booking: {worker.availability}")
+                else:
+                    print(f"Worker not available on date: {current_date} and time_slot: {time_slot}")
+
+                current_date += timedelta(days=interval)  # Increment the current date
+
+                # Break if we are entering the next month
+                if current_date.day == 1:
+                    break
+
+            month_count += 1  # Increment month counter
+            current_date = current_date.replace(day=1) + timedelta(days=1)  # Move to next month
+
+        print(f"Finished recurring bookings up to {current_date}")
 
 
 @booking_bp.route('/create-booking', methods=['POST'])
