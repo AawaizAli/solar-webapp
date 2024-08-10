@@ -488,21 +488,6 @@ const SearchPage = () => {
                       dataIndex: "charge_per_clean",
                       key: "charge_per_clean",
                   },
-                  {
-                      title: "Subscription Plan (Months)",
-                      dataIndex: "subscription_plan",
-                      key: "subscription_plan",
-                  },
-                  {
-                      title: "Subscription Start",
-                      dataIndex: "subscription_start",
-                      key: "subscription_start",
-                  },
-                  {
-                      title: "Subscription End",
-                      dataIndex: "subscription_end",
-                      key: "subscription_end",
-                  },
               ]
             : selectedOption === "Workers"
             ? [
