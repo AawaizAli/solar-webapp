@@ -11,10 +11,7 @@ class Client(db.Model):
     longitude = db.Column(db.Float, nullable=False)
     total_panels = db.Column(db.Integer, nullable=False)
     charge_per_clean = db.Column(db.Float, nullable=False)  # Updated field
-    subscription_plan = db.Column(db.Integer, nullable=True)   # New field for subscription plan
-    subscription_start = db.Column(db.Date, nullable=True)  # New field for subscription start date
-    subscription_end = db.Column(db.Date, nullable=True)
-    area = db.Column(db.String(100), nullable=True)  # New field for subscription end date
+    area = db.Column(db.String(100), nullable=True)  # Area field remains
 
     def to_dict(self):
         return {
@@ -26,8 +23,5 @@ class Client(db.Model):
             'longitude': self.longitude,
             'total_panels': self.total_panels,
             'charge_per_clean': self.charge_per_clean,  # Updated field
-            'subscription_plan': self.subscription_plan,
-            'subscription_start': self.subscription_start.strftime('%Y-%m-%d') if self.subscription_start else None,
-            'subscription_end': self.subscription_end.strftime('%Y-%m-%d') if self.subscription_end else None,
             'area': self.area,
         }
