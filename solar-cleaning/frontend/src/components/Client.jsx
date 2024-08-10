@@ -54,10 +54,6 @@ const Client = () => {
                 if (client) {
                     form.setFieldsValue({
                         ...client,
-                        subscription_start: client.subscription_start
-                            ? client.subscription_start.split("T")[0]
-                            : null,
-                        subscription_plan: client.subscription_plan,
                     });
                     setInitialArea(client.area);
                     setLatitude(client.latitude);
@@ -72,17 +68,10 @@ const Client = () => {
     };
 
     const handleCreateClient = (values) => {
-        const { subscription_start, subscription_plan } = values;
-        const subscription_end = new Date(subscription_start);
-        subscription_end.setMonth(
-            subscription_end.getMonth() + parseInt(subscription_plan)
-        );
-
         const clientData = {
             ...values,
             latitude,
             longitude,
-            subscription_end: subscription_end.toISOString().split("T")[0],
         };
 
         if (clientId) {
