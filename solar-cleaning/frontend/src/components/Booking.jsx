@@ -319,7 +319,7 @@ const Booking = () => {
                             </Select>
                         </Form.Item>
                         <Form.Item
-                            name="subscription_plan"
+                            name="recurrence_period"
                             label="Reccurence Period (months)"
                             rules={[
                                 {
