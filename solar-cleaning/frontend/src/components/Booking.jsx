@@ -42,6 +42,7 @@ const Booking = () => {
         setIsCreateModalVisible(false);
         form.resetFields();
     };
+    
 
     const checkWorkerAvailability = async (workerId, day, timeSlot) => {
         if (!workerId) return true; // If workerId is not provided, skip the check
@@ -54,7 +55,7 @@ const Booking = () => {
         const isAvailable = worker.availability[day][timeSlot];
 
         if (!isAvailable) {
-            AntdModal.warning({
+            Modal.warning({
                 title: "Worker Unavailable",
                 content: `Worker is not available on ${
                     [
