@@ -43,8 +43,9 @@ const Booking = () => {
         form.resetFields();
     };
     
-
     const checkWorkerAvailability = async (workerId, day, timeSlot) => {
+        console.log(`Checking availability for Worker ID: ${workerId}, Day: ${day}, Time Slot: ${timeSlot}`);
+
         if (!workerId) return true; // If workerId is not provided, skip the check
 
         const { payload: workers } = await dispatch(getAllWorkers());
@@ -52,9 +53,16 @@ const Booking = () => {
             (worker) => worker.id === parseInt(workerId)
         );
 
+        if (!worker) {
+            console.error("Worker not found:", workerId);
+            return false;
+        }
+
         const isAvailable = worker.availability[day][timeSlot];
+        console.log(`Worker Availability on Day ${day}, Time Slot ${timeSlot}:`, isAvailable);
 
         if (!isAvailable) {
+            console.error(`Worker is not available on ${day} at ${timeSlot}`);
             Modal.warning({
                 title: "Worker Unavailable",
                 content: `Worker is not available on ${
@@ -77,10 +85,12 @@ const Booking = () => {
 
     const fetchBookingDetails = async (id) => {
         try {
+            console.log("Fetching booking details for ID:", id);
             const { payload: bookings } = await dispatch(getAllBookings());
             const booking = bookings.find(
                 (booking) => booking.id === parseInt(id)
             );
+            console.log("Fetched booking details:", booking);
             return booking || null;
         } catch (error) {
             console.error("Error fetching booking details:", error);
@@ -89,38 +99,78 @@ const Booking = () => {
     };
 
     const handleCreateBooking = async (values) => {
-        const day = new Date(values.date).getDay(); // Assuming values.date is a valid date string
+        const day = new Date(values.date).getDay(); 
         const timeSlot = Object.keys(timeSlots).find(
             (key) => timeSlots[key] === values.time_slot
         );
         console.log(`Day: ${day}, Time Slot: ${timeSlot}`);
-
+    
         const isAvailable = await checkWorkerAvailability(
             values.worker_id,
             day,
             timeSlot
         );
-
+    
         if (!isAvailable) {
             return;
         }
-
+    
         const formattedValues = {
             ...values,
             client_id: parseInt(values.client_id, 10),
             worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
             time_slot: values.time_slot, // Send time_slot string directly
+            recurrence_period: parseInt(values.recurrence_period, 10), // Convert to integer
         };
         console.log("Formatted Values:", formattedValues);
-
+    
         try {
             await dispatch(createBooking(formattedValues)).unwrap();
             setIsCreateModalVisible(false);
             form.resetFields();
         } catch (error) {
+            console.error("Error creating booking:", error);
             alert("Worker is busy. Please select another time slot.");
         }
     };
+    
+    const handleUpdateBooking = async (values) => {
+        const day = new Date(values.date).getDay(); 
+        const timeSlot = Object.keys(timeSlots).find(
+            (key) => timeSlots[key] === values.time_slot
+        );
+        console.log(`Day: ${day}, Time Slot: ${timeSlot}`);
+    
+        const isAvailable = await checkWorkerAvailability(
+            values.worker_id,
+            day,
+            timeSlot
+        );
+    
+        if (!isAvailable) {
+            return;
+        }
+    
+        const formattedValues = {
+            ...values,
+            client_id: parseInt(values.client_id, 10),
+            worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
+            time_slot: values.time_slot, // Send time_slot string directly
+            recurrence_period: parseInt(values.recurrence_period, 10), // Convert to integer
+        };
+    
+        try {
+            await dispatch(
+                updateBooking({ id: bookingId, updatedData: formattedValues })
+            ).unwrap();
+            setIsCreateModalVisible(false);
+            form.resetFields();
+            setIsEditMode(false);
+        } catch (error) {
+            console.error("Error updating booking:", error);
+        }
+    };
+    
 
     const handleEditBooking = async () => {
         const id = prompt("Enter Booking ID to edit:");
@@ -145,42 +195,6 @@ const Booking = () => {
         setBookingId(id);
         setIsEditMode(true);
         setIsCreateModalVisible(true);
-    };
-
-    const handleUpdateBooking = async (values) => {
-        const day = new Date(values.date).getDay(); // Assuming values.date is a valid date string
-        const timeSlot = Object.keys(timeSlots).find(
-            (key) => timeSlots[key] === values.time_slot
-        );
-        console.log(`Day: ${day}, Time Slot: ${timeSlot}`);
-
-        const isAvailable = await checkWorkerAvailability(
-            values.worker_id,
-            day,
-            timeSlot
-        );
-
-        if (!isAvailable) {
-            return;
-        }
-
-        const formattedValues = {
-            ...values,
-            client_id: parseInt(values.client_id, 10),
-            worker_id: values.worker_id ? parseInt(values.worker_id, 10) : null,
-            time_slot: values.time_slot, // Send time_slot string directly
-        };
-
-        try {
-            await dispatch(
-                updateBooking({ id: bookingId, updatedData: formattedValues })
-            ).unwrap();
-            setIsCreateModalVisible(false);
-            form.resetFields();
-            setIsEditMode(false);
-        } catch (error) {
-            console.error("Error updating booking:", error);
-        }
     };
 
     const timeSlots = {
