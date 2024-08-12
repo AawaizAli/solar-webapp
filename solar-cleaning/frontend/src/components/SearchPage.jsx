@@ -285,6 +285,11 @@ const SearchPage = () => {
                                     key: action.payload.id,
                                     client_name: action.payload.client.name,
                                     worker_name: action.payload.worker.name,
+                                    client_address: action.payload.client.address, // Adding client address
+                                    client_contact: action.payload.client.contact_details, // Adding client contact
+                                    total_panels: action.payload.client.total_panels, // Adding total panels
+                                    charges_per_clean:
+                                        action.payload.client.charge_per_clean, // Adding charges per clean
                                 },
                             ])
                         );
@@ -302,6 +307,11 @@ const SearchPage = () => {
                                     key: item.id,
                                     client_name: item.client.name,
                                     worker_name: item.worker.name,
+                                    client_address: item.client.address, // Adding client address
+                                    client_contact: item.client.contact_details, // Adding client contact
+                                    total_panels: item.client.total_panels, // Adding total panels
+                                    charges_per_clean:
+                                        item.client.charge_per_clean, // Adding charges per clean
                                 }))
                             )
                         );
@@ -319,6 +329,11 @@ const SearchPage = () => {
                                     key: item.id,
                                     client_name: item.client.name,
                                     worker_name: item.worker.name,
+                                    client_address: item.client.address, // Adding client address
+                                    client_contact: item.client.contact_details, // Adding client contact
+                                    total_panels: item.client.total_panels, // Adding total panels
+                                    charges_per_clean:
+                                        item.client.charge_per_clean, // Adding charges per clean
                                 }))
                             )
                         );
@@ -336,6 +351,11 @@ const SearchPage = () => {
                                     key: item.id,
                                     client_name: item.client.name,
                                     worker_name: item.worker.name,
+                                    client_address: item.client.address, // Adding client address
+                                    client_contact: item.client.contact_details, // Adding client contact
+                                    total_panels: item.client.total_panels, // Adding total panels
+                                    charges_per_clean:
+                                        item.client.charge_per_clean, // Adding charges per clean
                                 }))
                             )
                         );
@@ -353,6 +373,11 @@ const SearchPage = () => {
                                     key: item.id,
                                     client_name: item.client.name,
                                     worker_name: item.worker.name,
+                                    client_address: item.client.address, // Adding client address
+                                    client_contact: item.client.contact_details, // Adding client contact
+                                    total_panels: item.client.total_panels, // Adding total panels
+                                    charges_per_clean:
+                                        item.client.charge_per_clean, // Adding charges per clean
                                 }))
                             )
                         );
@@ -370,6 +395,11 @@ const SearchPage = () => {
                                     key: item.id,
                                     client_name: item.client.name,
                                     worker_name: item.worker.name,
+                                    client_address: item.client.address, // Adding client address
+                                    client_contact: item.client.contact_details, // Adding client contact
+                                    total_panels: item.client.total_panels, // Adding total panels
+                                    charges_per_clean:
+                                        item.client.charge_per_clean, // Adding charges per clean
                                 }))
                             )
                         );
@@ -387,6 +417,11 @@ const SearchPage = () => {
                                     key: item.id,
                                     client_name: item.client.name,
                                     worker_name: item.worker.name,
+                                    client_address: item.client.address, // Adding client address
+                                    client_contact: item.client.contact_details, // Adding client contact
+                                    total_panels: item.client.total_panels, // Adding total panels
+                                    charges_per_clean:
+                                        item.client.charge_per_clean, // Adding charges per clean
                                 }))
                             )
                         );
@@ -404,6 +439,11 @@ const SearchPage = () => {
                                     key: item.id,
                                     client_name: item.client.name,
                                     worker_name: item.worker.name,
+                                    client_address: item.client.address, // Adding client address
+                                    client_contact: item.client.contact_details, // Adding client contact
+                                    total_panels: item.client.total_panels, // Adding total panels
+                                    charges_per_clean:
+                                        item.client.charge_per_clean, // Adding charges per clean
                                 }))
                             )
                         );
@@ -547,16 +587,16 @@ const SearchPage = () => {
                   { title: "Slot", dataIndex: "time_slot", key: "time_slot" },
                   { title: "Status", dataIndex: "status", key: "status" },
                   {
-                    title: "Recurrence",
-                    dataIndex: "recurrence",
-                    key: "recurrence",
-                    render: (text) =>
-                        text === 'ten'
-                            ? "Every 10 Days"
-                            : text === 'twenty'
-                            ? "Every 20 Days"
-                            : text, 
-                },
+                      title: "Recurrence",
+                      dataIndex: "recurrence",
+                      key: "recurrence",
+                      render: (text) =>
+                          text === "ten"
+                              ? "Every 10 Days"
+                              : text === "twenty"
+                              ? "Every 20 Days"
+                              : text,
+                  },
               ]
             : [];
 
