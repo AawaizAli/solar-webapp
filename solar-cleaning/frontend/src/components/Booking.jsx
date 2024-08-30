@@ -22,6 +22,7 @@ import professionalImg from "../../public/professional-img.png";
 import Header from "./Header";
 import Footer from "./Footer";
 import { getAllClients } from "../features/clients/clientsSlice";
+import { getAllClients } from "../features/clients/clientsSlice";
 
 const Booking = () => {
     const [bookingId, setBookingId] = useState("");
@@ -29,6 +30,34 @@ const Booking = () => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [form] = Form.useForm();
     const dispatch = useDispatch();
+    const [selectedClientId, setSelectedClientId] = useState(0);
+    const [workers, setWorkers] = useState([]);
+    const [clients, setClients] = useState([]);
+    const [workerTags, setWorkerTags] = useState([]);
+    const [inputVisible, setInputVisible] = useState(false);
+    const [inputValue, setInputValue] = useState("");
+    const inputRef = useRef(null);
+    const [workerIds, setWorkerIds] = useState([]);
+    const [isWorkerModalVisible, setIsWorkerModalVisible] = useState(false);
+
+    // Fetch workers data when the component mounts
+    useEffect(() => {
+        const dispatchFunc = async () => {
+            const { payload } = await dispatch(getAllWorkers());
+            setWorkers(payload);
+
+            const { payload: clientsPayload } = await dispatch(getAllClients());
+            setClients(clientsPayload);
+        };
+
+        dispatchFunc();
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (inputVisible) {
+            inputRef.current?.focus();
+        }
+    }, [inputVisible]);
     const [selectedClientId, setSelectedClientId] = useState(0);
     const [workers, setWorkers] = useState([]);
     const [clients, setClients] = useState([]);
@@ -130,7 +159,72 @@ const Booking = () => {
         setWorkerIds(newWorkerIds);
     };
 
+
+    const handleInputConfirm = () => {
+        if (inputValue && !tags.includes(inputValue)) {
+            const selectedWorker = workers.find(
+                (worker) => worker.name === inputValue
+            );
+            if (selectedWorker) {
+                setTags([...tags, inputValue]);
+                setSelectedWorkerIds([...selectedWorkerIds, selectedWorker.id]);
+            } else {
+                alert("Worker not found");
+            }
+        }
+        setInputVisible(false);
+        setInputValue("");
+    };
+
+    const handleClose = (removedTag) => {
+        const newTags = tags.filter((tag) => tag !== removedTag);
+        const newSelectedWorkerIds = selectedWorkerIds.filter(
+            (id, index) => tags[index] !== removedTag
+        );
+        setTags(newTags);
+        setSelectedWorkerIds(newSelectedWorkerIds);
+    };
+
+    const handleWorkerModalCancel = () => {
+        setIsWorkerModalVisible(false);
+    };
+
+    const handleWorkerModalOk = () => {
+        if (inputValue && !workerTags.includes(inputValue)) {
+            const selectedWorker = workers.find(
+                (worker) => worker.name === inputValue
+            );
+            if (selectedWorker) {
+                setWorkerTags([...workerTags, inputValue]);
+                setWorkerIds([...workerIds, selectedWorker.id]);
+            }
+        }
+        setIsWorkerModalVisible(false);
+        setInputValue("");
+    };
+
+    const showWorkerModal = () => {
+        setInputVisible(true);
+        setIsWorkerModalVisible(true);
+    };
+
+    const handleInputChange = (value) => {
+        setInputValue(value);
+    };
+
+    const handleWorkerTagClose = (removedTag) => {
+        const newTags = workerTags.filter((tag) => tag !== removedTag);
+        const newWorkerIds = workerIds.filter(
+            (id, index) => workerTags[index] !== removedTag
+        );
+        setWorkerTags(newTags);
+        setWorkerIds(newWorkerIds);
+    };
+
     const checkWorkerAvailability = async (workerId, day, timeSlot) => {
+        console.log(
+            `Checking availability for Worker ID: ${workerId}, Day: ${day}, Time Slot: ${timeSlot}`
+        );
         console.log(
             `Checking availability for Worker ID: ${workerId}, Day: ${day}, Time Slot: ${timeSlot}`
         );
@@ -148,6 +242,10 @@ const Booking = () => {
         }
 
         const isAvailable = worker.availability[day][timeSlot];
+        console.log(
+            `Worker Availability on Day ${day}, Time Slot ${timeSlot}:`,
+            isAvailable
+        );
         console.log(
             `Worker Availability on Day ${day}, Time Slot ${timeSlot}:`,
             isAvailable
@@ -192,12 +290,22 @@ const Booking = () => {
 
     const handleCreateBooking = async (values) => {
         const day = new Date(values.date).getDay();
+        const day = new Date(values.date).getDay();
         const timeSlot = Object.keys(timeSlots).find(
             (key) => timeSlots[key] === values.time_slot
         );
 
+
         const formattedValues = {
             ...values,
+            client_id: selectedClientId,
+            worker_ids: workerIds,
+            time_slot: values.time_slot,
+            recurrence_period: parseInt(values.recurrence_period, 10),
+        };
+
+        try {
+            console.log(formattedValues);
             client_id: selectedClientId,
             worker_ids: workerIds,
             time_slot: values.time_slot,
@@ -211,13 +319,17 @@ const Booking = () => {
             form.resetFields();
             setWorkerTags([]);
             setWorkerIds([]);
+            setWorkerTags([]);
+            setWorkerIds([]);
         } catch (error) {
             console.error("Error creating booking:", error);
             alert("Worker is busy. Please select another time slot.");
         }
     };
 
+
     const handleUpdateBooking = async (values) => {
+        const day = new Date(values.date).getDay();
         const day = new Date(values.date).getDay();
         const timeSlot = Object.keys(timeSlots).find(
             (key) => timeSlots[key] === values.time_slot
@@ -231,7 +343,7 @@ const Booking = () => {
         if (!isAvailable) {
             return;
         }
-    
+
         const formattedValues = {
             ...values,
             client_id: selectedClientId,
@@ -239,7 +351,7 @@ const Booking = () => {
             time_slot: values.time_slot,
             recurrence_period: parseInt(values.recurrence_period, 10),
         };
-    
+
         try {
             await dispatch(
                 updateBooking({ id: bookingId, updatedData: formattedValues })
@@ -253,7 +365,6 @@ const Booking = () => {
             console.error("Error updating booking:", error);
         }
     };
-    
 
     const handleEditBooking = async () => {
         const id = prompt("Enter Booking ID to edit:");
@@ -445,7 +556,164 @@ const Booking = () => {
                     </Form.Item>
                 </Form>
             </Modal>
+            <Modal
+                title={isEditMode ? "Update Booking" : "Create Booking"}
+                open={isCreateModalVisible}
+                onCancel={handleCreateModalCancel}
+                footer={null}>
+                <Form
+                    form={form}
+                    onFinish={
+                        isEditMode ? handleUpdateBooking : handleCreateBooking
+                    }
+                    layout="vertical">
 
+                    <Form.Item
+                        name="client_id"
+                        label="Client"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please select a Client!",
+                            },
+                        ]}>
+                        <Select
+                            onChange={(value) => setSelectedClientId(value)}>
+                            {clients.map((client) => (
+                                <Select.Option
+                                    key={client.id}
+                                    value={client.id}>
+                                    {client.name}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item label="Workers">
+                        {workerTags.map((tag, index) => (
+                            <Tag
+                                key={tag}
+                                closable
+                                onClose={() => handleWorkerTagClose(tag)}>
+                                {tag}
+                            </Tag>
+                        ))}
+                        <Tag
+                            icon={<PlusOutlined />}
+                            onClick={showWorkerModal}
+                            style={{ cursor: "pointer" }}>
+                            New Worker
+                        </Tag>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="date"
+                        label="Date"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please select the date!",
+                            },
+                        ]}>
+                        <Input type="date" />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="time_slot"
+                        label="Time Slot"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please select a time slot!",
+                            },
+                        ]}>
+                        <Select>
+                            {Object.keys(timeSlots).map((key) => (
+                                <Select.Option key={key} value={timeSlots[key]}>
+                                    {timeSlots[key]}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="status"
+                        label="Status"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please select the status!",
+                            },
+                        ]}>
+                        <Select>
+                            <Select.Option value="Scheduled">
+                                Scheduled
+                            </Select.Option>
+                            <Select.Option value="Completed">
+                                Completed
+                            </Select.Option>
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item name="recurrence" label="Recurrence">
+                        <Select>
+                            <Select.Option value="weekly">Weekly</Select.Option>
+                            <Select.Option value="ten">
+                                Every 10 Days
+                            </Select.Option>
+                            <Select.Option value="biweekly">
+                                Biweekly
+                            </Select.Option>
+                            <Select.Option value="twenty">
+                                Every 20 Days
+                            </Select.Option>
+                            <Select.Option value="monthly">
+                                Monthly
+                            </Select.Option>
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="recurrence_period"
+                        label="Reccurence Period (months)"
+                        rules={[
+                            {
+                                required: true,
+                                message:
+                                    "Please input the Reccurence period in months!",
+                            },
+                        ]}>
+                        <Input type="number" addonAfter="months" />
+                    </Form.Item>
+
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            {isEditMode ? "Update Booking" : "Create Booking"}
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+
+            <Modal
+                title="Select Worker"
+                open={isWorkerModalVisible}
+                onCancel={handleWorkerModalCancel}
+                onOk={handleWorkerModalOk}>
+                <Select
+                    showSearch
+                    placeholder="Select a worker"
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    style={{ width: "100%" }}>
+                    {workers.map((worker) => (
+                        <Select.Option key={worker.id} value={worker.name}>
+                            {worker.name}
+                        </Select.Option>
+                    ))}
+                </Select>
+            </Modal>
+
+            <Header />
             <Modal
                 title="Select Worker"
                 open={isWorkerModalVisible}
@@ -498,6 +766,7 @@ const Booking = () => {
                 </div>
             </section>
 
+            <Footer />
             <Footer />
         </>
     );
