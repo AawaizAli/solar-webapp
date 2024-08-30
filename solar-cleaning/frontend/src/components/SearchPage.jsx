@@ -55,6 +55,8 @@ const SearchPage = () => {
     const [availabilityData, setAvailabilityData] = useState([]);
     const [tableData, setTableData] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [workerModalVisible, setWorkerModalVisible] = useState(false);
+    const [selectedWorker, setSelectedWorker] = useState([]);
 
     const dispatch = useDispatch();
     const clients = useSelector((state) => state?.clients?.clients);
@@ -105,15 +107,29 @@ const SearchPage = () => {
                 if (action.payload) {
                     const mappedBookings = action.payload.map((booking) => ({
                         ...booking,
-                        key: booking.id,
-                        client_name: booking.client.name,
-                        worker_name: booking.worker.name,
-                        client_address: booking.client.address,
-                        client_contact: booking.client.contact_details,
-                        total_panels: booking.client.total_panels,
-                        charges_per_clean: booking.client.charge_per_clean,
+                        key: booking.booking_id,
+                        client_name: booking.client
+                            ? booking.client.name
+                            : "Unknown Client",
+                        worker_names:
+                            booking.workers && booking.workers.length > 0
+                                ? booking.workers
+                                      .map((worker) => worker.name)
+                                      .join(", ")
+                                : "Unknown Worker",
+                        client_address: booking.client
+                            ? booking.client.address
+                            : "Unknown Address",
+                        client_contact: booking.client
+                            ? booking.client.contact_details
+                            : "Unknown Contact",
+                        total_panels: booking.client
+                            ? booking.client.total_panels
+                            : "Unknown",
+                        charges_per_clean: booking.client
+                            ? booking.client.charge_per_clean
+                            : "Unknown",
                     }));
-                    // Sort by date
                     mappedBookings.sort(
                         (a, b) => new Date(a.date) - new Date(b.date)
                     );
@@ -284,10 +300,12 @@ const SearchPage = () => {
                                     ...action.payload,
                                     key: action.payload.id,
                                     client_name: action.payload.client.name,
-                                    worker_name: action.payload.worker.name,
-                                    client_address: action.payload.client.address, // Adding client address
-                                    client_contact: action.payload.client.contact_details, // Adding client contact
-                                    total_panels: action.payload.client.total_panels, // Adding total panels
+                                    client_address:
+                                        action.payload.client.address, // Adding client address
+                                    client_contact:
+                                        action.payload.client.contact_details, // Adding client contact
+                                    total_panels:
+                                        action.payload.client.total_panels, // Adding total panels
                                     charges_per_clean:
                                         action.payload.client.charge_per_clean, // Adding charges per clean
                                 },
@@ -559,9 +577,18 @@ const SearchPage = () => {
                       key: "client_name",
                   },
                   {
-                      title: "Worker Name",
-                      dataIndex: "worker_name",
-                      key: "worker_name",
+                      title: "Worker Names",
+                      dataIndex: "workers",
+                      key: "workers",
+                      render: (text, record) => (
+                          <Button
+                              onClick={() => {
+                                  setSelectedWorker(record.workers);
+                                  setWorkerModalVisible(true);
+                              }}>
+                              Show Workers
+                          </Button>
+                      ),
                   },
                   {
                       title: "Client Address",
@@ -734,9 +761,6 @@ const SearchPage = () => {
                                     <Option value="Client Name">
                                         Client Name
                                     </Option>
-                                    <Option value="Worker Name">
-                                        Worker Name
-                                    </Option>
                                     <Option value="Date">Date</Option>
                                     <Option value="Slot">Slot</Option>
                                     <Option value="Status">Status</Option>
@@ -764,6 +788,21 @@ const SearchPage = () => {
                     rowKey="id"
                 />
             </div>
+
+            <Modal
+                title="Assigned Workers"
+                open={workerModalVisible}
+                onCancel={() => setWorkerModalVisible(false)}
+                footer={null}>
+                <ul>
+                    {selectedWorker.map((worker) => (
+                        <li key={worker.id}>
+                            {worker.name} - {worker.area}
+                        </li>
+                    ))}
+                </ul>
+            </Modal>
+
             <Modal
                 title="Worker Availability"
                 open={modalVisible}

@@ -27,33 +27,56 @@ axiosInstance.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// Async thunk for fetching bookings
 export const getAllBookings = createAsyncThunk(
     "bookings/get-all-bookings",
     async (_, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.get(
-                "/api/bookings/get-all-bookings"
+                "/api/bookings/all-booking-details"
             );
+            console.log('rida ashfaq qureshi');
             console.log(response.data);
-            return response.data;
+            return response.data.map((booking) => ({
+                ...booking,
+                id: booking.booking_id, // Map booking_id to id for consistency
+            }));
         } catch (error) {
             return rejectWithValue(error.response.data.message);
         }
     }
 );
 
+// // Async thunk for fetching bookings
+// export const getAllBookings = createAsyncThunk(
+//     "bookings/get-all-bookings",
+//     async (_, { rejectWithValue }) => {
+//         try {
+//             const response = await axiosInstance.get(
+//                 "/api/bookings/get-all-bookings"
+//             );
+//             console.log(response.data);
+//             return response.data;
+//         } catch (error) {
+//             return rejectWithValue(error.response.data.message);
+//         }
+//     }
+// );
+
 export const getById = createAsyncThunk(
     "bookings/get-by-id",
     async (id, { rejectWithValue, dispatch, getState }) => {
         try {
             const state = getState();
+            // If bookings are not already loaded, fetch them
             if (state.bookings.bookings.length === 0) {
                 await dispatch(getAllBookings());
             }
+
+            // Find the booking with the matching booking_id
             const booking = state.bookings.bookings.find(
-                (booking) => booking.id === parseInt(id, 10)
+                (booking) => booking.booking_id === parseInt(id, 10)
             );
+
             if (!booking) {
                 throw new Error("Booking not found");
             }
@@ -63,6 +86,7 @@ export const getById = createAsyncThunk(
         }
     }
 );
+
 
 // Async thunk for fetching bookings by client ID
 export const getByClientId = createAsyncThunk(

@@ -10,8 +10,8 @@ import "owl.carousel/dist/assets/owl.theme.default.css";
 import "../../public/css/responsive.css";
 import "../../public/css/style.css";
 import "./ReportsPage.css";
-import Spreadsheet from "react-spreadsheet";
-import { getAllReports } from "../features/reports/reportsSlice";
+import Spreadsheet from "react-spreadsheet";    
+import { getAllReports, getAllBookingInstances } from "../features/reports/reportsSlice";
 import Header from "./Header";
 import Footer from "./Footer";
 
@@ -26,82 +26,93 @@ const ReportsPage = () => {
     });
 
     useEffect(() => {
-        dispatch(getAllReports()).then((action) => {
-            const payload = action.payload;
-            if (payload) {
-                const { bookings, salaries, expenses, daily_accounts } =
-                    payload;
+        if (activeTab === "bookings") {
+            dispatch(getAllBookingInstances()).then((action) => {
+                const payload = action.payload;
+                if (payload) {
+                    const sortedBookings = [...payload].sort(
+                        (a, b) => new Date(a.date) - new Date(b.date)
+                    );
 
-                // Make a shallow copy of the bookings array before sorting
-                const sortedBookings = [...bookings].sort(
-                    (a, b) => new Date(a.date) - new Date(b.date)
-                );
+                    const formattedBookings = sortedBookings.map((booking) => {
+                        const dateObj = new Date(booking.date);
+                        const dayOfWeek = dateObj.toLocaleDateString("en-US", {
+                            weekday: "long",
+                        });
 
-                const formattedBookings = sortedBookings.map((booking) => {
-                    const dateObj = new Date(booking.date);
-                    const dayOfWeek = dateObj.toLocaleDateString("en-US", {
-                        weekday: "long",
+                        return [
+                            { value: booking.booking_id }, 
+                            { value: booking.date },
+                            { value: dayOfWeek },
+                            { value: booking.client.name },
+                            { value: booking.worker.name },
+                            { value: booking.client.address }, // Client Address
+                            { value: booking.client.area }, // Client Area
+                            { value: booking.client.contact_details }, // Client Contact
+                            { value: booking.client.total_panels }, // Total Panels
+                            { value: booking.client.charge_per_clean }, // Charges per Clean
+                            { value: booking.status },
+                        ];
                     });
 
-                    return [
-                        { value: booking.date },
-                        { value: dayOfWeek },
-                        { value: booking.client.name },
-                        { value: booking.worker.name },
-                        { value: booking.client.address }, // Client Address
-                        { value: booking.client.area }, // Client Area
-                        { value: booking.client.contact_details }, // Client Contact
-                        { value: booking.client.total_panels }, // Total Panels
-                        { value: booking.client.charge_per_clean }, // Charges per Clean
-                        { value: booking.status },
-                    ];
-                });
+                    setData((prevData) => ({
+                        ...prevData,
+                        bookings: [[]].concat(formattedBookings),
+                    }));
+                }
+            });
+        } else {
+            dispatch(getAllReports()).then((action) => {
+                const payload = action.payload;
+                if (payload) {
+                    const { salaries, expenses, daily_accounts } = payload;
 
-                const formattedSalaries = Object.entries(salaries).flatMap(
-                    ([workerName, salaryDetails]) =>
-                        salaryDetails.length > 0
-                            ? salaryDetails.map((salary) => [
-                                  { value: salary.date },
-                                  { value: salary.day },
-                                  { value: salary.advance },
-                                  { value: salary.incentive },
-                                  { value: workerName },
-                              ])
-                            : [
-                                  [
-                                      { value: "" },
-                                      { value: "" },
-                                      { value: "" },
-                                      { value: "" },
+                    const formattedSalaries = Object.entries(salaries).flatMap(
+                        ([workerName, salaryDetails]) =>
+                            salaryDetails.length > 0
+                                ? salaryDetails.map((salary) => [
+                                      { value: salary.date },
+                                      { value: salary.day },
+                                      { value: salary.advance },
+                                      { value: salary.incentive },
                                       { value: workerName },
-                                  ],
-                              ]
-                );
+                                  ])
+                                : [
+                                      [
+                                          { value: "" },
+                                          { value: "" },
+                                          { value: "" },
+                                          { value: "" },
+                                          { value: workerName },
+                                      ],
+                                  ]
+                    );
 
-                const formattedExpenses = expenses.map((expense) => [
-                    { value: expense.date },
-                    { value: expense.description },
-                    { value: expense.amount },
-                ]);
+                    const formattedExpenses = expenses.map((expense) => [
+                        { value: expense.date },
+                        { value: expense.description },
+                        { value: expense.amount },
+                    ]);
 
-                const formattedDailyAccounts = daily_accounts.map((account) => [
-                    { value: account.date },
-                    { value: account.day },
-                    { value: account.total_earnings },
-                    { value: account.petrol_expense },
-                    { value: account.total_daily_wage },
-                    { value: account.tj_earnings_per_day },
-                ]);
+                    const formattedDailyAccounts = daily_accounts.map((account) => [
+                        { value: account.date },
+                        { value: account.day },
+                        { value: account.total_earnings },
+                        { value: account.petrol_expense },
+                        { value: account.total_daily_wage },
+                        { value: account.tj_earnings_per_day },
+                    ]);
 
-                setData({
-                    bookings: [[]].concat(formattedBookings),
-                    salary: [[]].concat(formattedSalaries),
-                    expenses: [[]].concat(formattedExpenses),
-                    dailyAccount: [[]].concat(formattedDailyAccounts),
-                });
-            }
-        });
-    }, [dispatch]);
+                    setData({
+                        bookings: [[]], // Keep this empty because it's already handled in the bookings tab
+                        salary: [[]].concat(formattedSalaries),
+                        expenses: [[]].concat(formattedExpenses),
+                        dailyAccount: [[]].concat(formattedDailyAccounts),
+                    });
+                }
+            });
+        }
+    }, [dispatch, activeTab]); // Re-run when activeTab changes
 
     const handleDataChange = (newData) => {
         setData((prevData) => ({
@@ -179,6 +190,7 @@ const ReportsPage = () => {
 
     const columns = {
         bookings: [
+            "Booking ID",
             "Date",
             "Day",
             "Client Name",
