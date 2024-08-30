@@ -465,7 +465,9 @@ const Booking = () => {
                 </Select>
             </Modal>
 
-            <Header />
+            <div className="hero_area">
+                <Header></Header>
+            </div>
             <section className="professional_section booking_padding">
                 <div id="professional_section" className="container">
                     <div className="row">
