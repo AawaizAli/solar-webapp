@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-const [loading, setLoading] = useState(false);
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -84,12 +83,10 @@ const Client = () => {
                 setClientId(""); // Clear clientId after update
             });
         } else {
-            dispatch(createClient(clientData))
-                .then(() => {
-                    setIsCreateModalVisible(false);
-                    form.resetFields();
-                })
-                .finally(() => setLoading(false)); // Enable button after process
+            dispatch(createClient(clientData)).then(() => {
+                setIsCreateModalVisible(false);
+                form.resetFields();
+            });
         }
     };
 
@@ -218,7 +215,7 @@ const Client = () => {
                         <Input type="number" addonAfter="PKR" />
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" loading={loading}>
+                        <Button type="primary" htmlType="submit">
                             {clientId ? "Update Client" : "Create Client"}
                         </Button>
                     </Form.Item>
