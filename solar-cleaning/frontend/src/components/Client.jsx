@@ -217,7 +217,7 @@ const Client = () => {
                         <Input type="number" addonAfter="PKR" />
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" loading={lodai}>
+                        <Button type="primary" htmlType="submit" loading={loading}>
                             {clientId ? "Update Client" : "Create Client"}
                         </Button>
                     </Form.Item>
