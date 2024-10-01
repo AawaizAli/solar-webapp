@@ -83,10 +83,12 @@ const Client = () => {
                 setClientId(""); // Clear clientId after update
             });
         } else {
-            dispatch(createClient(clientData)).then(() => {
-                setIsCreateModalVisible(false);
-                form.resetFields();
-            });
+            dispatch(createClient(clientData))
+                .then(() => {
+                    setIsCreateModalVisible(false);
+                    form.resetFields();
+                })
+                .finally(() => setLoading(false)); // Enable button after process
         }
     };
 
@@ -215,7 +217,7 @@ const Client = () => {
                         <Input type="number" addonAfter="PKR" />
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" htmlType="submit" loading={lodai}>
                             {clientId ? "Update Client" : "Create Client"}
                         </Button>
                     </Form.Item>

@@ -13,9 +13,17 @@ client_bp = Blueprint('client_bp', __name__, url_prefix='/api/clients')
 @jwt_required()
 def add_client():
     data = request.get_json()
+
+    # Check for required fields
     if not all(key in data for key in ['name', 'contact_details', 'address', 'total_panels', 'charge_per_clean', 'area']):
         return jsonify({'error': 'Bad Request', 'message': 'Missing required fields'}), 400
 
+    # Check if client already exists
+    existing_client = Client.query.filter_by(name=data['name'], contact_details=data['contact_details']).first()
+    if existing_client:
+        return jsonify({'error': 'Conflict', 'message': 'Client already exists'}), 409
+
+    # Create new client
     new_client = Client(
         name=data['name'],
         contact_details=data['contact_details'],
@@ -26,9 +34,12 @@ def add_client():
         charge_per_clean=data['charge_per_clean'],  # Updated field
         area=data['area']
     )
+    
     db.session.add(new_client)
     db.session.commit()
+    
     return jsonify(new_client.to_dict()), 201
+
     
 @client_bp.route('/get-all-clients', methods=['GET'])
 @jwt_required()
