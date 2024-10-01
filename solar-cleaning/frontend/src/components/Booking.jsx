@@ -409,6 +409,7 @@ const Booking = () => {
 
                     <Form.Item name="recurrence" label="Recurrence">
                         <Select>
+                            <Select.Option value="daily">Daily</Select.Option>
                             <Select.Option value="weekly">Weekly</Select.Option>
                             <Select.Option value="ten">
                                 Every 10 Days
