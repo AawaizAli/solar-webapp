@@ -264,6 +264,9 @@ const Booking = () => {
             alert("Booking not found!");
             return;
         }
+        const originalDate = new Date(bookingDetails.date);
+        originalDate.setDate(originalDate.getDate() + 1); // Add one day if necessary
+        const formattedDate = originalDate.toISOString().split('T')[0];
     
         // Populate the form with booking details
         const values = {
@@ -273,6 +276,7 @@ const Booking = () => {
             status: bookingDetails.status,
             recurrence: bookingDetails.recurrence,
             recurrence_period: bookingDetails.recurrence_period.toString(),
+            date:formattedDate,
         };
     
         // Set form values
@@ -409,7 +413,6 @@ const Booking = () => {
 
                     <Form.Item name="recurrence" label="Recurrence">
                         <Select>
-                            <Select.Option value="daily">Daily</Select.Option>
                             <Select.Option value="weekly">Weekly</Select.Option>
                             <Select.Option value="ten">
                                 Every 10 Days
@@ -465,7 +468,6 @@ const Booking = () => {
                     ))}
                 </Select>
             </Modal>
-
             <div className="hero_area">
                 <Header></Header>
             </div>

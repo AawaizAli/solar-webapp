@@ -137,6 +137,12 @@ const SearchPage = () => {
             alert("Booking not found!");
             return;
         }
+        
+        const originalDate = new Date(bookingDetails.date);
+        originalDate.setDate(originalDate.getDate() + 1); // Add one day to the date
+      
+        // Format the date for form input as YYYY-MM-DD
+        const formattedDate = originalDate.toISOString().split('T')[0];
 
         const values = {
             ...bookingDetails,
@@ -145,6 +151,8 @@ const SearchPage = () => {
             status: bookingDetails.status,
             recurrence: bookingDetails.recurrence,
             recurrence_period: bookingDetails.recurrence_period.toString(),
+            date: formattedDate, // Set the formatted date for the input field
+
         };
 
         // Set form values
