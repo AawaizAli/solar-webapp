@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Table, Input,Form, Button, Modal,Tag, Select } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Table, Input, Button, Modal, Select } from "antd";
 import { Link } from "react-router-dom";
-
 import {
     getAllWorkers,
     getById,
@@ -20,7 +18,6 @@ import {
     getByStatus,
     getByTimeSlot,
     getByRecurrence,
-    updateBooking,
 } from "../features/bookings/bookingsSlice";
 import {
     getAllClients,
@@ -51,9 +48,7 @@ const SearchPage = () => {
     const authState = useSelector((state) => state.auth);
     const actualIsAuthenticated = authState?.isAuthenticated ?? false;
     const actualUser = authState?.user ?? { username: "Guest" };
-    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
-    const [selectedClientId, setSelectedClientId] = useState(0);
-    const [workerTags, setWorkerTags] = useState([]);   
+
     const [selectedOption, setSelectedOption] = useState(null);
     const [selectedField, setSelectedField] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
@@ -61,17 +56,7 @@ const SearchPage = () => {
     const [tableData, setTableData] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [workerModalVisible, setWorkerModalVisible] = useState(false);
-    const [isWorkerModalVisible, setIsWorkerModalVisible] = useState(false);
-    const [inputValue, setInputValue] = useState("");
-    const [inputVisible, setInputVisible] = useState(false);
     const [selectedWorker, setSelectedWorker] = useState([]);
-    const [editWorkerModalVisible, setEditWorkerModalVisible] = useState(false); // For Edit Worker modal visibility
-    const [availableWorkers, setAvailableWorkers] = useState([]); // To store all available workers for the dropdown
-    const [selectedWorkerId, setSelectedWorkerId] = useState(null); // To store the selected worker ID
-    const [currentBookingId, setCurrentBookingId] = useState(null); // Store the booking ID for which the worker is being edited
-    const [workerIds, setWorkerIds] = useState([]);
-    const [currentBookingDetails,setCurrentBookingDetails] = useState(null);
-    const [form] = Form.useForm(); // Store the
 
     const dispatch = useDispatch();
     const clients = useSelector((state) => state?.clients?.clients);
@@ -87,169 +72,7 @@ const SearchPage = () => {
         setSearchQuery("");
         fetchData(option);
     };
-    const fetchBookingDetails = async (id) => {
-        try {
-            console.log("Fetching booking details for ID:", id);
-            const { payload: bookings } = await dispatch(getAllBookings());
-            const booking = bookings.find(
-                (booking) => booking.id === parseInt(id)
-            );
-            console.log("Fetched booking details:", booking);
-            return booking || null;
-        } catch (error) {
-            console.error("Error fetching booking details:", error);
-            return null;
-        }
-    };
-    const showWorkerModal = () => {
-        setInputVisible(true);
-        setIsWorkerModalVisible(true);
-    };
-    const handleWorkerModalCancel = () => {
-        setIsWorkerModalVisible(false);
-    };
-    const handleWorkerModalOk = () => {
-        if (inputValue && !workerTags.includes(inputValue)) {
-            const selectedWorker = workers.find(
-                (worker) => worker.name === inputValue
-            );
-            if (selectedWorker) {
-                setWorkerTags([...workerTags, inputValue]);
-                setWorkerIds([...workerIds, selectedWorker.id]);
-            }
-        }
-        setIsWorkerModalVisible(false);
-        setInputValue("");
-    };
-    const handleWorkerTagClose = (removedTag) => {
-        const newTags = workerTags.filter((tag) => tag !== removedTag);
-        const newWorkerIds = workerIds.filter(
-            (id, index) => workerTags[index] !== removedTag
-        );
-        setWorkerTags(newTags);
-        setWorkerIds(newWorkerIds);
-    };
-      // Show Edit Booking Modal
-      const handleEditBooking = async (bookingId) => {
-        const bookingDetails = await fetchBookingDetails(bookingId);
-        if (!bookingDetails) {
-            alert("Booking not found!");
-            return;
-        }
 
-        const values = {
-            ...bookingDetails,
-            client_id: bookingDetails.client.id.toString(),
-            time_slot: bookingDetails.time_slot,
-            status: bookingDetails.status,
-            recurrence: bookingDetails.recurrence,
-            recurrence_period: bookingDetails.recurrence_period.toString(),
-        };
-
-        // Set form values
-        form.setFieldsValue(values);
-
-        // Set worker tags and worker IDs
-        const workerNames = bookingDetails.workers.map((worker) => worker.name);
-        const workerIds = bookingDetails.workers.map((worker) => worker.id);
-        setWorkerTags(workerNames);
-        setWorkerIds(workerIds);
-
-        // Set the booking ID and switch to edit mode
-        setCurrentBookingId(bookingId);
-        setIsCreateModalVisible(true);
-    };
-    const checkWorkerAvailability = async (workerId, day, timeSlot) => {
-        console.log(
-            `Checking availability for Worker ID: ${workerId}, Day: ${day}, Time Slot: ${timeSlot}`
-        );
-
-        if (!workerId) return true; // If workerId is not provided, skip the check
-
-        const { payload: workers } = await dispatch(getAllWorkers());
-        const worker = workers.find(
-            (worker) => worker.id === parseInt(workerId)
-        );
-
-        if (!worker) {
-            console.error("Worker not found:", workerId);
-            return false;
-        }
-
-        const isAvailable = worker.availability[day][timeSlot];
-        console.log(
-            `Worker Availability on Day ${day}, Time Slot ${timeSlot}:`,
-            isAvailable
-        );
-
-        if (!isAvailable) {
-            console.error(`Worker is not available on ${day} at ${timeSlot}`);
-            Modal.warning({
-                title: "Worker Unavailable",
-                content: `Worker is not available on ${
-                    [
-                        "Sunday",
-                        "Monday",
-                        "Tuesday",
-                        "Wednesday",
-                        "Thursday",
-                        "Friday",
-                        "Saturday",
-                    ][day]
-                } at ${timeSlots[timeSlot]}.`,
-            });
-            return false;
-        }
-
-        return true;
-    };
-
-    const handleUpdateBooking = async (values) => {
-        const day = new Date(values.date).getDay();
-        const timeSlot = Object.keys(timeSlots).find(
-            (key) => timeSlots[key] === values.time_slot
-        );
-    
-        // We no longer check the number of worker_ids, just ensure availability of the remaining workers
-        const isAvailable = workerIds.every(async (workerId) => {
-            return await checkWorkerAvailability(workerId, day, timeSlot);
-        });
-    
-        if (!isAvailable) {
-            return;
-        }
-    
-        const formattedValues = {
-            ...values,
-            client_id: selectedClientId,
-            worker_ids: workerIds,  // Send the updated worker IDs
-            time_slot: values.time_slot,
-            recurrence_period: parseInt(values.recurrence_period, 10),
-        };
-    
-        try {
-            await dispatch(
-                updateBooking({ id: currentBookingId, updatedData: formattedValues })
-            ).unwrap();
-            setIsCreateModalVisible(false);
-            form.resetFields();
-            setWorkerTags([]);
-            setWorkerIds([]);
-            setIsEditMode(false);
-        } catch (error) {
-            console.error("Error updating booking:", error);
-        }
-    };
-
-    const handleCreateModalCancel = () => {
-        setIsCreateModalVisible(false);
-        form.resetFields();
-    };
-        const handleInputChange = (value) => {
-        setInputValue(value);
-    };
-    
-    
     const fetchData = (option) => {
         if (option === "Clients") {
             dispatch(getAllClients()).then((action) => {
@@ -747,69 +570,60 @@ const SearchPage = () => {
               ]
             : selectedOption === "Bookings"
             ? [
-                { title: "Booking ID", dataIndex: "id", key: "id" },
-                {
-                    title: "Client Name",
-                    dataIndex: "client_name",
-                    key: "client_name",
-                },
-                {
-                    title: "Worker Names",
-                    dataIndex: "workers",
-                    key: "workers",
-                    render: (text, record) => (
-                        <>
-                            <Button
-                                onClick={() => {
-                                    const workerIds = record.workers.map((worker) => worker.id);
-                                    setSelectedWorker(record.workers); // Update with correct booking ID
-                                    setWorkerModalVisible(true); // Show worker modal
-                                }}>
-                                Show Workers
-                            </Button>
-                            <Button
-                                style={{ marginLeft: '5px' }}
-                                onClick={() => {setCurrentBookingId(record.id);
-                                handleEditBooking(record.id)}}>
-                                Edit Booking
-                            </Button>
-                        </>
-                    ),
-                },
-                {
-                    title: "Client Address",
-                    dataIndex: "client_address",
-                    key: "client_address",
-                },
-                {
-                    title: "Client Contact",
-                    dataIndex: "client_contact",
-                    key: "client_contact",
-                },
-                {
-                    title: "Total Panels",
-                    dataIndex: "total_panels",
-                    key: "total_panels",
-                },
-                {
-                    title: "Charges per Clean",
-                    dataIndex: "charge_per_clean",
-                    key: "charge_per_clean",
-                },
-                { title: "Date", dataIndex: "date", key: "date" },
-                { title: "Slot", dataIndex: "time_slot", key: "time_slot" },
-                { title: "Status", dataIndex: "status", key: "status" },
-                {
-                    title: "Recurrence",
-                    dataIndex: "recurrence",
-                    key: "recurrence",
-                    render: (text) =>
-                        text === "ten"
-                            ? "Every 10 Days"
-                            : text === "twenty"
-                            ? "Every 20 Days"
-                            : text,
-                },
+                  { title: "Booking ID", dataIndex: "id", key: "id" },
+                  {
+                      title: "Client Name",
+                      dataIndex: "client_name",
+                      key: "client_name",
+                  },
+                  {
+                      title: "Worker Names",
+                      dataIndex: "workers",
+                      key: "workers",
+                      render: (text, record) => (
+                          <Button
+                              onClick={() => {
+                                  setSelectedWorker(record.workers);
+                                  setWorkerModalVisible(true);
+                              }}>
+                              Show Workers
+                          </Button>
+                      ),
+                  },
+                  {
+                      title: "Client Address",
+                      dataIndex: "client_address",
+                      key: "client_address",
+                  },
+                  {
+                      title: "Client Contact",
+                      dataIndex: "client_contact",
+                      key: "client_contact",
+                  },
+                  {
+                      title: "Total Panels",
+                      dataIndex: "total_panels",
+                      key: "total_panels",
+                  },
+                  {
+                      title: "Charges per Clean",
+                      dataIndex: "charges_per_clean",
+                      key: "charges_per_clean",
+                  },
+                  { title: "Date", dataIndex: "date", key: "date" },
+                  { title: "Slot", dataIndex: "time_slot", key: "time_slot" },
+                  { title: "Status", dataIndex: "status", key: "status" },
+                  {
+                      title: "Recurrence",
+                      dataIndex: "recurrence",
+                      key: "recurrence",
+                      render: (text) =>
+                          text === "ten"
+                              ? "Every 10 Days"
+                              : text === "twenty"
+                              ? "Every 20 Days"
+                              : text,
+                  },
               ]
             : [];
 
@@ -1028,152 +842,6 @@ const SearchPage = () => {
                     )}
                 </div>
             </Modal>
-                        {/* Modal for editing bookings */}
-                        <Modal
-                title="Edit Booking"
-                open={isCreateModalVisible} // Your state for modal visibility
-                onCancel={handleCreateModalCancel} // Function to handle modal cancel
-                footer={null}
-            >
-                <Form
-                    form={form}
-                    onFinish={handleUpdateBooking} // Function to handle booking update
-                    layout="vertical"
-                >
-                    <Form.Item
-                        name="client_id"
-                        label="Client"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please select a Client!",
-                            },
-                        ]}
-                    >
-                        <Select onChange={(value) => form.setFieldsValue({ client_id: value })}>
-                            {clients.map((client) => (
-                                <Select.Option key={client.id} value={client.id}>
-                                    {client.name}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-
-                    <Form.Item label="Workers">
-                        {workerTags.map((tag, index) => (
-                            <Tag
-                                key={tag}
-                                closable
-                                onClose={() => handleWorkerTagClose(tag)}>
-                                {tag}
-                            </Tag>
-                        ))}
-                        <Tag
-                            icon={<PlusOutlined />}
-                            onClick={showWorkerModal}
-                            style={{ cursor: "pointer" }}>
-                            New Worker
-                        </Tag>
-                    </Form.Item>
-
-                    <Form.Item
-                        name="date"
-                        label="Date"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please select the date!",
-                            },
-                        ]}
-                    >
-                        <Input type="date" />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="time_slot"
-                        label="Time Slot"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please select a time slot!",
-                            },
-                        ]}
-                    >
-                        <Select>
-                            {["09:00-11:00", "11:00-13:00"].map((slot) => (
-                                <Select.Option key={slot} value={slot}>
-                                    {slot}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-
-                    <Form.Item
-                        name="status"
-                        label="Status"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please select the status!",
-                            },
-                        ]}
-                    >
-                        <Select>
-                            <Select.Option value="Scheduled">Scheduled</Select.Option>
-                            <Select.Option value="Completed">Completed</Select.Option>
-                        </Select>
-                    </Form.Item>
-
-                    <Form.Item name="recurrence" label="Recurrence">
-                        <Select>
-                            <Select.Option value="weekly">Weekly</Select.Option>
-                            <Select.Option value="ten">Every 10 Days</Select.Option>
-                            <Select.Option value="biweekly">Biweekly</Select.Option>
-                            <Select.Option value="twenty">Every 20 Days</Select.Option>
-                            <Select.Option value="monthly">Monthly</Select.Option>
-                        </Select>
-                    </Form.Item>
-
-                    <Form.Item
-                        name="recurrence_period"
-                        label="Recurrence Period (months)"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please input the recurrence period!",
-                            },
-                        ]}
-                    >
-                        <Input type="number" />
-                    </Form.Item>
-
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                            Update Booking
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Modal>
-            <Modal
-                title="Select Worker"
-                open={isWorkerModalVisible}
-                onCancel={handleWorkerModalCancel}
-                onOk={handleWorkerModalOk}>
-                <Select
-                    showSearch
-                    placeholder="Select a worker"
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    style={{ width: "100%" }}>
-                    {workers.map((worker) => (
-                        <Select.Option key={worker.id} value={worker.name}>
-                            {worker.name}
-                        </Select.Option>
-                    ))}
-                </Select>
-            </Modal>
-            
-
 
             <Footer></Footer>
         </>
