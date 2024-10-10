@@ -19,8 +19,9 @@ import {
     getByWorkerName as getBookingByWorkerName,
     getByStatus,
     getByTimeSlot,
-    getByRecurrence,
     updateBooking,
+    getByDate,
+    getByTodaysDate,
 } from "../features/bookings/bookingsSlice";
 import {
     getAllClients,
@@ -252,6 +253,7 @@ const SearchPage = () => {
     
     const fetchData = (option) => {
         if (option === "Clients") {
+            setTableData([]);
             dispatch(getAllClients()).then((action) => {
                 if (action.payload) {
                     const mappedClients = action.payload.map((client) => ({
@@ -266,6 +268,7 @@ const SearchPage = () => {
                 }
             });
         } else if (option === "Workers") {
+            setTableData([]);
             dispatch(getAllWorkers()).then((action) => {
                 if (action.payload) {
                     const mappedWorkers = action.payload.map((worker) => ({
@@ -280,6 +283,7 @@ const SearchPage = () => {
                 }
             });
         } else if (option === "Bookings") {
+            setTableData([]);
             dispatch(getAllBookings()).then((action) => {
                 if (action.payload) {
                     const mappedBookings = action.payload.map((booking) => ({
@@ -313,7 +317,81 @@ const SearchPage = () => {
                     setTableData(mappedBookings);
                 }
             });
+        }else if (option === "TodaysBookings") {
+            setTableData([]);
+            const today = new Date().toISOString().split("T")[0]; // Add this log
+ // Get today's date in YYYY-MM-DD format
+            dispatch(getByTodaysDate(today)).then((action) => {
+                console.log("Today's bookings response:", action.payload); // Add this log
+                if (action.payload) {
+                    const mappedBookings = action.payload.map((booking) => ({
+                        ...booking,
+                        key: booking.booking_id,
+                        client_name: booking.client
+                            ? booking.client.name
+                            : "Unknown Client",
+                        worker_names:
+                            booking.workers && booking.workers.length > 0
+                                ? booking.workers
+                                      .map((worker) => worker.name)
+                                      .join(", ")
+                                : "Unknown Worker",
+                        client_address: booking.client
+                            ? booking.client.address
+                            : "Unknown Address",
+                        client_contact: booking.client
+                            ? booking.client.contact_details
+                            : "Unknown Contact",
+                        total_panels: booking.client
+                            ? booking.client.total_panels
+                            : "Unknown",
+                        charges_per_clean: booking.client
+                            ? booking.client.charge_per_clean
+                            : "Unknown",
+                    }));
+                    setTableData(mappedBookings);
+                }
+            });
         }
+        else if (option === "NextDayBookings") {
+            setTableData([]);
+            const nextDay = new Date();
+            nextDay.setDate(nextDay.getDate() + 1); // Get the next day's date
+            const nextDayString = nextDay.toISOString().split("T")[0]; // Convert to YYYY-MM-DD format
+            dispatch(getByTodaysDate(nextDayString)).then((action) => {
+                if (action.payload) {
+                    const mappedBookings = action.payload.map((booking) => ({
+                        ...booking,
+                        key: booking.booking_id,
+                        client_name: booking.client
+                            ? booking.client.name
+                            : "Unknown Client",
+                        worker_names:
+                            booking.workers && booking.workers.length > 0
+                                ? booking.workers
+                                      .map((worker) => worker.name)
+                                      .join(", ")
+                                : "Unknown Worker",
+                        client_address: booking.client
+                            ? booking.client.address
+                            : "Unknown Address",
+                        client_contact: booking.client
+                            ? booking.client.contact_details
+                            : "Unknown Contact",
+                        total_panels: booking.client
+                            ? booking.client.total_panels
+                            : "Unknown",
+                        charges_per_clean: booking.client
+                            ? booking.client.charge_per_clean
+                            : "Unknown",
+                    }));
+                    setTableData(mappedBookings);
+                }
+                else
+                setTableData([]);
+            });
+        }
+        
     };
 
     const handleSearch = () => {
@@ -467,26 +545,25 @@ const SearchPage = () => {
                     }
                 });
             }
-        } else if (selectedOption === "Bookings") {
+        } else if (selectedOption === "Bookings" || selectedOption === "TodaysBookings" || selectedOption === "NextDayBookings") {
             if (selectedField === "Booking ID") {
                 dispatch(getBookingById(searchQuery)).then((action) => {
-                    if (action.payload) {
+                    console.log('Received data:', action.payload);
+                    if (Array.isArray(action.payload)) {
                         setTableData(
-                            sortByDate([
-                                {
-                                    ...action.payload,
-                                    key: action.payload.id,
-                                    client_name: action.payload.client.name,
-                                    client_address:
-                                        action.payload.client.address, // Adding client address
-                                    client_contact:
-                                        action.payload.client.contact_details, // Adding client contact
-                                    total_panels:
-                                        action.payload.client.total_panels, // Adding total panels
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                    client_name: item.client.name,
+                                    worker_name: item.workers.name,
+                                    client_address: item.client.address, // Adding client address
+                                    client_contact: item.client.contact_details, // Adding client contact
+                                    total_panels: item.client.total_panels, // Adding total panels
                                     charges_per_clean:
-                                        action.payload.client.charge_per_clean, // Adding charges per clean
-                                },
-                            ])
+                                        item.client.charge_per_clean, // Adding charges per clean
+                                }))
+                            )
                         );
                     } else {
                         setTableData([]);
@@ -501,7 +578,7 @@ const SearchPage = () => {
                                     ...item,
                                     key: item.id,
                                     client_name: item.client.name,
-                                    worker_name: item.worker.name,
+                                    worker_name: item.workers.name,
                                     client_address: item.client.address, // Adding client address
                                     client_contact: item.client.contact_details, // Adding client contact
                                     total_panels: item.client.total_panels, // Adding total panels
@@ -523,7 +600,7 @@ const SearchPage = () => {
                                     ...item,
                                     key: item.id,
                                     client_name: item.client.name,
-                                    worker_name: item.worker.name,
+                                    worker_name: item.workers.name,
                                     client_address: item.client.address, // Adding client address
                                     client_contact: item.client.contact_details, // Adding client contact
                                     total_panels: item.client.total_panels, // Adding total panels
@@ -545,7 +622,7 @@ const SearchPage = () => {
                                     ...item,
                                     key: item.id,
                                     client_name: item.client.name,
-                                    worker_name: item.worker.name,
+                                    worker_name: item.workers.name,
                                     client_address: item.client.address, // Adding client address
                                     client_contact: item.client.contact_details, // Adding client contact
                                     total_panels: item.client.total_panels, // Adding total panels
@@ -567,7 +644,7 @@ const SearchPage = () => {
                                     ...item,
                                     key: item.id,
                                     client_name: item.client.name,
-                                    worker_name: item.worker.name,
+                                    worker_name: item.workers.name,
                                     client_address: item.client.address, // Adding client address
                                     client_contact: item.client.contact_details, // Adding client contact
                                     total_panels: item.client.total_panels, // Adding total panels
@@ -589,7 +666,7 @@ const SearchPage = () => {
                                     ...item,
                                     key: item.id,
                                     client_name: item.client.name,
-                                    worker_name: item.worker.name,
+                                    worker_name: item.workers.name,
                                     client_address: item.client.address, // Adding client address
                                     client_contact: item.client.contact_details, // Adding client contact
                                     total_panels: item.client.total_panels, // Adding total panels
@@ -611,7 +688,7 @@ const SearchPage = () => {
                                     ...item,
                                     key: item.id,
                                     client_name: item.client.name,
-                                    worker_name: item.worker.name,
+                                    worker_name: item.workers.name,
                                     client_address: item.client.address, // Adding client address
                                     client_contact: item.client.contact_details, // Adding client contact
                                     total_panels: item.client.total_panels, // Adding total panels
@@ -624,7 +701,31 @@ const SearchPage = () => {
                         setTableData([]);
                     }
                 });
-            } else if (selectedField === "Recurrence") {
+            }
+            else if (selectedField === "Date") {
+                dispatch(getByDate(searchQuery)).then((action) => {
+                    if (Array.isArray(action.payload)) {
+                        setTableData(
+                            sortByDate(
+                                action.payload.map((item) => ({
+                                    ...item,
+                                    key: item.id,
+                                    client_name: item.client.name,
+                                    worker_name: item.workers.name,
+                                    client_address: item.client.address, // Adding client address
+                                    client_contact: item.client.contact_details, // Adding client contact
+                                    total_panels: item.client.total_panels, // Adding total panels
+                                    charges_per_clean:
+                                        item.client.charge_per_clean, // Adding charges per clean
+                                }))
+                            )
+                        );
+                    } else {
+                        setTableData([]);
+                    }
+                });
+            }
+             else if (selectedField === "Recurrence") {
                 dispatch(getByRecurrence(searchQuery)).then((action) => {
                     if (Array.isArray(action.payload)) {
                         setTableData(
@@ -633,7 +734,7 @@ const SearchPage = () => {
                                     ...item,
                                     key: item.id,
                                     client_name: item.client.name,
-                                    worker_name: item.worker.name,
+                                    worker_name: item.workers.name,
                                     client_address: item.client.address, // Adding client address
                                     client_contact: item.client.contact_details, // Adding client contact
                                     total_panels: item.client.total_panels, // Adding total panels
@@ -745,8 +846,9 @@ const SearchPage = () => {
                       ),
                   },
               ]
-            : selectedOption === "Bookings"
+            : selectedOption === "Bookings" ||selectedOption === "TodaysBookings" || selectedOption === "NextDayBookings"
             ? [
+                { title: "Date", dataIndex: "date", key: "date" },
                 { title: "Booking ID", dataIndex: "id", key: "id" },
                 {
                     title: "Client Name",
@@ -796,7 +898,6 @@ const SearchPage = () => {
                     dataIndex: "charges_per_clean",
                     key: "charges_per_clean",
                 },
-                { title: "Date", dataIndex: "date", key: "date" },
                 { title: "Slot", dataIndex: "time_slot", key: "time_slot" },
                 { title: "Status", dataIndex: "status", key: "status" },
                 {
@@ -896,6 +997,23 @@ const SearchPage = () => {
                                 onClick={() => handleMenuClick("Bookings")}>
                                 Bookings
                             </Button>
+                            {/* New Button for Today's Bookings */}
+                        <Button
+                            className={`search-menu-btn ml-2 ${
+                                selectedOption === "TodaysBookings" ? "btn-primary" : ""
+                            }`}
+                            onClick={() => handleMenuClick("TodaysBookings")}>
+                            Today's Bookings
+                        </Button>
+
+                        {/* New Button for Next Day's Bookings */}
+                        <Button
+                            className={`search-menu-btn ml-2 ${
+                                selectedOption === "NextDayBookings" ? "btn-primary" : ""
+                            }`}
+                            onClick={() => handleMenuClick("NextDayBookings")}>
+                            Next Day's Bookings
+                        </Button>
                         </div>
                     </div>
                 </div>
@@ -944,6 +1062,7 @@ const SearchPage = () => {
                                     </Option>
                                     <Option value="Client ID">Client ID</Option>
                                     <Option value="Worker ID">Worker ID</Option>
+                                    <Option value="Worker Name"> Worker Name</Option>
                                     <Option value="Client Name">
                                         Client Name
                                     </Option>

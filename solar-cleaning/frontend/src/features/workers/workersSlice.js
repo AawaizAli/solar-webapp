@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from '../../api/axios.js';
 const baseURL = process.env.NODE_ENV === 'production' ? 'https://hash1khn.pythonanywhere.com' : 'http://127.0.0.1:5000/';
-
 const initialState = {
     workers: [],
     loading: false,
@@ -60,14 +59,10 @@ export const getAllWorkers = createAsyncThunk(
 
 export const getById = createAsyncThunk(
     "workers/get-by-id",
-    async (id, { rejectWithValue, dispatch, getState }) => {
+    async (id, { rejectWithValue }) => {
         try {
-            const state = getState();
-            if (state.workers.workers.length === 0) {
-                await dispatch(getAllWorkers());
-            }
-            const worker = state.workers.workers.find((worker) => worker.id === parseInt(id, 10));
-            return worker ? [worker] : [];
+            const response = await axiosInstance.get(`/api/workers/get-worker/${id}`);
+            return response.data ? [response.data] : [];  // Return as array to match existing structure
         } catch (error) {
             return rejectWithValue(error.response ? error.response.data.message : error.message);
         }
@@ -76,36 +71,23 @@ export const getById = createAsyncThunk(
 
 export const getByName = createAsyncThunk(
     "workers/get-by-name",
-    async (name, { rejectWithValue, dispatch, getState }) => {
+    async (name, { rejectWithValue }) => {
         try {
-            const state = getState();
-            if (state.workers.workers.length === 0) {
-                await dispatch(getAllWorkers());
-            }
-            const workers = state.workers.workers.filter((worker) =>
-                worker.name.toLowerCase().includes(name.toLowerCase())
-            );
-            return workers;
+            const response = await axiosInstance.get(`/api/workers/search/name/${name}`);
+            return response.data;  // Return the list of workers
         } catch (error) {
             return rejectWithValue(error.response.data.message);
         }
     }
 );
 
+
 export const getByArea = createAsyncThunk(
     "workers/get-by-area",
-    async (area, { rejectWithValue, dispatch, getState }) => {
+    async (area, { rejectWithValue }) => {
         try {
-            const state = getState();
-            if (state.workers.workers.length === 0) {
-                await dispatch(getAllWorkers());
-            }
-            const workers = state.workers.workers.filter(
-                (worker) =>
-                    worker.area &&
-                    worker.area.toLowerCase().includes(area.toLowerCase())
-            );
-            return workers;
+            const response = await axiosInstance.get(`/api/workers/search/area/${area}`);
+            return response.data;  // Return the list of workers
         } catch (error) {
             return rejectWithValue(error.response.data.message);
         }

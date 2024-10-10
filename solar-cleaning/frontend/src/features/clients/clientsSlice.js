@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from '../../api/axios.js';
 
-const baseURL = process.env.NODE_ENV === 'production' ? 'https://hash1khn.pythonanywhere.com' : 'http://127.0.0.1:5000/';
+const baseURL = process.env.NODE_ENV === 'production' ? 'https://hash1khn.pythonanywhere.com' : 'http://127.0.0.1:5000';
 
 const initialState = {
     clients: [],
@@ -59,133 +59,116 @@ const filterClients = (clients, field, value) => {
 // Async thunk for fetching clients by ID
 export const getById = createAsyncThunk(
     "clients/getById",
-    async (id, { dispatch, getState, rejectWithValue }) => {
+    async (id, { rejectWithValue }) => {
         try {
-            await dispatch(getAllClients());
-            const clients = getState().clients.clients;
-            return filterClients(clients, "id", id);
+            const response = await axiosInstance.get(`/api/clients/search/id/${id}`);
+            const client = response.data;
+
+            // Wrap the client in an array if it's a single object
+            return Array.isArray(client) ? client : [client];
         } catch (error) {
-            console.error("getById error:", error);
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response.data.message);
         }
     }
 );
+
 
 // Async thunk for fetching clients by name
 export const getByName = createAsyncThunk(
     "clients/getByName",
-    async (name, { dispatch, getState, rejectWithValue }) => {
+    async (name, { rejectWithValue }) => {
         try {
-            await dispatch(getAllClients());
-            const clients = getState().clients.clients;
-            return filterClients(clients, "name", name);
+            const response = await axiosInstance.get(`/api/clients/search/name/${name}`);
+            return response.data;
         } catch (error) {
-            console.error("getByName error:", error);
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response.data.message);
         }
     }
 );
+
 
 // Async thunk for fetching clients by contact details
 export const getByContact = createAsyncThunk(
     "clients/getByContact",
-    async (contact, { dispatch, getState, rejectWithValue }) => {
+    async (contact, { rejectWithValue }) => {
         try {
-            await dispatch(getAllClients());
-            const clients = getState().clients.clients;
-            return filterClients(clients, "contact_details", contact);
+            const response = await axiosInstance.get(`/api/clients/search/contact/${contact}`);
+            return response.data;
         } catch (error) {
-            console.error("getByContact error:", error);
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response.data.message);
         }
     }
 );
+
 
 // Async thunk for fetching clients by address
 export const getByAddress = createAsyncThunk(
     "clients/getByAddress",
-    async (address, { dispatch, getState, rejectWithValue }) => {
+    async (address, { rejectWithValue }) => {
         try {
-            await dispatch(getAllClients());
-            const clients = getState().clients.clients;
-            return filterClients(clients, "address", address);
+            const response = await axiosInstance.get(`/api/clients/search/address/${address}`);
+            return response.data;
         } catch (error) {
-            console.error("getByAddress error:", error);
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response.data.message);
         }
     }
 );
 
+
 export const getByArea = createAsyncThunk(
-    "clients/get-by-area",
-    async (area, { dispatch, getState, rejectWithValue }) => {
+    "clients/getByArea",
+    async (area, { rejectWithValue }) => {
         try {
-            await dispatch(getAllClients());
-            const clients = getState().clients.clients.filter(
-                (client) =>
-                    client.area &&
-                    client.area.toLowerCase().includes(area.toLowerCase())
-            );
-            console.log("Filtered clients by area:", clients);
-            return clients;
+            const response = await axiosInstance.get(`/api/clients/search/area/${area}`);
+            return response.data;
         } catch (error) {
-            console.error("getByArea error:", error);
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response.data.message);
         }
     }
 );
+
 
 // Async thunk for fetching clients by total panels
 export const getByTotalPanels = createAsyncThunk(
     "clients/getByTotalPanels",
-    async (totalPanels, { dispatch, getState, rejectWithValue }) => {
+    async (totalPanels, { rejectWithValue }) => {
         try {
-            await dispatch(getAllClients());
-            const clients = getState().clients.clients;
-            return filterClients(clients, "total_panels", totalPanels);
+            const response = await axiosInstance.get(`/api/clients/search/total-panels/${totalPanels}`);
+            return response.data;
         } catch (error) {
-            console.error("getByTotalPanels error:", error);
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response.data.message);
         }
     }
 );
+
 
 // Async thunk for fetching clients by charges per clean
 export const getByCharges = createAsyncThunk(
-    "clients/get-by-charges",
-    async (charges, { dispatch, getState, rejectWithValue }) => {
+    "clients/getByCharges",
+    async (charges, { rejectWithValue }) => {
         try {
-            await dispatch(getAllClients());
-            const clients = getState().clients.clients.filter(
-                (client) => client.charge_per_clean.toString() === charges
-            );
-            console.log("Filtered clients by charges:", clients);
-            return clients;
+            const response = await axiosInstance.get(`/api/clients/search/charges/${charges}`);
+            return response.data;
         } catch (error) {
-            console.error("getByCharges error:", error);
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response.data.message);
         }
     }
 );
 
+
 // Async thunk for fetching clients by subscription plan
 export const getBySubscriptionPlan = createAsyncThunk(
-    "clients/get-by-subscription-plan",
-    async (subscriptionPlan, { dispatch, getState, rejectWithValue }) => {
+    "clients/getBySubscriptionPlan",
+    async (plan, { rejectWithValue }) => {
         try {
-            await dispatch(getAllClients());
-            const clients = getState().clients.clients.filter(
-                (client) =>
-                    client.subscription_plan.toString() === subscriptionPlan
-            );
-            console.log("Filtered clients by subscription plan:", clients);
-            return clients;
+            const response = await axiosInstance.get(`/api/clients/search/subscription-plan/${plan}`);
+            return response.data;
         } catch (error) {
-            console.error("getBySubscriptionPlan error:", error);
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response.data.message);
         }
     }
 );
+
 
 // Async thunk for creating a client
 export const createClient = createAsyncThunk(

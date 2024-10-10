@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from '../../api/axios.js';
-const baseURL = process.env.NODE_ENV === 'production' ? 'https://hash1khn.pythonanywhere.com' : 'http://127.0.0.1:5000/';
+const baseURL = process.env.NODE_ENV === 'production' ? 'https://hash1khn.pythonanywhere.com' : 'http://127.0.0.1:5000';
 
 const initialState = {
     bookings: [],
@@ -38,7 +38,11 @@ export const getAllBookings = createAsyncThunk(
             console.log(response.data);
             return response.data.map((booking) => ({
                 ...booking,
-                id: booking.booking_id, // Map booking_id to id for consistency
+                id: booking.booking_id,
+                date: new Date(booking.date).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',}) // Map booking_id to id for consistency
             }));
         } catch (error) {
             return rejectWithValue(error.response.data.message);
@@ -64,25 +68,24 @@ export const getAllBookings = createAsyncThunk(
 
 export const getById = createAsyncThunk(
     "bookings/get-by-id",
-    async (id, { rejectWithValue, dispatch, getState }) => {
+    async (id, { rejectWithValue }) => {
         try {
-            const state = getState();
-            // If bookings are not already loaded, fetch them
-            if (state.bookings.bookings.length === 0) {
-                await dispatch(getAllBookings());
-            }
+            // Make an API call to fetch booking by ID
+            const response = await axiosInstance.get(`/api/bookings/search/booking_id/${id}`);
+            console.log("Booking Response:", response.data); // Log the response
 
-            // Find the booking with the matching booking_id
-            const booking = state.bookings.bookings.find(
-                (booking) => booking.booking_id === parseInt(id, 10)
-            );
-
-            if (!booking) {
-                throw new Error("Booking not found");
-            }
-            return booking;
+            // Return the response data, which will contain the booking details
+            return response.data.map((booking) => ({
+                ...booking,
+                id: booking.booking_id,
+                date: new Date(booking.date).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',}) // Map booking_id to id for consistency
+            }));
         } catch (error) {
-            return rejectWithValue(error.message);
+            // Handle and return any errors that occur
+            return rejectWithValue(error.response?.data?.message || "Error fetching booking by ID");
         }
     }
 );
@@ -91,69 +94,130 @@ export const getById = createAsyncThunk(
 // Async thunk for fetching bookings by client ID
 export const getByClientId = createAsyncThunk(
     "bookings/get-by-client-id",
-    async (clientId, { rejectWithValue, dispatch }) => {
+    async (clientId, { rejectWithValue }) => {
         try {
-            const response = await dispatch(getAllBookings());
-            const bookings = response.payload.filter(
-                (booking) => booking.client_id.toString() === clientId
-            );
-            return bookings;
+            // Make the API call to the backend to get bookings by client ID
+            const response = await axiosInstance.get(`/api/bookings/search/client/${clientId}`);
+            console.log(response.data)
+            // Assuming the backend returns the data in the correct structure,
+            // we can directly return the response data.
+            return response.data.map((booking) => ({
+                ...booking,
+                id: booking.booking_id,
+                date: new Date(booking.date).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',}) // Map booking_id to id for consistency
+            }));
         } catch (error) {
-            return rejectWithValue(error.message);
+            // If there's an error, return a rejected promise with the error message
+            return rejectWithValue(error.response?.data?.message || error.message);
         }
     }
 );
 
-// Async thunk for fetching bookings by worker ID
 export const getByWorkerId = createAsyncThunk(
     "bookings/get-by-worker-id",
-    async (workerId, { rejectWithValue, dispatch }) => {
+    async (workerId, { rejectWithValue }) => {
         try {
-            const response = await dispatch(getAllBookings());
-            const bookings = response.payload.filter(
-                (booking) => booking.worker_id.toString() === workerId
-            );
-            return bookings;
+            // Making the request using axiosInstance
+            const response = await axiosInstance.get(`/api/bookings/search/worker/${workerId}`);
+
+            // Axios automatically parses the response as JSON
+            return response.data.map((booking) => ({
+                ...booking,
+                id: booking.booking_id,
+                date: new Date(booking.date).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',}) // Map booking_id to id for consistency
+            }));
         } catch (error) {
-            return rejectWithValue(error.message);
+            // Return a more meaningful error message if available
+            return rejectWithValue(error.response?.data?.message || error.message);
         }
     }
 );
+
+
 
 export const getByClientName = createAsyncThunk(
     "bookings/get-by-client-name",
-    async (clientName, { rejectWithValue, dispatch, getState }) => {
+    async (clientName, { rejectWithValue }) => {
         try {
-            const state = getState();
-            if (state.bookings.bookings.length === 0) {
-                await dispatch(getAllBookings());
-            }
-            const bookings = state.bookings.bookings.filter((booking) =>
-                booking.client.name
-                    .toLowerCase()
-                    .includes(clientName.toLowerCase())
-            );
-            return bookings;
+            const response = await axiosInstance.get(`/api/bookings/search/client/name/${clientName}`);
+            return response.data.map((booking) => ({
+                ...booking,
+                id: booking.booking_id,
+                date: new Date(booking.date).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',}) // Map booking_id to id for consistency
+            })); // Directly return the filtered bookings by client name
         } catch (error) {
-            return rejectWithValue(error.response.data.message);
+            return rejectWithValue(error.response?.data?.message || error.message);
         }
     }
 );
 
+
 export const getByWorkerName = createAsyncThunk(
     "bookings/get-by-worker-name",
-    async (workerName, { rejectWithValue, dispatch, getState }) => {
+    async (workerName, { rejectWithValue }) => {
         try {
-            const state = getState();
-            if (state.bookings.bookings.length === 0) {
-                await dispatch(getAllBookings());
-            }
-            const bookings = state.bookings.bookings.filter((booking) =>
-                booking.worker.name
-                    .toLowerCase()
-                    .includes(workerName.toLowerCase())
-            );
-            return bookings;
+            // Make the request to the API using the worker name
+            const response = await axiosInstance.get(`/api/bookings/search/worker/name/${workerName}`);
+            
+            // Axios automatically parses the response as JSON
+            return response.data.map((booking) => ({
+                ...booking,
+                id: booking.booking_id,
+                date: new Date(booking.date).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',}) // Map booking_id to id for consistency
+            }));
+        } catch (error) {
+            // Return a more meaningful error message if available
+            return rejectWithValue(error.response?.data?.message || error.message);
+        }
+    }
+);
+export const getByDate = createAsyncThunk(
+    "bookings/get-by-date",
+    async (date, { rejectWithValue }) => {
+        try {
+            // Call the backend API to get bookings filtered by date
+            const response = await axiosInstance.get(`/api/bookings/search/date/${date}`);
+            
+            // Axios automatically parses JSON responses, so no need to use `.json()`
+            return response.data.map((booking) => ({
+                ...booking,
+                id: booking.booking_id,
+                date: new Date(booking.date).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',}) // Map booking_id to id for consistency
+            }));
+        } catch (error) {
+            // Return a meaningful error message if available
+            return rejectWithValue(error.response?.data?.message || error.message);
+        }
+    }
+);
+export const getByTodaysDate = createAsyncThunk(
+    "bookings/get-by-todays-date",
+    async (date, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.get(`/api/bookings/search/date/${date}`);
+            return response.data.map((booking) => ({
+                ...booking,
+                id: booking.booking_id,
+                date: new Date(booking.date).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',}) // Map booking_id to id for consistency
+            }));
         } catch (error) {
             return rejectWithValue(error.response.data.message);
         }
@@ -162,58 +226,46 @@ export const getByWorkerName = createAsyncThunk(
 
 export const getByStatus = createAsyncThunk(
     "bookings/get-by-status",
-    async (status, { rejectWithValue, dispatch, getState }) => {
+    async (status, { rejectWithValue }) => {
         try {
-            const state = getState();
-            if (state.bookings.bookings.length === 0) {
-                await dispatch(getAllBookings());
-            }
-            const bookings = state.bookings.bookings.filter(
-                (booking) =>
-                    booking.status.toLowerCase() === status.toLowerCase()
-            );
-            return bookings;
+            const response = await axiosInstance.get(`/api/bookings/search/status/${status}`);
+            return response.data.map((booking) => ({
+                ...booking,
+                id: booking.booking_id,
+                date: new Date(booking.date).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',}) // Map booking_id to id for consistency
+            }));// Directly return the filtered bookings by status
         } catch (error) {
-            return rejectWithValue(error.response.data.message);
+            return rejectWithValue(error.response?.data?.message || error.message);
         }
     }
 );
+
 
 export const getByTimeSlot = createAsyncThunk(
     "bookings/get-by-time-slot",
-    async (timeSlot, { rejectWithValue, dispatch, getState }) => {
+    async (timeSlot, { rejectWithValue }) => {
         try {
-            const state = getState();
-            if (state.bookings.bookings.length === 0) {
-                await dispatch(getAllBookings());
-            }
-            const bookings = state.bookings.bookings.filter(
-                (booking) => booking.time_slot === timeSlot
-            );
-            return bookings;
+            // Call the backend API to get bookings filtered by time slot
+            const response = await axiosInstance.get(`/api/bookings/search/slot/${encodeURIComponent(timeSlot)}`);
+            
+            return response.data.map((booking) => ({
+                ...booking,
+                id: booking.booking_id,
+                date: new Date(booking.date).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',}) // Map booking_id to id for consistency
+            }));
         } catch (error) {
-            return rejectWithValue(error.response.data.message);
+            // Return a meaningful error message if available
+            return rejectWithValue(error.response?.data?.message || error.message);
         }
     }
 );
 
-export const getByRecurrence = createAsyncThunk(
-    "bookings/get-by-recurrence",
-    async (recurrence, { rejectWithValue, dispatch, getState }) => {
-        try {
-            const state = getState();
-            if (state.bookings.bookings.length === 0) {
-                await dispatch(getAllBookings());
-            }
-            const bookings = state.bookings.bookings.filter(
-                (booking) => booking.recurrence === recurrence
-            );
-            return bookings;
-        } catch (error) {
-            return rejectWithValue(error.response.data.message);
-        }
-    }
-);
 
 // Async thunk for creating a booking
 export const createBooking = createAsyncThunk(
@@ -349,18 +401,6 @@ const bookingsSlice = createSlice({
                 state.loading = false;
             })
             .addCase(getByTimeSlot.rejected, (state, action) => {
-                state.error = action.payload;
-                state.loading = false;
-            })
-            .addCase(getByRecurrence.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(getByRecurrence.fulfilled, (state, action) => {
-                state.bookings = action.payload;
-                state.loading = false;
-            })
-            .addCase(getByRecurrence.rejected, (state, action) => {
                 state.error = action.payload;
                 state.loading = false;
             })
