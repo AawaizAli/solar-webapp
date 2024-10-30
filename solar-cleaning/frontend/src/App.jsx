@@ -9,19 +9,20 @@ import Client from './components/Client';
 import SearchPage from './components/SearchPage';
 import ReportsPage from './components/ReportsPage';
 import Reports2 from './components/Reports2';
+import Closed from './components/closed';
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route exact path="/" element={<HomePage />} />
-        <Route path="/bookings" element={<Booking />} />
+        <Route exact path="/" element={<Closed />} />
+        {/* <Route path="/bookings" element={<Booking />} />
         <Route path="/workers" element={<Worker />} />
         <Route path="/clients" element={<Client />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/reports" element={<ReportsPage/>} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/logout" element={<LogoutPage />} />
+        <Route path="/logout" element={<LogoutPage />} /> */}
       </Routes>
     </Router>
   );
