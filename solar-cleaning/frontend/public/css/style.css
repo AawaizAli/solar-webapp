@@ -7,6 +7,10 @@ body {
     color: #040000;
 }
 
+.prod-closed {
+    color: red;
+}
+
 .header-icon {
     margin-right: 5px;
 }

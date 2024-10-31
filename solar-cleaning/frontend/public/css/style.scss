@@ -31,6 +31,10 @@ $primary2:#ff8a1d;
   }
 }
 
+.prod-closed {
+  color: red !important;
+}
+
 @mixin upperBold {
   text-transform: uppercase;
   font-weight: bold;

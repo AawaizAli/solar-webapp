@@ -6,6 +6,7 @@ import professionalImg from "../../public/professional-img.png";
 
 import Header from "./Header";
 import Footer from "./Footer";
+import './closed.css';
 
 const Closed = () => {
   const authState = useSelector((state) => state.auth);
@@ -46,15 +47,10 @@ const Closed = () => {
             <div className="row">
               <div className="col-md-6">
                 <div className="detail-box">
-                  <h1>
+                  <h1 className="prod-closed">
                     Website production stopped due to no payment from middle man..
                   </h1>
                   
-                </div>
-              </div>
-              <div className="col-md-6">
-                <div className="img-box">
-                  <img src={sliderImg} alt="Slider Image" />
                 </div>
               </div>
             </div>
